@@ -370,33 +370,28 @@ const RadarWizard: React.FC = () => {
         return { level: 'Bajo', color: 'bg-green-500', text: 'text-green-500' };
       };
       const exposure = getExposureLevel(miniResults.globalScore);
-      const top2Risks = miniResults.topRisks.slice(0, 2);
+      const topRisk = miniResults.dimensionScores.find(d => d.id === miniResults.topRisks[0]?.dimension);
       
       return (
         <div className="mt-4 p-6 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700">
-          <div className="text-center mb-6">
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Tu diagnóstico preliminar está listo</p>
-            <div className={`inline-flex items-center px-4 py-2 rounded-full text-white font-bold ${exposure.color}`}>
-              Nivel de exposición: {exposure.level}
+          <div className="text-center mb-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Tu diagnóstico preliminar</p>
+            <div className={`inline-flex items-center px-6 py-3 rounded-full text-white font-bold ${exposure.color}`}>
+              Exposición {exposure.level}
             </div>
           </div>
           
-          <div className="text-center mb-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">Hemos detectado tus 2 principales áreas de riesgo:</p>
-          </div>
+          {topRisk && (
+            <div className="text-center mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400">Tu principal área de atención:</p>
+              <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">{topRisk.label}</p>
+            </div>
+          )}
           
-          <div className="space-y-3 mb-6">
-            {top2Risks.map((risk, idx) => {
-              const dim = miniResults.dimensionScores.find(d => d.id === risk.dimension);
-              return (
-                <div key={idx} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700 rounded-lg">
-                  <div className={`w-8 h-8 ${exposure.color} rounded-full flex items-center justify-center text-white font-bold text-sm`}>
-                    {idx + 1}
-                  </div>
-                  <span className="text-gray-800 dark:text-gray-200 font-medium">{dim?.label}</span>
-                </div>
-              );
-            })}
+          <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+            <p className="text-sm text-green-700 dark:text-green-300 font-medium">
+              📧 Tu informe detallado llega a tu email en 5 minutos
+            </p>
           </div>
         </div>
       );

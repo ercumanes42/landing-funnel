@@ -207,7 +207,7 @@ export const WIZARD_STEPS: { title: string; questions: Question[] }[] = [
   {
     title: "Resultado Preliminar",
     questions: [
-      { id: "mini_result", category: "result", type: "mini_result", required: false }
+      { id: "mini_result", category: "result", type: "mini_result", text: "", required: false }
     ]
   },
   {
