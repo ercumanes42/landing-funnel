@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DIAGNÓSTICO TALENTO+IA 2026 | Estrategia</title>
+    <meta name="description" content="Detecta tus 3 mayores riesgos de personas para 2026 y recibe un informe ejecutivo." />
+    
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#0B1220', // Negro suave
+              secondary: '#566079', // Gris
+              accent1: '#22D3EE', // Cian/Teal
+              accent2: '#A78BFA', // Violeta
+              success: '#22C55E',
+              warning: '#F59E0B',
+              danger: '#EF4444',
+              bgLight: '#F7F8FB',
+              darkBg: '#0f172a'
+            },
+            fontFamily: {
+              sans: ['Outfit', 'sans-serif'],
+            },
+            keyframes: {
+               'glow': {
+                  '0%, 100%': { 
+                    boxShadow: '0 0 5px rgba(34, 211, 238, 0.5), 0 0 10px rgba(34, 211, 238, 0.3)'
+                  },
+                  '50%': { 
+                    boxShadow: '0 0 20px rgba(34, 211, 238, 0.8), 0 0 35px rgba(167, 139, 250, 0.6)'
+                  }
+               }
+            },
+            animation: {
+              'spin-slow': 'spin 3s linear infinite',
+              'glow': 'glow 3s ease-in-out infinite',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @media print {
+        @page { margin: 0; size: auto; }
+        body { -webkit-print-color-adjust: exact; }
+      }
+      .gradient-text {
+        background: linear-gradient(90deg, #22D3EE, #A78BFA);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "recharts": "https://esm.sh/recharts@^3.7.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-bgLight dark:bg-darkBg text-primary dark:text-gray-100 antialiased transition-colors duration-300 font-sans">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
