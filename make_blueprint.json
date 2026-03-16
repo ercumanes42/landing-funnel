@@ -1,0 +1,83 @@
+{
+    "name": "Apollo + OpenAI + Microsoft 365",
+    "flow": [
+        {
+            "id": 1,
+            "module": "http:ActionMakeRequest",
+            "version": 3,
+            "parameters": {
+                "handleErrors": false
+            },
+            "mapper": {
+                "url": "https://api.apollo.io/api/v1/mixed_people/search",
+                "method": "post",
+                "headers": [
+                    {
+                        "name": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "name": "Cache-Control",
+                        "value": "no-cache"
+                    }
+                ],
+                "bodyType": "raw",
+                "parseResponse": true,
+                "serializeUrl": false,
+                "shareCookies": false,
+                "data": "{\n  \"api_key\": \"3ywdeqVyz1ux77S9gXn-0Q\",\n  \"q_organization_domains\": \"\",\n  \"page\": 1,\n  \"person_titles\": [\"CEO\", \"Director General\", \"HR Director\", \"Director de Recursos Humanos\"],\n  \"organization_num_employees_ranges\": [\"50,1000\"],\n  \"person_locations\": [\"Spain\"]\n}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "name": "Apollo: Buscar"
+            }
+        },
+        {
+            "id": 2,
+            "module": "openai:ActionCreateChatCompletion",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "model": "gpt-4o-mini",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "Eres un experto B2B. Escribe una línea corta (máx 15 palabras) elogiando o destacando algo de esta descripción de empresa. No uses comillas. Descripción: {{1.data.people[1].organization.seo_description}}"
+                    }
+                ]
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0
+                },
+                "name": "OpenAI: Mensaje"
+            }
+        },
+        {
+            "id": 3,
+            "module": "microsoft_email:ActionSendEmail",
+            "version": 2,
+            "parameters": {},
+            "mapper": {
+                "to": "{{1.data.people[1].email}}",
+                "subject": "Sobre la estructura de equipos en {{1.data.people[1].organization.name}}",
+                "content": "<p>Hola {{1.data.people[1].first_name}},</p><p>{{2.choices[1].message.content}}</p><p>Te escribo porque hemos desarrollado un \"Diagnóstico Técnico Organizacional\" que... [Accede directo: 👉 https://tudominio.com/?email={{1.data.people[1].email}}]</p>",
+                "isHtml": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0
+                },
+                "name": "Outlook: Enviar"
+            }
+        }
+    ],
+    "metadata": {
+        "version": 1
+    }
+}

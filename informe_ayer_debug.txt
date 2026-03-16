@@ -1,0 +1,133 @@
+╔══════════════════════════════════════════════════════════════╗
+║    📅 INFORME DE AYER (DEPURADO) - 09 MARZO 2026         ║
+╚══════════════════════════════════════════════════════════════╝
+
+  👤 Usuarios únicos (no test):   23
+  🖱️  Click en Iniciar:            0
+  📝 Empezaron cuestionario:      0
+  📋 Completaron diagnóstico:     0
+  📅 Agendaron llamada:           0
+  📄 Descargaron informe:         0
+  📨 Leads con contacto:          23
+
+  🔍 EVENTOS DETECTADOS AYER (DEBUG):
+  auto_identified_from_email, view_landing
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📧 DETALLE DE ACTIVIDAD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Usuario #1 (macastel...):
+    📨 Email: macastellanos@energia.eiffage.es
+    ✅ Acciones:     
+    📋 Eventos: auto_identified_from_email
+
+  Usuario #2 (019cd336...):
+    📨 Email: macastellanos@energia.eiffage.es
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #3 (019cd335...):
+    📨 Email: macastellanos@energia.eiffage.es
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #4 (santiago...):
+    📨 Email: santiago.sanjuangarcia@eiffage.com
+    ✅ Acciones:     
+    📋 Eventos: auto_identified_from_email
+
+  Usuario #5 (019cd31d...):
+    📨 Email: santiago.sanjuangarcia@eiffage.com
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #6 (pedro.sa...):
+    📨 Email: pedro.salvadormartinez@eiffage.com
+    ✅ Acciones:     
+    📋 Eventos: auto_identified_from_email
+
+  Usuario #7 (019cd311...):
+    📨 Email: pedro.salvadormartinez@eiffage.com
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #8 (019cd311...):
+    📨 Email: pedro.salvadormartinez@eiffage.com
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #9 (019cd30a...):
+    📨 Email: pedro.salvadormartinez@eiffage.com
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #10 (epsomarr...):
+    📨 Email: epsomarriba@dosgradoscapital.com
+    ✅ Acciones:     
+    📋 Eventos: auto_identified_from_email
+
+  Usuario #11 (019cd266...):
+    📨 Email: epsomarriba@dosgradoscapital.com
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #12 (cat@domu...):
+    📨 Email: cat@domusvi.es
+    ✅ Acciones:     
+    📋 Eventos: auto_identified_from_email
+
+  Usuario #13 (019cd266...):
+    📨 Email: cat@domusvi.es
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #14 (zahily.p...):
+    📨 Email: zahily.perez@disagrupo.es
+    ✅ Acciones:     
+    📋 Eventos: auto_identified_from_email
+
+  Usuario #15 (019cd20b...):
+    📨 Email: zahily.perez@disagrupo.es
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #16 (rebeca.a...):
+    📨 Email: rebeca.alcaide@disagrupo.es
+    ✅ Acciones:     
+    📋 Eventos: auto_identified_from_email
+
+  Usuario #17 (019cd1f8...):
+    📨 Email: rebeca.alcaide@disagrupo.es
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #18 (maria.ca...):
+    📨 Email: maria.castro@disagrupo.es
+    ✅ Acciones:     
+    📋 Eventos: auto_identified_from_email
+
+  Usuario #19 (019cd1f8...):
+    📨 Email: maria.castro@disagrupo.es
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #20 (carmen.a...):
+    📨 Email: carmen.alvarez@disagrupo.es
+    ✅ Acciones:     
+    📋 Eventos: auto_identified_from_email
+
+  Usuario #21 (019cd1e6...):
+    📨 Email: carmen.alvarez@disagrupo.es
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+
+  Usuario #22 (andrea.d...):
+    📨 Email: andrea.deetman@disagrupo.es
+    ✅ Acciones:     
+    📋 Eventos: auto_identified_from_email
+
+  Usuario #23 (019cd1e6...):
+    📨 Email: andrea.deetman@disagrupo.es
+    ✅ Acciones: Vista    
+    📋 Eventos: view_landing
+

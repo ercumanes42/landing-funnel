@@ -1,0 +1,87 @@
+{
+    "name": "⚙️ Escenario 2: Retargeting - Perseguidor de NO Agendados",
+    "flow": [
+        {
+            "id": 1,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": ""
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0,
+                    "name": "1. Webhook (Recibe el aviso de Web completada)"
+                },
+                "parameters": [
+                    {
+                        "name": "hook",
+                        "type": "hook:gateway-webhook",
+                        "label": "Webhook"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "builtin:BasicSleep",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "delay": 120
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0,
+                    "name": "2. Pausa Inteligente (Espera 2h)"
+                }
+            }
+        },
+        {
+            "id": 3,
+            "module": "calendly:ActionGetEventInvitee",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "email": "{{1.email}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0,
+                    "name": "3. Calendly (¿Ha reservado?)"
+                }
+            }
+        },
+        {
+            "id": 4,
+            "module": "microsoft_email:ActionSendEmail",
+            "version": 2,
+            "parameters": {},
+            "mapper": {
+                "to": [
+                    {
+                        "emailAddress": "{{1.email}}",
+                        "name": "{{1.name}}"
+                    }
+                ],
+                "subject": "Tu informe organizacional / Dudas",
+                "content": "<p>Hola {{1.name}},</p><p>He visto que tu equipo acaba de descargar el Diagnóstico Organizacional, pero quería asegurarme de que no os habéis atascado en el análisis de los resultados.</p><p>Si os surgen dudas sobre la métrica de retención, tengo hueco mañana para comentarlo 10 minutos sin compromiso.</p><p>Te dejo mi calendario por aquí: <b>[TU ENLACE DE CALENDLY AQUI]</b></p><p>Un abrazo,</p>",
+                "isHtml": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 900,
+                    "y": 0,
+                    "name": "4. Outlook (Misil de Retargeting)"
+                }
+            }
+        }
+    ],
+    "metadata": {
+        "version": 1
+    }
+}

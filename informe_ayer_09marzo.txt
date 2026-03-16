@@ -1,0 +1,13 @@
+╔══════════════════════════════════════════════════════════════╗
+║    📅 INFORME DE AYER - 09 DE MARZO 2026                 ║
+╚══════════════════════════════════════════════════════════════╝
+
+  👤 Usuarios que entraron:       23
+  🖱️  Dieron click en iniciar:     0
+  📝 Iniciaron la encuesta:       0
+  📋 Completaron diagnóstico:     0
+  🚪 Abandonaron la encuesta:     0
+  📅 Agendaron llamada:           0
+  📄 Descargaron informe:         0
+  📨 Leads obtenidos (con email): 0
+

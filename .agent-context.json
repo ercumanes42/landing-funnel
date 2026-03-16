@@ -1,0 +1,53 @@
+{
+  "proyecto": "Landing Funnel - GFS Consulting",
+  "fecha_inicio": "2026-03-16",
+  "tipo_funnel": "Email automático frío desde Make",
+  "audiencia": "CEOs, Directores, Gerentes, Jefes de RRHH (España)",
+  "flujo_actual": "Email frío → Landing → Diagnóstico (8 pasos) → BookingPage → Informe por email (siempre)",
+  "estado_actual": "Push a GitHub completado - Vercel se desplegará automáticamente",
+  "datos_analisis": {
+    "periodo": "6-13 marzo 2026",
+    "visitantes": 47,
+    "inician": 13,
+    "completan": 2,
+    "abandono_paso1": "82%",
+    "reservas": "0%",
+    "leads_calidad": ["Heineken", "El Corte Inglés", "Balearia", "ADIF", "Banco Sabadell", "Santander", "Mango"]
+  },
+  "funcionamiento_actual": {
+    "scoring": "5 dimensiones (D1-D4 + T) con peso ponderado",
+    "webhook": "Envía a Make: globalScore, d1-d4-t, r1-r3, meetingOptIn",
+    "informe": "Llega SIEMPRE por email (tanto si reserva como si no)"
+  },
+  "nueva_logica_scoring": {
+    "preguntas": 8,
+    "mapeo": {
+      "D1": ["q4_liderazgo"],
+      "D2": ["q5_adaptacion"],
+      "D3": ["q1_reclutamiento", "q2_rotacion", "q3_clima", "q8_propuesta_valor"],
+      "D4": ["q7_sucesion"],
+      "T": ["q6_ia"]
+    },
+    "exposicion": {
+      "alto": "1.0-2.2 promedio",
+      "medio": "2.3-3.4 promedio",
+      "bajo": "3.5-5.0 promedio"
+    }
+  },
+  "fase_actual": "Fase 2: Diagnóstico Reducido",
+  "tareas": [
+    "Crear agenda.md con plan detallado - ✅ HECHO",
+    "Analizar datos de PostHog - ✅ HECHO",
+    "Revisar funcionamiento del scoring y webhook - ✅ HECHO",
+    "Revisar directrices UX/UI - ✅ HECHO",
+    "Fase 1: Hero y Landing - 🔄 EN CURSO",
+    "Fase 2: Diagnóstico Reducido",
+    "Fase 3: Scoring y Lógica del Informe",
+    "Fase 4: Flujo de Valor (Mini-resultado)",
+    "Fase 5: Formulario Minimalista",
+    "Fase 6: Resultado y Reserva Opcional",
+    "Fase 7: Análisis y Seguimiento",
+    "Fase 8: Pruebas y Despliegue"
+  ],
+  "ultima_actualizacion": "2026-03-16T19:30:00Z"
+}

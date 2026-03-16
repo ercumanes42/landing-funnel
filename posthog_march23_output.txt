@@ -1,0 +1,142 @@
+=== REPORTE POSTHOG (2 Mar - 3 Mar 2026) ===
+
+👥 Usuarios Totales Únicos Detectados: 26
+📧 Identificaciones Automáticas (Emails extraídos de URL): 37
+
+📊 EMBUDO DE CONVERSIÓN (FUNNEL GENERAL)
+  - Nivel 1 (Vio landing, sin iniciar): 20
+  - Nivel 2 (Inició diagnóstico, abandonó a medias): 4
+  - Nivel 3 (Terminó diagnóstico, no agendó): 1
+  - Nivel 4 (Agenda completada con éxito): 1
+
+🛑 DETALLE POR USUARIOS (Dónde se quedaron)
+  - ID: juanmartinez@gfs.es
+    Etapa: Nivel 4 (Completó y Agendó)
+    Última vez activo: 2/3/2026, 13:44:52
+
+  - ID: mboza@auroracorp.es
+    Etapa: Nivel 3 (Completó diagnóstico, sin agendar)
+    Última vez activo: 3/3/2026, 14:24:11
+
+  - ID: beatriz.aguirre@camaravalladolid.com
+    Etapa: Nivel 2 (Inició encuesta pero no terminó)
+    Última vez activo: 3/3/2026, 15:24:27
+
+  - ID: antonioruizg@gruposantander.es
+    Etapa: Nivel 2 (Inició encuesta pero no terminó)
+    Última vez activo: 2/3/2026, 12:21:28
+
+  - ID: mpruiz.bce@cajarural.com
+    Etapa: Nivel 2 (Inició encuesta pero no terminó)
+    Última vez activo: 2/3/2026, 14:54:49
+
+  - ID: jesus.martin@valdepenas.es
+    Etapa: Nivel 2 (Inició encuesta pero no terminó)
+    Última vez activo: 2/3/2026, 8:52:28
+
+  - ID: angela.barrero@campofriofg.com
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 3/3/2026, 15:40:25
+
+  - ID: paguilar@calidadpascual.com
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 3/3/2026, 13:00:57
+
+  - ID: montserrat.rubio@calidadpascual.com
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 3/3/2026, 12:40:54
+
+  - ID: cristina.perez.santos@calidadpascual.com
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 3/3/2026, 12:40:45
+
+  - ID: mdelpino@crgranada.com
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 3/3/2026, 12:00:47
+
+  - ID: teresa.loyzaga@globalcaja.es
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 3/3/2026, 11:40:47
+
+  - ID: carmen.lopez@globalcaja.es
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 3/3/2026, 11:21:01
+
+  - ID: aurora.perez@globalcaja.es
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 3/3/2026, 11:21:00
+
+  - ID: magarcia@cadesoluciones.com
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 3/3/2026, 10:40:59
+
+  - ID: fahedo@bestdoctors.com
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 2/3/2026, 15:01:01
+
+  - ID: Jackdavis@eureliosollutions.com
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 2/3/2026, 13:43:56
+
+  - ID: jlassalle@asisa.es
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 2/3/2026, 13:01:47
+
+  - ID: rvielva@gruposantander.es
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 2/3/2026, 12:40:59
+
+  - ID: antonioruizg@slurpmail.net
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 2/3/2026, 12:37:08
+
+  - ID: mcortell@bancamarch.es
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 2/3/2026, 11:41:24
+
+  - ID: mpablos@bancamarch.es
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 2/3/2026, 11:21:57
+
+  - ID: jesusanchez@ayto-miguelturra.es
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 2/3/2026, 10:23:50
+
+  - ID: 019cadde-1939-7853-8e6a-b41a73fedae6
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 2/3/2026, 10:25:40
+
+  - ID: 019caddd-40cd-7d30-b529-ef9f1f09df89
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 2/3/2026, 10:24:44
+
+  - ID: jgarciaf@creditoycaucion.es
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 2/3/2026, 8:37:06
+
+
+📈 EVENTOS GLOBALES DE ESOS DÍAS
+  Total eventos procesados por la API: 668
+{
+  "auto_identified_from_email": 37,
+  "$identify": 40,
+  "view_landing": 89,
+  "diagnostic_start": 12,
+  "click_start_survey": 13,
+  "$autocapture": 272,
+  "$web_vitals": 73,
+  "report_view": 3,
+  "skip_booking": 5,
+  "$set": 10,
+  "email_captured": 5,
+  "diagnostic_complete": 5,
+  "complete_survey": 5,
+  "survey_step_viewed": 76,
+  "block_4_complete": 5,
+  "block_3_complete": 5,
+  "block_2_complete": 5,
+  "block_1_complete": 5,
+  "start_survey": 1,
+  "book_call_complete": 1,
+  "book_call_clicked": 1
+}

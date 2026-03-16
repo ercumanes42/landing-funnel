@@ -1,0 +1,89 @@
+╔══════════════════════════════════════════════════════════════╗
+║    📊 INFORME COMPARATIVO ESTRATÉGICO (SIN DATOS TEST)     ║
+║    Generado: 9/3/2026, 8:36:10                        ║
+╚══════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📅 PERIODO 1: 25 AL 27 DE FEBRERO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  👥 Usuarios únicos reales:          20
+  👀 Nivel 1 - Solo Landing (Bounce): 12
+  ⚠️  Nivel 2 - Iniciaron Encuesta:    4
+  📋 Nivel 3 - Completaron (Diagnostico): 0
+  ✅ Nivel 4 - Agendaron Llamada:     0
+
+  📊 Tasas de Conversión:
+     - Landing → Inicio:     20.0%
+     - Inicio → Completo:    0.0%
+     - Completo → Agendado:  0%
+
+  📩 Leads capturados:        0
+  📄 Descargaron sin agendar: 0
+
+  🏚️ Puntos de abandono REALES (Pasos):
+     - Paso 0/8: 4 usuarios
+
+  🔍 Eventos reales detectados:
+     - auto_identified_from_email: 10
+     - view_landing: 16
+     - click_start_survey: 4
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📅 PERIODO 2: 02 AL 06 DE MARZO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  👥 Usuarios únicos reales:          92
+  👀 Nivel 1 - Solo Landing (Bounce): 53
+  ⚠️  Nivel 2 - Iniciaron Encuesta:    14
+  📋 Nivel 3 - Completaron (Diagnostico): 3
+  ✅ Nivel 4 - Agendaron Llamada:     0
+
+  📊 Tasas de Conversión:
+     - Landing → Inicio:     15.2%
+     - Inicio → Completo:    21.4%
+     - Completo → Agendado:  0.0%
+
+  📩 Leads capturados:        3
+  📄 Descargaron sin agendar: 0
+
+  🏚️ Puntos de abandono REALES (Pasos):
+     - Paso 0/8: 2 usuarios
+     - Paso 1/8: 8 usuarios
+     - Paso 5/8: 1 usuarios
+
+  🔍 Eventos reales detectados:
+     - auto_identified_from_email: 52
+     - view_landing: 81
+     - survey_step_viewed: 40
+     - block_3_complete: 3
+     - block_2_complete: 3
+     - block_1_complete: 4
+     - click_start_survey: 18
+     - diagnostic_start: 19
+     - start_survey: 1
+     - report_view: 3
+     - report_download: 2
+     - pdf_clicked: 2
+     - skip_booking: 2
+     - email_captured: 3
+     - diagnostic_complete: 2
+     - complete_survey: 2
+     - block_4_complete: 2
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  🧠 ANÁLISIS ESTRATÉGICO Y COMPARATIVO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  📈 Evolución del Embudo Real:
+  - El tráfico real aumentó un 360.0% entre periodos.
+  - Los leads reales pasaron de 0 a 3.
+
+  🧐 Observaciones de Experto (Marketing & Funnels):
+  - ⚠️ FRICCIÓN DETECTADA: Hay usuarios reales abandonando en el formulario. Revisar Paso 1.
+
+  ✅ Acciones Recomendadas:
+  1. Enviar seguimiento personalizado a los 3 leads de esta semana.
+  2. Optimizar el copy del Paso 1 para reducir el rebote del 15% al 10%.
+  3. Revisar por qué el 0% de los completados están agendando; podría ser un error técnico en el botón de Calendly o falta de incentivo real.
+

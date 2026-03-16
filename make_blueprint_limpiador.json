@@ -1,0 +1,99 @@
+{
+    "name": "🤖 Agente Limpiador de Base de Datos (Emails)",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google_sheets:ActionSearchRows",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "limit": 100,
+                "query": "Estado=''"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0,
+                    "name": "1. Buscar Contactos Nuevos"
+                }
+            }
+        },
+        {
+            "id": 2,
+            "module": "text:ActionMatchPattern",
+            "version": 1,
+            "parameters": {
+                "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                "global": false,
+                "case": false,
+                "multiline": false,
+                "singleline": false
+            },
+            "mapper": {
+                "text": "{{1.Email}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0,
+                    "name": "2. Analizador de Texto (Comprobar Email)"
+                }
+            }
+        },
+        {
+            "id": 3,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "parameters": {},
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0,
+                    "name": "3. Enrutador"
+                }
+            }
+        },
+        {
+            "id": 4,
+            "module": "google_sheets:ActionUpdateRow",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "row": "{{1.__rowNumber}}",
+                "values": {
+                    "Estado": "Limpio"
+                }
+            },
+            "metadata": {
+                "designer": {
+                    "x": 900,
+                    "y": -150,
+                    "name": "4A. Marcar como LIMPIO"
+                }
+            }
+        },
+        {
+            "id": 5,
+            "module": "google_sheets:ActionUpdateRow",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "row": "{{1.__rowNumber}}",
+                "values": {
+                    "Estado": "Error de formato"
+                }
+            },
+            "metadata": {
+                "designer": {
+                    "x": 900,
+                    "y": 150,
+                    "name": "4B. Marcar como ERROR"
+                }
+            }
+        }
+    ],
+    "metadata": {
+        "version": 1
+    }
+}

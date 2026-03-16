@@ -1,0 +1,42 @@
+{
+    "contact": {
+        "name": "Juan",
+        "lastname": "Martinez",
+        "email": "juan@example.com",
+        "company": "Tech Corp",
+        "role": "CEO"
+    },
+    "survey": {
+        "globalScore": 75,
+        "risks": [
+            {
+                "dimension": "D1",
+                "score": 30
+            },
+            {
+                "dimension": "D4",
+                "score": 45
+            }
+        ],
+        "scores": {
+            "D1": 30,
+            "D2": 60,
+            "D3": 45,
+            "D4": 80,
+            "T": 50
+        },
+        "answers": {
+            "d1_1": 4,
+            "d2_3": 5,
+            "pain_points": [
+                "Fuga de Talento",
+                "Baja Productividad"
+            ]
+        }
+    },
+    "meta": {
+        "timestamp": "2026-02-03T10:00:00.000Z",
+        "meetingOptIn": "Pending Booking",
+        "isUnlocked": false
+    }
+}

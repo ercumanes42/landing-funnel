@@ -1,0 +1,63 @@
+=== REPORTE SEMANAL POSTHOG (25 Feb - 28 Feb 2026) ===
+
+👥 Usuarios Totales Únicos Detectados: 10
+📧 Identificaciones Automáticas (Emails extraídos de URL): 10
+
+📊 EMBUDO DE CONVERSIÓN (FUNNEL GENERAL)
+  - Nivel 1 (Vio landing, sin iniciar): 6
+  - Nivel 2 (Inició diagnóstico, abandonó a medias): 4
+  - Nivel 3 (Terminó diagnóstico, no agendó): 0
+  - Nivel 4 (Agenda completada con éxito): 0
+
+🛑 DETALLE POR USUARIOS (Dónde se quedaron)
+  - ID: josealberto.saavedra@atlantica.com
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 27/2/2026, 12:40:34
+
+  - ID: german.pacheco@atlantica.com
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 27/2/2026, 12:21:51
+
+  - ID: fjlopez@asisa.es
+    Etapa: Nivel 2 (Inició encuesta pero no terminó)
+    Última vez activo: 27/2/2026, 10:47:18
+
+  - ID: administracion@arcos.es
+    Etapa: Nivel 2 (Inició encuesta pero no terminó)
+    Última vez activo: 26/2/2026, 17:00:38
+
+  - ID: jmojica@aratel.es
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 26/2/2026, 16:20:50
+
+  - ID: remi.rovira@alstomgroup.com
+    Etapa: Nivel 2 (Inició encuesta pero no terminó)
+    Última vez activo: 26/2/2026, 12:00:53
+
+  - ID: jaime.peidro@alapar.orgstyle=
+    Etapa: Nivel 2 (Inició encuesta pero no terminó)
+    Última vez activo: 25/2/2026, 15:20:41
+
+  - ID: for_cgomez@ahorramas.comstyle=
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 25/2/2026, 11:01:32
+
+  - ID: 019c9499-c2b0-74b5-a02e-5bbe965920ba
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 25/2/2026, 12:40:31
+
+  - ID: 019c9499-c206-7243-ba40-f00f72630ccd
+    Etapa: Nivel 1 (Solo vio landing y se fue)
+    Última vez activo: 25/2/2026, 12:40:30
+
+
+📈 EVENTOS GLOBALES DE LA SEMANA
+  Total eventos procesados por la API: 60
+{
+  "$web_vitals": 13,
+  "auto_identified_from_email": 10,
+  "$identify": 10,
+  "view_landing": 16,
+  "click_start_survey": 4,
+  "$autocapture": 7
+}

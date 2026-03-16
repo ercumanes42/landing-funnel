@@ -1,0 +1,82 @@
+{
+    "name": "🤖 Robot A: El Apuntador (Recibe Webhook y anota hora)",
+    "flow": [
+        {
+            "id": 1,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": ""
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0,
+                    "name": "1. Webhook (Oreja)"
+                },
+                "parameters": [
+                    {
+                        "name": "hook",
+                        "type": "hook:gateway-webhook",
+                        "label": "Webhook"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "google-sheets:ActionSearchRows",
+            "version": 1,
+            "parameters": {
+                "valueRenderOption": "FORMATTED_VALUE",
+                "dateTimeRenderOption": "FORMATTED_STRING"
+            },
+            "mapper": {
+                "limit": "1",
+                "query": [
+                    {
+                        "o": "text:equal",
+                        "a": "B",
+                        "b": "{{1.email}}"
+                    }
+                ],
+                "drive": "drive",
+                "includesHeaders": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0,
+                    "name": "2. Buscar a este Lead"
+                }
+            }
+        },
+        {
+            "id": 3,
+            "module": "google-sheets:ActionUpdateHeaderRow",
+            "version": 1,
+            "parameters": {
+                "valueInputOption": "USER_ENTERED"
+            },
+            "mapper": {
+                "row": "{{2.__ROW_NUMBER__}}",
+                "values": {
+                    "Hora_Test_Terminado": "{{formatDate(now; \"DD/MM/YYYY HH:mm\")}}"
+                },
+                "drive": "drive",
+                "includesHeaders": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0,
+                    "name": "3. Anotar hora final"
+                }
+            }
+        }
+    ],
+    "metadata": {
+        "version": 1
+    }
+}
