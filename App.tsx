@@ -21,16 +21,19 @@ const PageTracker = () => {
 };
 
 const App: React.FC = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
 
   useEffect(() => {
-    // Check local storage or system preference
-    const isDark = localStorage.getItem('theme') === 'dark';
-    setDarkMode(isDark);
-    if (isDark) {
+    if (darkMode) {
       document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
-  }, []);
+  }, [darkMode]);
 
   const toggleTheme = () => {
     const newMode = !darkMode;
@@ -38,6 +41,7 @@ const App: React.FC = () => {
     if (newMode) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
+    } else {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
