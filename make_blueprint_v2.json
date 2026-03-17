@@ -1,0 +1,172 @@
+{
+    "name": "Funnel email y captura - CORREGIDO v2",
+    "flow": [
+        {
+            "id": 1,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": 3841712,
+                "maxResults": 1
+            },
+            "mapper": {}
+        },
+        {
+            "id": 2,
+            "module": "google-sheets:addRow",
+            "version": 2,
+            "parameters": { "__IMTCONN__": 13840688 },
+            "mapper": {
+                "from": "drive",
+                "mode": "select",
+                "values": {
+                    "0": "{{1.contact.name}}",
+                    "1": "{{1.contact.lastname}}",
+                    "2": "{{1.contact.company}}",
+                    "3": "{{1.contact.email}}",
+                    "4": "{{1.meta.meetingOptIn}}",
+                    "5": "{{1.contact.pain_point_1}}",
+                    "6": "{{1.contact.pain_point_2}}",
+                    "7": "{{1.contact.pain_point_3}}",
+                    "8": "{{1.survey.answers.q1}}",
+                    "9": "{{1.survey.answers.q2}}",
+                    "10": "{{1.survey.answers.q3}}",
+                    "11": "{{1.survey.answers.q4}}",
+                    "12": "{{1.survey.answers.q5}}",
+                    "13": "{{1.survey.answers.q6}}",
+                    "14": "{{1.survey.answers.q7}}",
+                    "15": "{{1.survey.answers.q8}}",
+                    "26": "{{1.survey.answers.company}}",
+                    "27": "{{1.survey.answers.email}}",
+                    "28": "{{1.meta.meetingOptIn}}"
+                },
+                "sheetId": "Hoja 2",
+                "spreadsheetId": "/1i8bBg7BtUvJhNnoZF39yfdgPIWPmSJ2potzI-SgTd9U",
+                "includesHeaders": true,
+                "insertDataOption": "INSERT_ROWS",
+                "useColumnHeaders": false,
+                "valueInputOption": "USER_ENTERED"
+            }
+        },
+        {
+            "id": 12,
+            "module": "openai-gpt-3:CreateCompletion",
+            "version": 1,
+            "parameters": { "__IMTCONN__": 13840674 },
+            "mapper": {
+                "model": "o4-mini",
+                "select": "chat",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "Eres un consultor senior de Recursos Humanos. Genera análisis ejecutivo de 400 palabras en español."
+                    },
+                    {
+                        "role": "user",
+                        "content": "Empresa: {{1.contact.company}}, Contacto: {{1.contact.name}} {{1.contact.lastname}}, Email: {{1.contact.email}}, Pain Points: {{1.contact.pain_point}}, Score: {{1.survey.globalScore}}, D1:{{1.survey.scores.D1}}, D2:{{1.survey.scores.D2}}, D3:{{1.survey.scores.D3}}, D4:{{1.survey.scores.D4}}, T:{{1.survey.scores.T}}"
+                    }
+                ],
+                "max_tokens": 2000,
+                "temperature": 0.3
+            }
+        },
+        {
+            "id": 8,
+            "module": "microsoft-email:createAndSendAMessage",
+            "version": 2,
+            "parameters": { "__IMTCONN__": 7366787 },
+            "mapper": {
+                "content": "<div>Nuevo Lead: {{1.contact.company}} - Score: {{1.survey.globalScore}}/100 - Estado: {{1.meta.meetingOptIn}}</div>",
+                "subject": "Nuevo Lead: {{1.contact.company}}",
+                "contentType": "html",
+                "toRecipients": [
+                    { "address": "jgpino@gfs.es", "name": "Joaquín" },
+                    { "address": "tromanp@gfs.es", "name": "Tomás" }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 4,
+                            "module": "microsoft-email:createAndSendAMessage",
+                            "version": 2,
+                            "parameters": { "__IMTCONN__": 8240324 },
+                            "filter": {
+                                "name": "Si agendó",
+                                "conditions": [[{ "a": "{{1.meta.meetingOptIn}}", "o": "text:contain", "b": "Booking" }]]
+                            },
+                            "mapper": {
+                                "toRecipients": [{ "address": "{{1.contact.email}}", "name": "{{1.contact.name}}" }],
+                                "subject": "{{1.contact.name}}, tu diagnóstico está listo",
+                                "content": "<p>Hola <strong>{{1.contact.name}}</strong>,</p><p>Tu sesión está confirmada. Tu puntuación: <strong>{{1.survey.globalScore}}</strong>/100</p><p>Ver informe: <a href=\"https://diagnostico-rrhh-2026.vercel.app/#/resultado?score={{1.survey.globalScore}}&d1={{1.survey.scores.D1}}&d2={{1.survey.scores.D2}}&d3={{1.survey.scores.D3}}&d4={{1.survey.scores.D4}}&t={{1.survey.scores.T}}&r1={{1.survey.r1}}&r2={{1.survey.r2}}&r3={{1.survey.r3}}\">Aquí</a></p>",
+                                "contentType": "html"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 7,
+                            "module": "util:FunctionSleep",
+                            "version": 1,
+                            "mapper": { "duration": "300" }
+                        },
+                        {
+                            "id": 6,
+                            "module": "microsoft-email:createAndSendAMessage",
+                            "version": 2,
+                            "parameters": { "__IMTCONN__": 8240324 },
+                            "filter": {
+                                "name": "Si no agendó",
+                                "conditions": [[{ "a": "{{1.meta.meetingOptIn}}", "o": "text:equal", "b": "Skipped" }]]
+                            },
+                            "mapper": {
+                                "toRecipients": [{ "address": "{{1.contact.email}}", "name": "{{1.contact.name}}" }],
+                                "subject": "Tu diagnóstico organizacional - Resultados",
+                                "content": "<p>Hola <strong>{{1.contact.name}}</strong>,</p><p>Aquí tienes tu diagnóstico.</p><p>Tu puntuación: <strong>{{1.survey.globalScore}}</strong>/100</p><p>Ver informe: <a href=\"https://diagnostico-rrhh-2026.vercel.app/#/resultado?score={{1.survey.globalScore}}&d1={{1.survey.scores.D1}}&d2={{1.survey.scores.D2}}&d3={{1.survey.scores.D3}}&d4={{1.survey.scores.D4}}&t={{1.survey.scores.T}}&r1={{1.survey.r1}}&r2={{1.survey.r2}}&r3={{1.survey.r3}}\">Aquí</a></p>",
+                                "contentType": "html"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 9,
+                            "module": "microsoft-email:createAndSendAMessage",
+                            "version": 2,
+                            "parameters": { "__IMTCONN__": 8240324 },
+                            "filter": {
+                                "name": "Si solo completó",
+                                "conditions": [[{ "a": "{{1.meta.meetingOptIn}}", "o": "text:contain", "b": "Pending" }]]
+                            },
+                            "mapper": {
+                                "toRecipients": [{ "address": "{{1.contact.email}}", "name": "{{1.contact.name}}" }],
+                                "subject": "Tu diagnóstico organizacional - Resultados",
+                                "content": "<p>Hola <strong>{{1.contact.name}}</strong>,</p><p>Gracias por completar el diagnóstico.</p><p>Tu puntuación: <strong>{{1.survey.globalScore}}</strong>/100</p><p>Ver informe: <a href=\"https://diagnostico-rrhh-2026.vercel.app/#/resultado?score={{1.survey.globalScore}}&d1={{1.survey.scores.D1}}&d2={{1.survey.scores.D2}}&d3={{1.survey.scores.D3}}&d4={{1.survey.scores.D4}}&t={{1.survey.scores.T}}&r1={{1.survey.r1}}&r2={{1.survey.r2}}&r3={{1.survey.r3}}\">Aquí</a></p><p><a href=\"https://calendly.com/joaquingfs/diagnostico-ejecutivo-y-hoja-de-ruta\">Agenda una llamada</a></p>",
+                                "contentType": "html"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true
+        },
+        "zone": "eu2.make.com"
+    }
+}

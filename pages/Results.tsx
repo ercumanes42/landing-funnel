@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, Calendar } from 'lucide-react';
+import { CheckCircle, Calendar, Download } from 'lucide-react';
 import Button from '../components/Button';
+import PrintableReport from '../components/PrintableReport';
 import { calculateResults } from '../utils/scoring';
 import { ResultData, AnalyticsEvent } from '../types';
 import { logEvent } from '../utils/analytics';
+import { DIMENSIONS, QUICK_WINS } from '../constants';
 
 const Results: React.FC = () => {
     const navigate = useNavigate();
     const [results, setResults] = useState<ResultData | null>(null);
     const [isGuest, setIsGuest] = useState(false);
+    const [showPDF, setShowPDF] = useState(false);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const urlScore = params.get('score');
         
-        // Robust parameter parsing
         const getIntParam = (name: string) => {
             const val = params.get(name);
             if (!val || val.trim() === '') return 0;
@@ -24,21 +26,35 @@ const Results: React.FC = () => {
         };
 
         if (urlScore !== null) {
+            const d1 = getIntParam('d1');
+            const d2 = getIntParam('d2');
+            const d3 = getIntParam('d3');
+            const d4 = getIntParam('d4');
+            const t = getIntParam('t');
+            
+            const dimensionScores = [
+                { id: "D1", label: DIMENSIONS.D1.label, score: d1, color: "#06b6d4" },
+                { id: "D2", label: DIMENSIONS.D2.label, score: d2, color: "#3b82f6" },
+                { id: "D3", label: DIMENSIONS.D3.label, score: d3, color: "#f59e0b" },
+                { id: "D4", label: DIMENSIONS.D4.label, score: d4, color: "#6366f1" },
+                { id: "T", label: DIMENSIONS.T.label, score: t, color: "#ec4899" }
+            ];
+            
+            const sorted = [...dimensionScores].sort((a, b) => a.score - b.score);
+            
             const guestResults: ResultData = {
                 globalScore: getIntParam('score'),
-                dimensionScores: [
-                    { id: "D1", label: "Súper Equipos Híbridos", score: getIntParam('d1'), color: "#06b6d4" },
-                    { id: "D2", label: "Adaptación Acelerada", score: getIntParam('d2'), color: "#3b82f6" },
-                    { id: "D3", label: "Cambio de Reglas", score: getIntParam('d3'), color: "#f59e0b" },
-                    { id: "D4", label: "Sucesión", score: getIntParam('d4'), color: "#6366f1" },
-                    { id: "T", label: "Gobernanza IA", score: getIntParam('t'), color: "#ec4899" }
-                ],
+                dimensionScores,
                 topRisks: [
-                    { dimension: params.get('r1') || 'D1', score: 0 },
-                    { dimension: params.get('r2') || 'D2', score: 0 },
-                    { dimension: params.get('r3') || 'T', score: 0 }
-                ].filter(r => r.dimension !== ''),
-                quickWins: []
+                    { dimension: sorted[0].id, score: sorted[0].score },
+                    { dimension: sorted[1].id, score: sorted[1].score },
+                    { dimension: sorted[2].id, score: sorted[2].score }
+                ],
+                quickWins: [
+                    QUICK_WINS[sorted[0].id as keyof typeof QUICK_WINS],
+                    QUICK_WINS[sorted[1].id as keyof typeof QUICK_WINS],
+                    QUICK_WINS[sorted[2].id as keyof typeof QUICK_WINS]
+                ].filter(Boolean)
             };
             setResults(guestResults);
             setIsGuest(true);
@@ -73,6 +89,25 @@ const Results: React.FC = () => {
         logEvent(AnalyticsEvent.BOOK_CALL_CLICKED);
         navigate('/agendar');
     };
+
+    const handleDownloadPDF = () => {
+        window.print();
+    };
+
+    if (showPDF) {
+        return (
+            <div className="min-h-screen bg-white">
+                <div className="print-only">
+                    <PrintableReport results={results} />
+                </div>
+                <div className="fixed bottom-4 right-4 no-print">
+                    <Button onClick={() => setShowPDF(false)} className="bg-slate-600">
+                        Cerrar PDF
+                    </Button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 pb-20 text-white">
@@ -137,6 +172,16 @@ const Results: React.FC = () => {
                         <Calendar className="w-5 h-5 mr-2" />
                         Reservar revisión de 15 min
                     </Button>
+                    
+                    <div className="mt-4">
+                        <button 
+                            onClick={handleDownloadPDF}
+                            className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center justify-center gap-2 mx-auto"
+                        >
+                            <Download className="w-4 h-4" />
+                            Descargar Informe PDF
+                        </button>
+                    </div>
                 </div>
 
                 {/* Secondary */}

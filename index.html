@@ -53,6 +53,9 @@
       @media print {
         @page { margin: 0; size: auto; }
         body { -webkit-print-color-adjust: exact; }
+        .no-print, header, footer { display: none !important; }
+        .min-h-screen { min-height: auto !important; }
+        .bg-gradient-to-b { background: white !important; }
       }
       .gradient-text {
         background: linear-gradient(90deg, #22D3EE, #A78BFA);

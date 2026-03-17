@@ -1,0 +1,211 @@
+{
+    "name": "Funnel email y captura - CORREGIDO",
+    "flow": [
+        {
+            "id": 1,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": 3841712,
+                "maxResults": 1
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": { "x": -702, "y": -10 }
+            }
+        },
+        {
+            "id": 2,
+            "module": "google-sheets:addRow",
+            "version": 2,
+            "parameters": { "__IMTCONN__": 13840688 },
+            "mapper": {
+                "from": "drive",
+                "mode": "select",
+                "values": {
+                    "0": "{{1.contact.name}}",
+                    "1": "{{1.contact.lastname}}",
+                    "2": "{{1.contact.company}}",
+                    "3": "{{1.contact.email}}",
+                    "4": "{{1.meta.meetingOptIn}}",
+                    "5": "{{1.contact.pain_point_1}}",
+                    "6": "{{1.contact.pain_point_2}}",
+                    "7": "{{1.contact.pain_point_3}}",
+                    "8": "{{1.survey.answers.q1}}",
+                    "9": "{{1.survey.answers.q2}}",
+                    "10": "{{1.survey.answers.q3}}",
+                    "11": "{{1.survey.answers.q4}}",
+                    "12": "{{1.survey.answers.q5}}",
+                    "13": "{{1.survey.answers.q6}}",
+                    "14": "{{1.survey.answers.q7}}",
+                    "15": "{{1.survey.answers.q8}}",
+                    "26": "{{1.survey.answers.company}}",
+                    "27": "{{1.survey.answers.email}}",
+                    "28": "{{1.meta.meetingOptIn}}"
+                },
+                "sheetId": "Hoja 2",
+                "spreadsheetId": "/1i8bBg7BtUvJhNnoZF39yfdgPIWPmSJ2potzI-SgTd9U",
+                "includesHeaders": true,
+                "insertDataOption": "INSERT_ROWS",
+                "useColumnHeaders": false,
+                "valueInputOption": "USER_ENTERED",
+                "insertUnformatted": false
+            },
+            "metadata": { "designer": { "x": -409, "y": -4 } }
+        },
+        {
+            "id": 12,
+            "module": "openai-gpt-3:CreateCompletion",
+            "version": 1,
+            "parameters": { "__IMTCONN__": 13840674 },
+            "mapper": {
+                "model": "o4-mini",
+                "top_p": "1",
+                "select": "chat",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "Eres un consultor senior de Recursos Humanos y Transformación Digital de GFS Consulting. Genera un análisis ejecutivo en español de máximo 400 palabras basado en los datos del diagnóstico. Estructura: 1. DIAGNÓSTICO GENERAL, 2. ALERTAS ROJAS, 3. OPORTUNIDADES DETECTADAS, 4. RECOMENDACIÓN ESTRATÉGICA. Usa tono consultivo y profesional."
+                    },
+                    {
+                        "role": "user",
+                        "content": "Empresa: {{1.contact.company}}\nContacto: {{1.contact.name}} {{1.contact.lastname}}\nEmail: {{1.contact.email}}\nPain Points: {{1.contact.pain_point}}\nPuntuación Global: {{1.survey.globalScore}}/100\nD1: {{1.survey.scores.D1}}, D2: {{1.survey.scores.D2}}, D3: {{1.survey.scores.D3}}, D4: {{1.survey.scores.D4}}, T: {{1.survey.scores.T}}\nRespuestas: {{1.survey.answers}}",
+                        "imageDetail": "auto"
+                    }
+                ],
+                "max_tokens": "2000",
+                "temperature": "0.3",
+                "n_completions": 1,
+                "response_format": "text"
+            },
+            "metadata": { "designer": { "x": -60, "y": -11 } }
+        },
+        {
+            "id": 8,
+            "module": "microsoft-email:createAndSendAMessage",
+            "version": 2,
+            "parameters": { "__IMTCONN__": 7366787 },
+            "mapper": {
+                "content": "<div style=\"font-family: sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; padding: 24px; border-radius: 12px;\">\n  <h2 style=\"color: #0ea5e9; border-bottom: 2px solid #0ea5e9; padding-bottom: 10px;\">Nuevo Lead + Análisis IA</h2>\n  <h3>Datos del Lead:</h3>\n  <ul>\n    <li><strong>Nombre:</strong> {{1.contact.name}} {{1.contact.lastname}}</li>\n    <li><strong>Empresa:</strong> {{1.contact.company}}</li>\n    <li><strong>Email:</strong> {{1.contact.email}}</li>\n    <li><strong>Puntuación:</strong> {{1.survey.globalScore}}/100</li>\n    <li><strong>Estado:</strong> {{1.meta.meetingOptIn}}</li>\n  </ul>\n  <p><strong>Pain Points:</strong> {{1.contact.pain_point}}</p>\n  <hr>\n  <h3>Análisis IA:</h3>\n  <div style=\"background:#f8fafc;padding:20px;border-radius:8px;white-space:pre-wrap;\">{{12.choices[].message.content}}</div>\n</div>",
+                "subject": "Nuevo Lead: {{1.contact.company}}({{1.survey.globalScore}}/100)",
+                "contentType": "html",
+                "toRecipients": [
+                    { "name": "Joaquín González", "address": "jgpino@gfs.es" },
+                    { "name": "Tomás Roman", "address": "tromanp@gfs.es" }
+                ]
+            },
+            "metadata": { "designer": { "x": 329, "y": -16 } }
+        },
+        {
+            "id": 3,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "mapper": null,
+            "metadata": { "designer": { "x": 685, "y": -20 } },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 4,
+                            "module": "microsoft-email:createAndSendAMessage",
+                            "version": 2,
+                            "parameters": { "__IMTCONN__": 8240324 },
+                            "filter": {
+                                "name": "Si agendó",
+                                "conditions": [[{ "a": "{{1.meta.meetingOptIn}}", "o": "text:contain", "b": "Confirmed" }]]
+                            },
+                            "mapper": {
+                                "toRecipients": [{ "address": "{{1.contact.email}}", "name": "{{1.contact.name}}" }],
+                                "subject": "{{1.contact.name}}, aquí están tus resultados de riesgo (Privado)",
+                                "content": "<div style=\"font-family:Arial,sans-serif;max-width:600px;margin:0 auto;\">\n<div style=\"background:linear-gradient(135deg,#1e293b,#334155);padding:30px;border-radius:12px 12px 0 0;text-align:center;\">\n<h1 style=\"color:white;margin:0;\">Tu Diagnóstico de Talento</h1>\n<p style=\"color:#0ea5e9;margin:10px 0 0;\">GFS Consulting</p>\n</div>\n<div style=\"background:#f8fafc;padding:30px;border:1px solid #e2e8f0;border-top:none;\">\n<p>Hola <strong>{{1.contact.name}}</strong>,</p>\n<p>Gracias por completar el diagnóstico de <strong>{{1.contact.company}}</strong>.</p>\n<div style=\"background:#22c55e15;border-left:4px solid #22c55e;padding:15px;margin:25px 0;border-radius:0 8px 8px 0;\">\n<h3 style=\"color:#15803d;margin:0 0 5px;\">Tu sesión está confirmada</h3>\n<p style=\"margin:0;color:#166534;\">Revisa tu calendario para los detalles.</p>\n</div>\n<div style=\"background:#0ea5e915;border-left:4px solid #0ea5e9;padding:15px;margin:25px 0;border-radius:0 8px 8px 0;\">\n<h3 style=\"color:#0284c7;margin:0 0 5px;\">Tu Informe de Riesgos</h3>\n<p style=\"margin:0;color:#0369a1;\">Tu puntuación global es de <strong>{{1.survey.globalScore}}</strong> puntos.</p>\n</div>\n<p style=\"text-align:center;margin:30px 0;\">\n<a href=\"https://diagnostico-rrhh-2026.vercel.app/#/resultado?score={{1.survey.globalScore}}&d1={{1.survey.scores.D1}}&d2={{1.survey.scores.D2}}&d3={{1.survey.scores.D3}}&d4={{1.survey.scores.D4}}&t={{1.survey.scores.T}}&r1={{1.survey.r1}}&r2={{1.survey.r2}}&r3={{1.survey.r3}}\" style=\"background:#1e40af;color:#fff;padding:16px 32px;text-decoration:none;border-radius:8px;font-weight:bold;\">Ver Mi Informe Completo</a>\n</p>\n<hr>\n<h3>¿Qué haremos en nuestra sesión?</h3>\n<ul>\n<li>El impacto de tu puntuación en {{1.contact.company}}.</li>\n<li>Tus desafíos: {{1.contact.pain_point}}</li>\n<li>Plan de acción de 3 pasos.</li>\n</ul>\n<p>Nos vemos pronto,</p>\n<p><strong>Joaquín González del Pino</strong><br>Chief Development & Innovation Officer | GFS Consulting</p>\n</div>\n<div style=\"background:#1e293b;padding:20px;border-radius:0 0 12px 12px;text-align:center;\">\n<p style=\"color:#64748b;margin:0;font-size:12px;\">© 2026 GFS Consulting</p>\n</div>\n</div>",
+                                "from": [{ "address": "jgpino@gfs.es", "name": "Joaquín González" }],
+                                "bccRecipients": [
+                                    { "address": "jgpino@gfs.es", "name": "Joaquín González" },
+                                    { "address": "tromanp@gfs.es", "name": "Tomás Roman" }
+                                ],
+                                "contentType": "html"
+                            },
+                            "metadata": { "designer": { "x": 1105, "y": -204 } }
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 7,
+                            "module": "util:FunctionSleep",
+                            "version": 1,
+                            "parameters": {},
+                            "mapper": { "duration": "300" },
+                            "metadata": { "designer": { "x": 1084, "y": 86 } }
+                        },
+                        {
+                            "id": 6,
+                            "module": "microsoft-email:createAndSendAMessage",
+                            "version": 2,
+                            "parameters": { "__IMTCONN__": 8240324 },
+                            "filter": {
+                                "name": "Si no agendó (Skipped)",
+                                "conditions": [[{ "a": "{{1.meta.meetingOptIn}}", "o": "text:equal", "b": "Skipped" }]]
+                            },
+                            "mapper": {
+                                "from": [{ "name": "Joaquín González", "address": "jgpino@gfs.es" }],
+                                "content": "<p>Hola <b>{{1.contact.name}}</b>,</p><p>Aquí tienes tu Auditoría Privada de Talento 2026 para <b>{{1.contact.company}}</b>.</p><p>El sistema ha detectado puntos de mejora críticos, especialmente en <b>{{1.survey.risks}}</b>.</p><div style=\"background:#f8fafc;border-left:4px solid #3b82f6;padding:20px;margin:25px 0;border-radius:0 8px 8px 0;\"><b>Tu Informe interactivo GFS:</b><br><br><a href=\"https://diagnostico-rrhh-2026.vercel.app/#/resultado?score={{1.survey.globalScore}}&d1={{1.survey.scores.D1}}&d2={{1.survey.scores.D2}}&d3={{1.survey.scores.D3}}&d4={{1.survey.scores.D4}}&t={{1.survey.scores.T}}&r1={{1.survey.r1}}&r2={{1.survey.r2}}&r3={{1.survey.r3}}\" style=\"background:#2563eb;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;\">Ver Mi Diagnóstico →</a></div><p>Si quieres sacarle partido real al informe, puedo explicártelos en 15 minutos sin compromiso.</p><p><a href=\"https://calendly.com/joaquingfs/diagnostico-ejecutivo-y-hoja-de-ruta\">Elegir espacio en mi agenda →</a></p><p>Un abrazo,</p><p><strong>Joaquín González del Pino</strong><br>Chief Development & Innovation Officer | GFS Consulting</p>",
+                                "subject": "Tu diagnóstico organizacional - Resultados",
+                                "contentType": "html",
+                                "toRecipients": [{ "name": "{{1.contact.name}}", "address": "{{1.contact.email}}" }],
+                                "bccRecipients": [
+                                    { "name": "Joaquín González", "address": "jgpino@gfs.es" },
+                                    { "name": "Tomás Roman", "address": "tromanp@gfs.es" }
+                                ]
+                            },
+                            "metadata": { "designer": { "x": 1416, "y": 197 } }
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 9,
+                            "module": "microsoft-email:createAndSendAMessage",
+                            "version": 2,
+                            "parameters": { "__IMTCONN__": 8240324 },
+                            "filter": {
+                                "name": "Si solo completó (Pending Booking)",
+                                "conditions": [[{ "a": "{{1.meta.meetingOptIn}}", "o": "text:equal", "b": "Pending Booking" }]]
+                            },
+                            "mapper": {
+                                "from": [{ "name": "Joaquín González", "address": "jgpino@gfs.es" }],
+                                "content": "<p>Hola <b>{{1.contact.name}}</b>,</p><p>Gracias por completar el diagnóstico de <b>{{1.contact.company}}</b>.</p><p>Aquí tienes tu Auditoría Privada de Talento 2026.</p><div style=\"background:#f8fafc;border-left:4px solid #3b82f6;padding:20px;margin:25px 0;border-radius:0 8px 8px 0;\"><b>Tu Informe interactivo GFS:</b><br><br><a href=\"https://diagnostico-rrhh-2026.vercel.app/#/resultado?score={{1.survey.globalScore}}&d1={{1.survey.scores.D1}}&d2={{1.survey.scores.D2}}&d3={{1.survey.scores.D3}}&d4={{1.survey.scores.D4}}&t={{1.survey.scores.T}}&r1={{1.survey.r1}}&r2={{1.survey.r2}}&r3={{1.survey.r3}}\" style=\"background:#2563eb;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;\">Ver Mi Diagnóstico →</a></div><p>Tu puntuación global: <strong>{{1.survey.globalScore}}</strong> puntos.</p><p>Si quieres que te explique tus resultados personalmente, puedo hacerlo en 15 minutos sin compromiso.</p><p><a href=\"https://calendly.com/joaquingfs/diagnostico-ejecutivo-y-hoja-de-ruta\">Elegir espacio en mi agenda →</a></p><p>Un abrazo,</p><p><strong>Joaquín González del Pino</strong><br>Chief Development & Innovation Officer | GFS Consulting</p>",
+                                "subject": "Tu diagnóstico organizacional - Resultados",
+                                "contentType": "html",
+                                "toRecipients": [{ "name": "{{1.contact.name}}", "address": "{{1.contact.email}}" }],
+                                "bccRecipients": [
+                                    { "name": "Joaquín González", "address": "jgpino@gfs.es" },
+                                    { "name": "Tomás Roman", "address": "tromanp@gfs.es" }
+                                ]
+                            },
+                            "metadata": { "designer": { "x": 1416, "y": 350 } }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "zone": "eu2.make.com"
+    }
+}
