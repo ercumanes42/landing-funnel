@@ -1,0 +1,23 @@
+{
+  "id": "085716b0-826d-470c-b6ac-84749392a1ca",
+  "projectId": "Landing Funnel",
+  "key": "projectBrief-current-flow",
+  "type": "architecture",
+  "content": "# Current Flow\n\nEmail frío → Landing → Diagnóstico (8 pasos) → BookingPage → Informe por email (siempre).",
+  "tags": [
+    "overview",
+    "project",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "projectBrief.md"
+  },
+  "createdAt": 1773733181849,
+  "updatedAt": 1773733181849
+}

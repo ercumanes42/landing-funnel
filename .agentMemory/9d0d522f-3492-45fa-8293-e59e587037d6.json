@@ -1,0 +1,23 @@
+{
+  "id": "9d0d522f-3492-45fa-8293-e59e587037d6",
+  "projectId": "Landing Funnel",
+  "key": "systemPatterns-data-logic",
+  "type": "pattern",
+  "content": "# Data Logic\n\n-   **Scoring:** Weighted averages (5 dimensions: D1-D4 + T).\n-   **Reports:** Always sent via email after diagnosis, regardless of booking.",
+  "tags": [
+    "patterns",
+    "design",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "systemPatterns.md"
+  },
+  "createdAt": 1773733181870,
+  "updatedAt": 1773733181870
+}

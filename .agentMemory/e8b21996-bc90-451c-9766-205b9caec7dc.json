@@ -1,0 +1,23 @@
+{
+  "id": "e8b21996-bc90-451c-9766-205b9caec7dc",
+  "projectId": "Landing Funnel",
+  "key": "projectBrief-current-goals",
+  "type": "architecture",
+  "content": "# Current Goals\n\n- **UX/UI Overhaul:** Reducing friction in the diagnostic steps.\n- **Improved Funnel Efficiency:** Targetting the 82% bounce rate in step 1.",
+  "tags": [
+    "overview",
+    "project",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "projectBrief.md"
+  },
+  "createdAt": 1773733061699,
+  "updatedAt": 1773733061699
+}

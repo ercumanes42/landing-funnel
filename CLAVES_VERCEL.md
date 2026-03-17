@@ -3,7 +3,7 @@
 Cuando entres en el proyecto en Vercel, ve a **Settings > Environment Variables** y añade estas tres:
 
 1. **Key:** `VITE_POSTHOG_KEY`
-   **Value:** `phc_E4F5hozddDirA8xEjRhoT5gHOLcPT4pFymLcC0jAr2G`
+   **Value:** `phx_KpAop7TlNzMLazPUoFKGaYBL7sOlGlgCK41saCvAtjUqmoz`
 
 2. **Key:** `VITE_POSTHOG_HOST`
    **Value:** `https://eu.i.posthog.com`

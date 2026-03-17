@@ -166,10 +166,14 @@ const RadarWizard: React.FC = () => {
     const payload = {
       contact: {
         name: state.answers['firstname'],
-        lastname: "",
+        lastname: state.answers['lastname'],
         email: state.answers['email'],
-        company: "",
-        role: "",
+        company: state.answers['company'],
+        role: state.answers['role'],
+        company_size: state.answers['company_size'],
+        sector: state.answers['sector'],
+        work_model: state.answers['work_model'],
+        pain_point: state.answers['pain_point']
       },
       survey: {
         globalScore: results.globalScore,

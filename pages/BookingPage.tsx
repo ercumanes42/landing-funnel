@@ -92,6 +92,10 @@ const BookingPage: React.FC = () => {
                     email: surveyState.answers['email'],
                     company: surveyState.answers['company'],
                     role: surveyState.answers['role'],
+                    company_size: surveyState.answers['company_size'],
+                    sector: surveyState.answers['sector'],
+                    work_model: surveyState.answers['work_model'],
+                    pain_point: surveyState.answers['pain_point']
                 },
                 survey: {
                     globalScore: calculated.globalScore,

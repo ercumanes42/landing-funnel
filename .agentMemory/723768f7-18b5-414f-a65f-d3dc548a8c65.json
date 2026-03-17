@@ -1,0 +1,23 @@
+{
+  "id": "723768f7-18b5-414f-a65f-d3dc548a8c65",
+  "projectId": "Landing Funnel",
+  "key": "projectBrief-overview",
+  "type": "architecture",
+  "content": "# Overview\n\nThis project is an automated email marketing funnel for GFS Consulting. It targets CEOs and HR managers in Spain.",
+  "tags": [
+    "overview",
+    "project",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "projectBrief.md"
+  },
+  "createdAt": 1773733098766,
+  "updatedAt": 1773733098766
+}

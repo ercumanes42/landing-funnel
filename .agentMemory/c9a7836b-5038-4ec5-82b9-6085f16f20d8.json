@@ -1,0 +1,24 @@
+{
+  "id": "c9a7836b-5038-4ec5-82b9-6085f16f20d8",
+  "projectId": "Landing Funnel",
+  "key": "techContext-core-tech-stack",
+  "type": "decision",
+  "content": "# Core Tech Stack\n\n-   **Frontend:** Vite + React + TypeScript + Vanilla CSS.\n-   **Analytics:** PostHog (custom integration in `posthog_*.ts` scripts).\n-   **Backend/Automation:** Make / Zapier (Blueprints shared in separate `.json` files).\n-   **Vercel:** Hosting/Deploy (Keys in `CLAVES_VERCEL.md`).",
+  "tags": [
+    "technology",
+    "decisions",
+    "api",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "techContext.md"
+  },
+  "createdAt": 1773733181876,
+  "updatedAt": 1773733181876
+}

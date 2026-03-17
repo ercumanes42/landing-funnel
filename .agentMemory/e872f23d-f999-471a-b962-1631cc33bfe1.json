@@ -1,0 +1,24 @@
+{
+  "id": "e872f23d-f999-471a-b962-1631cc33bfe1",
+  "projectId": "Landing Funnel",
+  "key": "techContext-memory-system-required",
+  "type": "decision",
+  "content": "# Memory System (Required)\n\nThis project uses **`agentMemory`** as a mandatory tool for session continuity. \n\n### Why?\nTo allow the agent to resume work after closing the IDE or PC without losing context about performance data, scoring logic, and UI decisions.\n\n### Enforcement\n-   **Storage:** Searchable JSON in `.agentMemory/`.\n-   **Markdown:** Bi-directional sync in `.clinerules/memory-bank/`.\n-   **Sync Trigger:** `npm run start-server` from `.agent/skills/agent-memory`.",
+  "tags": [
+    "technology",
+    "decisions",
+    "performance",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "techContext.md"
+  },
+  "createdAt": 1773733181876,
+  "updatedAt": 1773733181876
+}

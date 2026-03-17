@@ -1,0 +1,23 @@
+{
+  "id": "2dfce965-8e3e-4507-94ce-c59c20f36d54",
+  "projectId": "Landing Funnel",
+  "key": "activeContext-remaining-sub-tasks",
+  "type": "pattern",
+  "content": "# Remaining Sub-tasks\n\n-   [ ] Verify `memory_search` works within the MCP context (verified via manual sync).\n-   [ ] Finalize the \"Continuity\" state for the user to close and reopen the project.",
+  "tags": [
+    "current",
+    "focus",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "activeContext.md"
+  },
+  "createdAt": 1773733181862,
+  "updatedAt": 1773733181862
+}

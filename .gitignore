@@ -24,3 +24,17 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Scripts con API keys (seguridad)
+posthog_*.ts
+track_user.ts
+landing_agent.ts
+find_latest_lead.ts
+get_today_report.ts
+test_posthog.ts
+check_excel*.ts
+clean_db.ts
+*.txt
+!README.md
+!agenda.md
+!CLAVES_VERCEL.md

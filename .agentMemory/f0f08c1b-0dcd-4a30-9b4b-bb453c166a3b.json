@@ -1,0 +1,23 @@
+{
+  "id": "f0f08c1b-0dcd-4a30-9b4b-bb453c166a3b",
+  "projectId": "Landing Funnel",
+  "key": "systemPatterns-analytics",
+  "type": "pattern",
+  "content": "# Analytics\n\n-   **PostHog:** Scripts for data retrieval/analysis (`posthog_report_today.ts`, etc.).\n-   **Naming:** Always use CamelCase for component files and snake_case for script utility files.",
+  "tags": [
+    "patterns",
+    "design",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "systemPatterns.md"
+  },
+  "createdAt": 1773733181870,
+  "updatedAt": 1773733181870
+}

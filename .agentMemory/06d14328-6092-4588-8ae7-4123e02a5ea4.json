@@ -1,0 +1,23 @@
+{
+  "id": "06d14328-6092-4588-8ae7-4123e02a5ea4",
+  "projectId": "Landing Funnel",
+  "key": "activeContext-what-we-have-done-so-far",
+  "type": "pattern",
+  "content": "# What we have done so far\n\n1.  **Skill Discovery:** Found `agent-memory-mcp` in the skill generator.\n2.  **Configuration:** Reproduced the skill inside `.agent/skills/agent-memory` of this project.\n3.  **Windows Fixes:** Patched `SocketBridge` to support named pipes on Windows and handled path encoding.\n4.  **Base Context:** Created a `projectBrief.md` with the current funnel logic (8-step diagnosis, PostHog analysis, scoring weights).\n5.  **Initialization:** Ran `tools.project_init` which created the storage and the `.agent/workflows/update-memory.md` workflow.\n6.  **Sync:** Performed the first sync, converting markdown files into searchable JSON in `.agentMemory/`.",
+  "tags": [
+    "current",
+    "focus",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "activeContext.md"
+  },
+  "createdAt": 1773733181862,
+  "updatedAt": 1773733181862
+}

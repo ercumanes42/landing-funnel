@@ -1,0 +1,24 @@
+{
+  "id": "68634580-f1ce-411e-8067-81d0abe75792",
+  "projectId": "Landing Funnel",
+  "key": "systemPatterns-memory-first-development-project-po",
+  "type": "pattern",
+  "content": "# Memory-First Development (Project Policy)\n\n1.  **Read Before Work:** Use `memory_search` or `memory_read` at session start.\n2.  **Write After Significant Milestones:** Use `memory_write` to commit new knowledge (UI patterns, API fixes).\n3.  **Sync:** Changes to these `.md` files in `memory-bank` will automatically sync to JSON storage.",
+  "tags": [
+    "patterns",
+    "design",
+    "api",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "systemPatterns.md"
+  },
+  "createdAt": 1773733181870,
+  "updatedAt": 1773733181870
+}

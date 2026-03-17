@@ -1,0 +1,23 @@
+{
+  "id": "70a47227-d3f4-4829-b014-a6b143548ea3",
+  "projectId": "Landing Funnel",
+  "key": "projectBrief-tech-stack-logic",
+  "type": "architecture",
+  "content": "# Tech Stack & Logic\n\n- **Scoring:** 5 dimensions (D1-D4 + T) with weighted averages.\n- **Webhook:** Sends `globalScore`, `d1-d4-t`, `r1-r3`, `meetingOptIn` to Make.\n- **Reporting:** Reports are ALWAYS sent via email, regardless of booking.",
+  "tags": [
+    "overview",
+    "project",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "projectBrief.md"
+  },
+  "createdAt": 1773733181849,
+  "updatedAt": 1773733181849
+}

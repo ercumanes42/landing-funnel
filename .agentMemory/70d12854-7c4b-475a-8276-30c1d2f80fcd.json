@@ -1,0 +1,23 @@
+{
+  "id": "70d12854-7c4b-475a-8276-30c1d2f80fcd",
+  "projectId": "Landing Funnel",
+  "key": "projectBrief-analysis-6-13-march-2026",
+  "type": "architecture",
+  "content": "# Analysis (6-13 March 2026)\n\n- **Visitors:** 47\n- **Starts:** 13\n- **Completed:** 2\n- **Bounce Step 1:** 82%\n- **Meeting Bookings:** 0%\n- **High Quality Leads:** Heineken, El Corte Inglés, Balearia, ADIF, Banco Sabadell, Santander, Mango.",
+  "tags": [
+    "overview",
+    "project",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "projectBrief.md"
+  },
+  "createdAt": 1773733098767,
+  "updatedAt": 1773733098767
+}

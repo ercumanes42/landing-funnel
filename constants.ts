@@ -211,11 +211,57 @@ export const WIZARD_STEPS: { title: string; questions: Question[] }[] = [
     ]
   },
   {
-    title: "¿Dónde te enviamos tu informe privado?",
+    title: "¿Donde te enviamos tu informe privado?",
     questions: [
+      {
+        id: "company_size",
+        text: "Tamaño de la Empresa",
+        category: "context",
+        type: "select",
+        options: ["Pequeña (1-50 empleados)", "Mediana (51-250 empleados)", "Gran Empresa (+250 empleados)"],
+        required: true
+      },
+      {
+        id: "sector",
+        text: "Sector principal",
+        category: "context",
+        type: "select",
+        options: ["Retail", "Tecnología", "Industria", "Servicios", "Salud", "Educación", "Otros"],
+        required: true
+      },
+      {
+        id: "work_model",
+        text: "Modelo de trabajo actual",
+        category: "context",
+        type: "select",
+        options: ["Presencial 100%", "Híbrido", "Remoto 100%"],
+        required: true
+      },
+      {
+        id: "role",
+        text: "Tu rol principal",
+        category: "context",
+        type: "select",
+        options: ["Director/a General", "Director/a RRHH", "Gerente / Responsable", "Consultor / Otros"],
+        required: true
+      },
       {
         id: "firstname",
         text: "Nombre",
+        category: "lead",
+        type: "text",
+        required: true
+      },
+      {
+        id: "lastname",
+        text: "Apellidos",
+        category: "lead",
+        type: "text",
+        required: true
+      },
+      {
+        id: "company",
+        text: "Empresa",
         category: "lead",
         type: "text",
         required: true
@@ -226,6 +272,14 @@ export const WIZARD_STEPS: { title: string; questions: Question[] }[] = [
         category: "lead",
         type: "text",
         required: true
+      },
+      {
+        id: "pain_point",
+        text: "¿Qué te quita el sueño hoy?",
+        category: "lead",
+        type: "text",
+        required: true,
+        hint: "Ej: Incertidumbre sobre cómo aplicar IA, rotación alta..."
       },
       {
         id: "consent",

@@ -1,0 +1,23 @@
+{
+  "id": "392b4816-7258-46c7-92c9-9af9223118e3",
+  "projectId": "Landing Funnel",
+  "key": "activeContext-current-focus",
+  "type": "pattern",
+  "content": "# Current Focus\n\nWe are implementing the **`agentMemory`** system to ensure persistence across sessions.",
+  "tags": [
+    "current",
+    "focus",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "activeContext.md"
+  },
+  "createdAt": 1773733181862,
+  "updatedAt": 1773733181862
+}

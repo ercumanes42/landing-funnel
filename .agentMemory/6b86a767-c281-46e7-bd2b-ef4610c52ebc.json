@@ -1,0 +1,23 @@
+{
+  "id": "6b86a767-c281-46e7-bd2b-ef4610c52ebc",
+  "projectId": "Landing Funnel",
+  "key": "systemPatterns-ui-styling-premium-standard",
+  "type": "pattern",
+  "content": "# UI Styling (Premium Standard)\n\n-   **CSS:** Vanilla CSS (no Tailwind unless requested).\n-   **Components:** Functional React components in `./components`.\n-   **Style:** Modern, premium aesthetic (glassmorphism, subtle gradients, micro-animations).",
+  "tags": [
+    "patterns",
+    "design",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "systemPatterns.md"
+  },
+  "createdAt": 1773733181870,
+  "updatedAt": 1773733181870
+}

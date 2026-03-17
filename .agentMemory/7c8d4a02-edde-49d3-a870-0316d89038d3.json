@@ -1,0 +1,23 @@
+{
+  "id": "7c8d4a02-edde-49d3-a870-0316d89038d3",
+  "projectId": "Landing Funnel",
+  "key": "activeContext-how-to-resume",
+  "type": "pattern",
+  "content": "# How to Resume\n\nAt the start of the next session, the agent should:\n1.  Read `.agent-context.json` and `.clinerules/memory-bank/*.md`.\n2.  Run `memory_search({ \"query\": \"activeContext\" })` to see what was the last focus.",
+  "tags": [
+    "current",
+    "focus",
+    "cline"
+  ],
+  "relationships": {
+    "dependsOn": [],
+    "implements": []
+  },
+  "metadata": {
+    "accessCount": 0,
+    "createdBy": "cline",
+    "sourceFile": "activeContext.md"
+  },
+  "createdAt": 1773733181862,
+  "updatedAt": 1773733181862
+}
