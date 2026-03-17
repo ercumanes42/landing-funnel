@@ -6,6 +6,7 @@ import RadarWizard from './pages/RadarWizard';
 import Results from './pages/Results';
 import BookingPage from './pages/BookingPage';
 import Dashboard from './pages/Dashboard';
+import DashboardResults from './pages/DashboardResults';
 import { logEvent, AnalyticsEvent } from './utils/analytics';
 
 const PageTracker = () => {
@@ -105,6 +106,7 @@ const App: React.FC = () => {
             <Route path="/resultado" element={<Results />} />
             <Route path="/resultados" element={<Results />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/mis-resultados" element={<DashboardResults />} />
           </Routes>
         </main>
 
