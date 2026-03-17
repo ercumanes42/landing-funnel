@@ -2,20 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Download, Calendar } from 'lucide-react';
 import Button from '../components/Button';
+import PrintableReport from '../components/PrintableReport';
 import { DIMENSIONS } from '../constants';
-
-interface DimensionScore {
-  id: string;
-  label: string;
-  score: number;
-}
+import { ResultData } from '../types';
 
 const DashboardResults: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const [results, setResults] = useState<{
-    globalScore: number;
-    dimensionScores: DimensionScore[];
-  } | null>(null);
+  const [results, setResults] = useState<ResultData | null>(null);
+  const [showPDF, setShowPDF] = useState(false);
 
   useEffect(() => {
     const getIntParam = (name: string) => {
@@ -25,16 +19,32 @@ const DashboardResults: React.FC = () => {
       return isNaN(parsed) ? 0 : parsed;
     };
 
-    const globalScore = getIntParam('score');
-    const dimensionScores: DimensionScore[] = [
-      { id: 'D1', label: DIMENSIONS.D1.label, score: getIntParam('d1') },
-      { id: 'D2', label: DIMENSIONS.D2.label, score: getIntParam('d2') },
-      { id: 'D3', label: DIMENSIONS.D3.label, score: getIntParam('d3') },
-      { id: 'D4', label: DIMENSIONS.D4.label, score: getIntParam('d4') },
-      { id: 'T', label: DIMENSIONS.T.label, score: getIntParam('t') },
+    const d1 = getIntParam('d1');
+    const d2 = getIntParam('d2');
+    const d3 = getIntParam('d3');
+    const d4 = getIntParam('d4');
+    const t = getIntParam('t');
+
+    const dimensionScores = [
+      { id: 'D1', label: DIMENSIONS.D1.label, score: d1 },
+      { id: 'D2', label: DIMENSIONS.D2.label, score: d2 },
+      { id: 'D3', label: DIMENSIONS.D3.label, score: d3 },
+      { id: 'D4', label: DIMENSIONS.D4.label, score: d4 },
+      { id: 'T', label: DIMENSIONS.T.label, score: t },
     ];
 
-    setResults({ globalScore, dimensionScores });
+    const sorted = [...dimensionScores].sort((a, b) => a.score - b.score);
+
+    setResults({
+      globalScore: getIntParam('score'),
+      dimensionScores,
+      topRisks: [
+        { dimension: sorted[0].id, score: sorted[0].score },
+        { dimension: sorted[1].id, score: sorted[1].score },
+        { dimension: sorted[2].id, score: sorted[2].score }
+      ],
+      quickWins: []
+    });
   }, [searchParams]);
 
   const getExposureLevel = (score: number) => {
@@ -44,7 +54,7 @@ const DashboardResults: React.FC = () => {
   };
 
   const handleDownloadPDF = () => {
-    window.print();
+    setShowPDF(true);
   };
 
   const handleBookCall = () => {
@@ -53,6 +63,19 @@ const DashboardResults: React.FC = () => {
 
   if (!results) {
     return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
+  }
+
+  if (showPDF) {
+    return (
+      <div className="min-h-screen bg-white">
+        <PrintableReport results={results} />
+        <div className="fixed bottom-4 right-4">
+          <Button onClick={() => setShowPDF(false)} className="bg-slate-600">
+            Cerrar PDF
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   const exposure = getExposureLevel(results.globalScore);
