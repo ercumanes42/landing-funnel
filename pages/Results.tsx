@@ -105,7 +105,11 @@ const Results: React.FC = () => {
                     {/* Área principal - solo 1 */}
                     {results.topRisks[0] && (
                         <div className="mt-4 p-4 bg-slate-700/50 rounded-lg">
-                            <p className="text-sm text-slate-400 mb-1">Tu área principal de atención:</p>
+                            <p className="text-sm text-slate-400 mb-1">
+                                {results.globalScore >= 75 ? "Tu mayor fortaleza detectada:" : 
+                                 results.globalScore >= 40 ? "Tu principal área de mejora:" : 
+                                 "⚠️ Riesgo crítico a resolver:"}
+                            </p>
                             <p className="text-lg font-semibold text-white">
                                 {results.dimensionScores.find(d => d.id === results.topRisks[0].dimension)?.label}
                             </p>

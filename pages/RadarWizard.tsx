@@ -384,13 +384,19 @@ const RadarWizard: React.FC = () => {
     if (q.type === 'mini_result') {
       const miniResults = calculateResults(state.answers);
       const getExposureLevel = (score: number) => {
-        if (score < 40) return { level: 'Alto', color: 'bg-red-500', text: 'text-red-500' };
-        if (score < 70) return { level: 'Medio', color: 'bg-amber-500', text: 'text-amber-500' };
-        return { level: 'Bajo', color: 'bg-green-500', text: 'text-green-500' };
+        if (score < 40) return { level: 'Alta', color: 'bg-red-500', text: 'text-red-500' };
+        if (score < 70) return { level: 'Media', color: 'bg-amber-500', text: 'text-amber-500' };
+        return { level: 'Baja', color: 'bg-green-500', text: 'text-green-500' };
       };
       const exposure = getExposureLevel(miniResults.globalScore);
       const topRisk = miniResults.dimensionScores.find(d => d.id === miniResults.topRisks[0]?.dimension);
       
+      const getLabel = (score: number) => {
+        if (score >= 75) return "Tu mayor fortaleza detectada:";
+        if (score >= 40) return "Tu principal área de mejora:";
+        return "⚠️ Riesgo crítico a resolver:";
+      };
+
       return (
         <div className="mt-4 p-6 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700">
           <div className="text-center mb-4">
@@ -402,7 +408,7 @@ const RadarWizard: React.FC = () => {
           
           {topRisk && (
             <div className="text-center mb-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Tu principal área de atención:</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{getLabel(miniResults.globalScore)}</p>
               <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">{topRisk.label}</p>
             </div>
           )}
