@@ -63,6 +63,7 @@ const BookingPage: React.FC = () => {
 
         // 2. Delay redirect slightly for UX
         setTimeout(() => {
+            localStorage.removeItem('radar_state'); // Clear to prevent contaminating next test
             navigate('/resultado');
         }, 2000);
     };
@@ -86,15 +87,6 @@ const BookingPage: React.FC = () => {
         if (APP_CONFIG.POST_ENDPOINT_URL) {
             // Calculate results for the email link
             const calculated = calculateResults(surveyState.answers);
-
-            // Find dimension IDs for top 3 risks (need to map label back to ID)
-            const labelToId: Record<string, string> = {
-                "Súper Equipos Híbridos": "D1",
-                "Adaptación Acelerada": "D2",
-                "Cambio de Reglas": "D3",
-                "Sucesión": "D4",
-                "Gobernanza IA": "T"
-            };
 
             const payload = {
                 contact: {
@@ -122,9 +114,9 @@ const BookingPage: React.FC = () => {
                     d4: calculated.dimensionScores.find(d => d.id === "D4")?.score || 0,
                     t: calculated.dimensionScores.find(d => d.id === "T")?.score || 0,
                     // Top 3 risk dimension IDs for URL
-                    r1: labelToId[calculated.topRisks[0]?.dimension] || "D1",
-                    r2: labelToId[calculated.topRisks[1]?.dimension] || "D2",
-                    r3: labelToId[calculated.topRisks[2]?.dimension] || "T",
+                    r1: calculated.topRisks[0]?.dimension || "D1",
+                    r2: calculated.topRisks[1]?.dimension || "D2",
+                    r3: calculated.topRisks[2]?.dimension || "T",
                     answers: surveyState.answers
                 },
                 meta: {
@@ -134,20 +126,21 @@ const BookingPage: React.FC = () => {
                 }
             };
 
+            console.log("Payload being sent:", JSON.stringify(payload, null, 2));
+
             // Enhanced Reliability: Use navigator.sendBeacon for confirmed bookings
-            // This ensures the data reaches Make even if the user closes the tab immediately
             const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
             if (navigator.sendBeacon && confirmed) {
-                navigator.sendBeacon(APP_CONFIG.POST_ENDPOINT_URL, blob);
-                console.log("Webhook fired via Beacon");
+                const queued = navigator.sendBeacon(APP_CONFIG.POST_ENDPOINT_URL, blob);
+                console.log("Webhook fired via Beacon. Queued:", queued);
             } else {
                 fetch(APP_CONFIG.POST_ENDPOINT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                     keepalive: true
-                }).then(() => console.log("Webhook fired via Fetch")).catch(err => {
-                    console.error(err);
+                }).then(r => console.log("Webhook fired via Fetch. Status:", r.status)).catch(err => {
+                    console.error("Fetch error:", err);
                     logEvent(AnalyticsEvent.ERROR_SHOWN, { method: "booking_webhook_error", error: String(err) });
                 });
             }
