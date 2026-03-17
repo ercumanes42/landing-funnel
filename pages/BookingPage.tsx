@@ -23,15 +23,31 @@ const BookingPage: React.FC = () => {
         }
     }, [navigate]);
 
-    // Official Calendly Event Listener
+    // 1. Official hook from react-calendly
     useCalendlyEventListener({
         onEventScheduled: (e) => {
-            console.log("Calendly Event Scheduled:", e.data);
+            console.log("Calendly Event Scheduled (Hook):", e.data);
             handleBookingSuccess();
         }
     });
 
+    // 2. Manual fallback for message communication
+    useEffect(() => {
+        const handleManualMessage = (e: MessageEvent) => {
+            // Check for both common event formats
+            if (e.data.event === 'calendly.event_scheduled' || 
+                (typeof e.data === 'string' && e.data.includes('event_scheduled'))) {
+                console.log("Calendly Event Scheduled (Manual):", e.data);
+                handleBookingSuccess();
+            }
+        };
+
+        window.addEventListener('message', handleManualMessage);
+        return () => window.removeEventListener('message', handleManualMessage);
+    }, [state]);
+
     const handleBookingSuccess = () => {
+        if (isBooked) return; // Prevent double firing
         setIsBooked(true);
         logEvent(AnalyticsEvent.BOOK_CALL_CLICKED, { status: 'confirmed' });
         logEvent(AnalyticsEvent.BOOK_CALL_COMPLETE);
@@ -118,15 +134,23 @@ const BookingPage: React.FC = () => {
                 }
             };
 
-            fetch(APP_CONFIG.POST_ENDPOINT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                keepalive: true
-            }).then(() => console.log("Webhook fired")).catch(err => {
-                console.error(err);
-                logEvent(AnalyticsEvent.ERROR_SHOWN, { method: "booking_webhook_error", error: String(err) });
-            });
+            // Enhanced Reliability: Use navigator.sendBeacon for confirmed bookings
+            // This ensures the data reaches Make even if the user closes the tab immediately
+            const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+            if (navigator.sendBeacon && confirmed) {
+                navigator.sendBeacon(APP_CONFIG.POST_ENDPOINT_URL, blob);
+                console.log("Webhook fired via Beacon");
+            } else {
+                fetch(APP_CONFIG.POST_ENDPOINT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    keepalive: true
+                }).then(() => console.log("Webhook fired via Fetch")).catch(err => {
+                    console.error(err);
+                    logEvent(AnalyticsEvent.ERROR_SHOWN, { method: "booking_webhook_error", error: String(err) });
+                });
+            }
         }
     };
 
