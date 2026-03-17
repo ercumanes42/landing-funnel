@@ -214,38 +214,6 @@ export const WIZARD_STEPS: { title: string; questions: Question[] }[] = [
     title: "¿Donde te enviamos tu informe privado?",
     questions: [
       {
-        id: "company_size",
-        text: "Tamaño de la Empresa",
-        category: "context",
-        type: "select",
-        options: ["Pequeña (1-50 empleados)", "Mediana (51-250 empleados)", "Gran Empresa (+250 empleados)"],
-        required: true
-      },
-      {
-        id: "sector",
-        text: "Sector principal",
-        category: "context",
-        type: "select",
-        options: ["Retail", "Tecnología", "Industria", "Servicios", "Salud", "Educación", "Otros"],
-        required: true
-      },
-      {
-        id: "work_model",
-        text: "Modelo de trabajo actual",
-        category: "context",
-        type: "select",
-        options: ["Presencial 100%", "Híbrido", "Remoto 100%"],
-        required: true
-      },
-      {
-        id: "role",
-        text: "Tu rol principal",
-        category: "context",
-        type: "select",
-        options: ["Director/a General", "Director/a RRHH", "Gerente / Responsable", "Consultor / Otros"],
-        required: true
-      },
-      {
         id: "firstname",
         text: "Nombre",
         category: "lead",
@@ -275,11 +243,19 @@ export const WIZARD_STEPS: { title: string; questions: Question[] }[] = [
       },
       {
         id: "pain_point",
-        text: "¿Qué te quita el sueño hoy?",
+        text: "¿Qué te quita el sueño hoy? (opcional)",
         category: "lead",
-        type: "text",
-        required: true,
-        hint: "Ej: Incertidumbre sobre cómo aplicar IA, rotación alta..."
+        type: "multiselect",
+        options: [
+          "Incertidumbre sobre cómo aplicar IA",
+          "Alta rotación de talento",
+          "Dificultad para cubrir puestos clave",
+          "Baja productividad en equipos híbridos",
+          "Falta de planes de sucesión",
+          "Adopción lenta de nuevas tecnologías"
+        ],
+        maxSelections: 3,
+        required: false
       },
       {
         id: "consent",
