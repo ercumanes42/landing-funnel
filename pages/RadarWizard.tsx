@@ -166,6 +166,7 @@ const RadarWizard: React.FC = () => {
     const payload = {
       contact: {
         name: state.answers['firstname'],
+        firstname: state.answers['firstname'],
         lastname: state.answers['lastname'],
         email: state.answers['email'],
         company: state.answers['company'],
@@ -173,10 +174,24 @@ const RadarWizard: React.FC = () => {
         company_size: state.answers['company_size'],
         sector: state.answers['sector'],
         work_model: state.answers['work_model'],
-        pain_point: state.answers['pain_point']
+        pain_point: state.answers['pain_point'],
+        pain_point_1: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'][0] || "" : "",
+        pain_point_2: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'][1] || "" : "",
+        pain_point_3: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'][2] || "" : "",
+        pain_points_txt: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'].join(", ") : state.answers['pain_point']
       },
       survey: {
         globalScore: results.globalScore,
+        // Individual dimension scores for easy URL construction in Make/Zapier
+        d1: results.dimensionScores.find(d => d.id === "D1")?.score || 0,
+        d2: results.dimensionScores.find(d => d.id === "D2")?.score || 0,
+        d3: results.dimensionScores.find(d => d.id === "D3")?.score || 0,
+        d4: results.dimensionScores.find(d => d.id === "D4")?.score || 0,
+        t: results.dimensionScores.find(d => d.id === "T")?.score || 0,
+        // Top 3 risk dimension IDs
+        r1: results.topRisks[0]?.dimension || "D1",
+        r2: results.topRisks[1]?.dimension || "D2",
+        r3: results.topRisks[2]?.dimension || "T",
         risks: results.topRisks,
         scores: results.dimensionScores.reduce((acc, curr) => ({ ...acc, [curr.id]: curr.score }), {} as Record<string, number>),
         answers: state.answers

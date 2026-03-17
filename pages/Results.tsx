@@ -11,6 +11,30 @@ const Results: React.FC = () => {
     const [results, setResults] = useState<ResultData | null>(null);
 
     useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const urlScore = params.get('score');
+        
+        if (urlScore) {
+            const guestResults: ResultData = {
+                globalScore: parseInt(urlScore),
+                dimensionScores: [
+                    { id: "D1", label: "Súper Equipos Híbridos", score: parseInt(params.get('d1') || '0'), color: "#06b6d4" },
+                    { id: "D2", label: "Adaptación Acelerada", score: parseInt(params.get('d2') || '0'), color: "#3b82f6" },
+                    { id: "D3", label: "Cambio de Reglas", score: parseInt(params.get('d3') || '0'), color: "#f59e0b" },
+                    { id: "D4", label: "Sucesión", score: parseInt(params.get('d4') || '0'), color: "#6366f1" },
+                    { id: "T", label: "Gobernanza IA", score: parseInt(params.get('t') || '0'), color: "#ec4899" }
+                ],
+                topRisks: [
+                    { dimension: params.get('r1') || '', score: 0 },
+                    { dimension: params.get('r2') || '', score: 0 },
+                    { dimension: params.get('r3') || '', score: 0 }
+                ].filter(r => r.dimension !== ''),
+                quickWins: []
+            };
+            setResults(guestResults);
+            return;
+        }
+
         const saved = localStorage.getItem('radar_state');
         
         if (saved) {

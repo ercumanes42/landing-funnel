@@ -88,6 +88,7 @@ const BookingPage: React.FC = () => {
             const payload = {
                 contact: {
                     name: surveyState.answers['firstname'],
+                    firstname: surveyState.answers['firstname'],
                     lastname: surveyState.answers['lastname'],
                     email: surveyState.answers['email'],
                     company: surveyState.answers['company'],
@@ -95,7 +96,11 @@ const BookingPage: React.FC = () => {
                     company_size: surveyState.answers['company_size'],
                     sector: surveyState.answers['sector'],
                     work_model: surveyState.answers['work_model'],
-                    pain_point: surveyState.answers['pain_point']
+                    pain_point: surveyState.answers['pain_point'],
+                    pain_point_1: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'][0] || "" : "",
+                    pain_point_2: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'][1] || "" : "",
+                    pain_point_3: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'][2] || "" : "",
+                    pain_points_txt: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'].join(", ") : surveyState.answers['pain_point']
                 },
                 survey: {
                     globalScore: calculated.globalScore,
