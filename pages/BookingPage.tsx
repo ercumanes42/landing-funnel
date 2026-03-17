@@ -23,18 +23,13 @@ const BookingPage: React.FC = () => {
         }
     }, [navigate]);
 
-    // Robust Event Listener for Calendly
-    useEffect(() => {
-        const handleCalendlyEvent = (e: any) => {
-            if (e.data.event && e.data.event === 'calendly.event_scheduled') {
-                console.log("Calendly Event Scheduled via Message:", e.data);
-                handleBookingSuccess();
-            }
-        };
-
-        window.addEventListener('message', handleCalendlyEvent);
-        return () => window.removeEventListener('message', handleCalendlyEvent);
-    }, [state]);
+    // Official Calendly Event Listener
+    useCalendlyEventListener({
+        onEventScheduled: (e) => {
+            console.log("Calendly Event Scheduled:", e.data);
+            handleBookingSuccess();
+        }
+    });
 
     const handleBookingSuccess = () => {
         setIsBooked(true);
