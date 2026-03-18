@@ -25,6 +25,8 @@ const Results: React.FC = () => {
             return isNaN(parsed) ? 0 : parsed;
         };
 
+        const isDirectPdf = params.get('pdf') === 'true';
+
         if (urlScore !== null) {
             const d1 = getIntParam('d1');
             const d2 = getIntParam('d2');
@@ -58,6 +60,10 @@ const Results: React.FC = () => {
             };
             setResults(guestResults);
             setIsGuest(true);
+            if (isDirectPdf) {
+                setShowPDF(true); // Using this to indicate direct PDF view
+                setTimeout(() => window.print(), 500); // Auto trigger print dialog
+            }
             return;
         }
 
@@ -97,12 +103,10 @@ const Results: React.FC = () => {
     if (showPDF) {
         return (
             <div className="min-h-screen bg-white">
-                <div className="print-only">
-                    <PrintableReport results={results} />
-                </div>
-                <div className="fixed bottom-4 right-4 no-print">
+                <PrintableReport results={results} />
+                <div className="fixed bottom-4 right-4 print:hidden">
                     <Button onClick={() => setShowPDF(false)} className="bg-slate-600">
-                        Cerrar PDF
+                        Volver
                     </Button>
                 </div>
             </div>
@@ -110,7 +114,8 @@ const Results: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 pb-20 text-white">
+        <>
+        <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 pb-20 text-white print:hidden">
             <div className="max-w-2xl mx-auto px-4 py-12">
                 
                 {/* Logo */}
@@ -164,33 +169,40 @@ const Results: React.FC = () => {
                 </div>
 
                 {/* CTA Principal */}
-                <div className="text-center mb-6">
-                    <p className="text-slate-300 mb-4">
-                        ¿Te gustaría que te expliquemos tu resultado personalmente?
-                    </p>
-                    <Button onClick={handleBookCall} className="px-8 py-4 text-lg shadow-lg shadow-accent1/20">
-                        <Calendar className="w-5 h-5 mr-2" />
-                        Reservar revisión de 15 min
-                    </Button>
-                    
-                    <div className="mt-4">
+                {!isGuest && (
+                    <>
+                    <div className="text-center mb-6">
+                        <p className="text-slate-300 mb-4">
+                            ¿Te gustaría que te expliquemos tu resultado personalmente?
+                        </p>
+                        <Button onClick={handleBookCall} className="px-8 py-4 text-lg shadow-lg shadow-accent1/20">
+                            <Calendar className="w-5 h-5 mr-2" />
+                            Reservar revisión de 15 min
+                        </Button>
+                    </div>
+
+                    {/* Secondary */}
+                    <div className="text-center mb-6">
                         <button 
-                            onClick={handleDownloadPDF}
-                            className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center justify-center gap-2 mx-auto"
+                            onClick={() => logEvent(AnalyticsEvent.CLICK_REQUEST_REVIEW)}
+                            className="text-sm text-slate-500 hover:text-slate-400"
                         >
-                            <Download className="w-4 h-4" />
-                            Descargar Informe PDF
+                            No gracias, esperaré el informe por email
                         </button>
                     </div>
-                </div>
+                    </>
+                )}
 
-                {/* Secondary */}
-                <div className="text-center">
+                <div className="mt-4 text-center">
+                    <p className="text-slate-300 mb-4">
+                        Descarga tu informe ejecutivo detallado aquí:
+                    </p>
                     <button 
-                        onClick={() => logEvent(AnalyticsEvent.CLICK_REQUEST_REVIEW)}
-                        className="text-sm text-slate-500 hover:text-slate-400"
+                        onClick={handleDownloadPDF}
+                        className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center justify-center gap-2 mx-auto bg-slate-800/50 px-6 py-3 rounded-full border border-slate-700"
                     >
-                        No gracias, esperaré el informe por email
+                        <Download className="w-5 h-5" />
+                        Descargar Informe PDF
                     </button>
                 </div>
 
@@ -200,6 +212,12 @@ const Results: React.FC = () => {
                 </div>
             </div>
         </div>
+
+        {/* Hidden area strictly for native printing without state change */}
+        <div className="hidden print:block bg-white text-black min-h-screen">
+            <PrintableReport results={results} />
+        </div>
+        </>
     );
 };
 

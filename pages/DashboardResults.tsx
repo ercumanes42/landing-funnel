@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Download, Calendar } from 'lucide-react';
+import { Download } from 'lucide-react';
 import Button from '../components/Button';
 import PrintableReport from '../components/PrintableReport';
-import { DIMENSIONS } from '../constants';
+import { DIMENSIONS, QUICK_WINS } from '../constants';
 import { ResultData } from '../types';
 
 const DashboardResults: React.FC = () => {
@@ -26,14 +26,16 @@ const DashboardResults: React.FC = () => {
     const t = getIntParam('t');
 
     const dimensionScores = [
-      { id: 'D1', label: DIMENSIONS.D1.label, score: d1 },
-      { id: 'D2', label: DIMENSIONS.D2.label, score: d2 },
-      { id: 'D3', label: DIMENSIONS.D3.label, score: d3 },
-      { id: 'D4', label: DIMENSIONS.D4.label, score: d4 },
-      { id: 'T', label: DIMENSIONS.T.label, score: t },
+      { id: 'D1', label: DIMENSIONS.D1.label, score: d1, color: '#06b6d4' },
+      { id: 'D2', label: DIMENSIONS.D2.label, score: d2, color: '#3b82f6' },
+      { id: 'D3', label: DIMENSIONS.D3.label, score: d3, color: '#f59e0b' },
+      { id: 'D4', label: DIMENSIONS.D4.label, score: d4, color: '#6366f1' },
+      { id: 'T', label: DIMENSIONS.T.label, score: t, color: '#ec4899' },
     ];
 
     const sorted = [...dimensionScores].sort((a, b) => a.score - b.score);
+
+    const isDirectPdf = searchParams.get('pdf') === 'true';
 
     setResults({
       globalScore: getIntParam('score'),
@@ -43,8 +45,17 @@ const DashboardResults: React.FC = () => {
         { dimension: sorted[1].id, score: sorted[1].score },
         { dimension: sorted[2].id, score: sorted[2].score }
       ],
-      quickWins: []
+      quickWins: [
+        QUICK_WINS[sorted[0].id as keyof typeof QUICK_WINS],
+        QUICK_WINS[sorted[1].id as keyof typeof QUICK_WINS],
+        QUICK_WINS[sorted[2].id as keyof typeof QUICK_WINS]
+      ].filter(Boolean)
     });
+    
+    if (isDirectPdf) {
+      setShowPDF(true);
+      setTimeout(() => window.print(), 500);
+    }
   }, [searchParams]);
 
   const getExposureLevel = (score: number) => {
@@ -54,11 +65,7 @@ const DashboardResults: React.FC = () => {
   };
 
   const handleDownloadPDF = () => {
-    setShowPDF(true);
-  };
-
-  const handleBookCall = () => {
-    window.location.href = 'https://calendly.com/joaquingfs/diagnostico-ejecutivo-y-hoja-de-ruta';
+    window.print();
   };
 
   if (!results) {
@@ -69,9 +76,9 @@ const DashboardResults: React.FC = () => {
     return (
       <div className="min-h-screen bg-white">
         <PrintableReport results={results} />
-        <div className="fixed bottom-4 right-4">
+        <div className="fixed bottom-4 right-4 print:hidden">
           <Button onClick={() => setShowPDF(false)} className="bg-slate-600">
-            Cerrar PDF
+            Volver
           </Button>
         </div>
       </div>
@@ -81,7 +88,8 @@ const DashboardResults: React.FC = () => {
   const exposure = getExposureLevel(results.globalScore);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 pb-20 text-white">
+    <>
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 pb-20 text-white print:hidden">
       <div className="max-w-3xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
@@ -126,11 +134,6 @@ const DashboardResults: React.FC = () => {
             <Download className="w-5 h-5 mr-2" />
             Descargar Informe PDF
           </Button>
-          
-          <Button onClick={handleBookCall} variant="outline" fullWidth className="border-slate-600 text-slate-300 hover:bg-slate-800">
-            <Calendar className="w-5 h-5 mr-2" />
-            Agendar Revisión Personal
-          </Button>
         </div>
 
         <div className="mt-8 text-center text-xs text-slate-500">
@@ -138,6 +141,12 @@ const DashboardResults: React.FC = () => {
         </div>
       </div>
     </div>
+    
+    {/* Hidden area strictly for native printing without state change */}
+    <div className="hidden print:block bg-white text-black min-h-screen">
+      <PrintableReport results={results} />
+    </div>
+    </>
   );
 };
 

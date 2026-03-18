@@ -25,7 +25,8 @@ export const calculateResults = (answers: Record<string, AnswerValue>): ResultDa
       return acc + val;
     }, 0);
 
-    return Math.round((sum / answeredKeys.length) * 20);
+    const average = sum / answeredKeys.length;
+    return Math.round(((average - 1) / 4) * 100);
   };
 
   const scores = Object.entries(DIMENSIONS).map(([key, config]) => ({
