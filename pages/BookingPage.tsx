@@ -46,31 +46,28 @@ const BookingPage: React.FC = () => {
         return () => window.removeEventListener('message', handleManualMessage);
     }, [state]);
 
-    const handleBookingSuccess = () => {
-        setIsBooked(prev => {
-            if (prev) return true; // Already booked
-            
-            logEvent(AnalyticsEvent.BOOK_CALL_CLICKED, { status: 'confirmed' });
-            logEvent(AnalyticsEvent.BOOK_CALL_COMPLETE);
+    const handleBookingSuccess = async () => {
+        // Prevent double firing using a ref-like approach with the state setter
+        setIsBooked(prev => { if (prev) return true; return true; });
 
-            // Fetch the freshest state directly from localStorage to guarantee no stale closures
-            const savedRaw = localStorage.getItem('radar_state');
-            if (savedRaw) {
-                const freshState = JSON.parse(savedRaw);
-                freshState.answers['meeting_optin'] = "Sí, Confirmed Booking";
-                localStorage.setItem('radar_state', JSON.stringify(freshState));
-                // Trigger Webhook Here ensuring "BOOKED" status
-                triggerWebhook(freshState, true);
-            }
+        // We run this logic manually after ensuring isBooked check
+        logEvent(AnalyticsEvent.BOOK_CALL_CLICKED, { status: 'confirmed' });
+        logEvent(AnalyticsEvent.BOOK_CALL_COMPLETE);
 
-            // Delay redirect slightly for UX
-            setTimeout(() => {
-                localStorage.removeItem('radar_state'); // Clear to prevent contaminating next test
-                navigate('/resultado');
-            }, 2000);
-            
-            return true;
-        });
+        // Read freshest state from localStorage (avoids stale closure)
+        const savedRaw = localStorage.getItem('radar_state');
+        if (savedRaw) {
+            const freshState = JSON.parse(savedRaw);
+            freshState.answers['meeting_optin'] = "Sí, Confirmed Booking";
+            localStorage.setItem('radar_state', JSON.stringify(freshState));
+
+            // CRITICAL FIX: await the webhook so Make.com receives it BEFORE navigate() kills the request
+            await triggerWebhook(freshState, true);
+        }
+
+        // Only navigate AFTER the webhook has fully completed
+        localStorage.removeItem('radar_state');
+        navigate('/resultado');
     };
 
     const handleSkip = () => {
@@ -88,70 +85,68 @@ const BookingPage: React.FC = () => {
         setIsEmailed(true);
     };
 
-    const triggerWebhook = (surveyState: SurveyState, confirmed: boolean) => {
-        if (APP_CONFIG.POST_ENDPOINT_URL) {
-            // Calculate results for the email link
-            const calculated = calculateResults(surveyState.answers);
+    const triggerWebhook = async (surveyState: SurveyState, confirmed: boolean): Promise<void> => {
+        if (!APP_CONFIG.POST_ENDPOINT_URL) return;
 
-            const payload = {
-                contact: {
-                    name: surveyState.answers['firstname'],
-                    firstname: surveyState.answers['firstname'],
-                    lastname: surveyState.answers['lastname'],
-                    email: surveyState.answers['email'],
-                    company: surveyState.answers['company'],
-                    role: surveyState.answers['role'],
-                    company_size: surveyState.answers['company_size'],
-                    sector: surveyState.answers['sector'],
-                    work_model: surveyState.answers['work_model'],
-                    pain_point: surveyState.answers['pain_point'],
-                    pain_point_1: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'][0] || "" : "",
-                    pain_point_2: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'][1] || "" : "",
-                    pain_point_3: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'][2] || "" : "",
-                    pain_points_txt: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'].join(", ") : surveyState.answers['pain_point']
-                },
-                survey: {
-                    globalScore: calculated.globalScore,
-                    // Individual dimension scores for URL construction
-                    d1: calculated.dimensionScores.find(d => d.id === "D1")?.score || 0,
-                    d2: calculated.dimensionScores.find(d => d.id === "D2")?.score || 0,
-                    d3: calculated.dimensionScores.find(d => d.id === "D3")?.score || 0,
-                    d4: calculated.dimensionScores.find(d => d.id === "D4")?.score || 0,
-                    t: calculated.dimensionScores.find(d => d.id === "T")?.score || 0,
-                    // Top 3 risk dimension IDs for URL
-                    r1: calculated.topRisks[0]?.dimension || "D1",
-                    r2: calculated.topRisks[1]?.dimension || "D2",
-                    r3: calculated.topRisks[2]?.dimension || "T",
-                    answers: surveyState.answers
-                },
-                meta: {
-                    timestamp: new Date().toISOString(),
-                    meetingOptIn: confirmed ? "Confirmed Booking" : "Skipped",
-                    isUnlocked: confirmed
-                }
-            };
+        // Calculate results for the email link
+        const calculated = calculateResults(surveyState.answers);
 
-            console.log("Payload being sent:", JSON.stringify(payload, null, 2));
+        const payload = {
+            contact: {
+                name: surveyState.answers['firstname'],
+                firstname: surveyState.answers['firstname'],
+                lastname: surveyState.answers['lastname'],
+                email: surveyState.answers['email'],
+                company: surveyState.answers['company'],
+                role: surveyState.answers['role'],
+                company_size: surveyState.answers['company_size'],
+                sector: surveyState.answers['sector'],
+                work_model: surveyState.answers['work_model'],
+                pain_point: surveyState.answers['pain_point'],
+                pain_point_1: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'][0] || "" : "",
+                pain_point_2: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'][1] || "" : "",
+                pain_point_3: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'][2] || "" : "",
+                pain_points_txt: Array.isArray(surveyState.answers['pain_point']) ? surveyState.answers['pain_point'].join(", ") : surveyState.answers['pain_point']
+            },
+            survey: {
+                globalScore: calculated.globalScore,
+                d1: calculated.dimensionScores.find(d => d.id === "D1")?.score || 0,
+                d2: calculated.dimensionScores.find(d => d.id === "D2")?.score || 0,
+                d3: calculated.dimensionScores.find(d => d.id === "D3")?.score || 0,
+                d4: calculated.dimensionScores.find(d => d.id === "D4")?.score || 0,
+                t: calculated.dimensionScores.find(d => d.id === "T")?.score || 0,
+                r1: calculated.topRisks[0]?.dimension || "D1",
+                r2: calculated.topRisks[1]?.dimension || "D2",
+                r3: calculated.topRisks[2]?.dimension || "T",
+                answers: surveyState.answers
+            },
+            meta: {
+                timestamp: new Date().toISOString(),
+                meetingOptIn: confirmed ? "Confirmed Booking" : "Skipped",
+                isUnlocked: confirmed
+            }
+        };
 
-            // Enhanced Reliability: Always use fetch to communicate with Make.com (SendBeacon can fail on non-standard JSON headers)
-            fetch(APP_CONFIG.POST_ENDPOINT_URL, {
+        console.log("Payload being sent:", JSON.stringify(payload, null, 2));
+
+        try {
+            // CRITICAL: await the fetch so the page does NOT navigate away before Make.com acknowledges
+            const r = await fetch(APP_CONFIG.POST_ENDPOINT_URL, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify(payload),
-                cache: 'no-cache', // Prevents Safari/Chrome from caching the POST secretly
                 keepalive: true
-            }).then(r => {
-                console.log("Webhook FINAL fired via Fetch. Status:", r.status);
-                if (!r.ok) {
-                    console.error("Make.com rejected the payload with status", r.status);
-                }
-            }).catch(err => {
-                console.error("Fetch Network error:", err);
-                logEvent(AnalyticsEvent.ERROR_SHOWN, { method: "booking_webhook_error", error: String(err) });
             });
+            console.log("Webhook FINAL fired via Fetch. Status:", r.status);
+            if (!r.ok) {
+                console.error("Make.com rejected the payload with status", r.status);
+            }
+        } catch (err) {
+            console.error("Fetch Network error:", err);
+            logEvent(AnalyticsEvent.ERROR_SHOWN, { method: "booking_webhook_error", error: String(err) });
         }
     };
 
