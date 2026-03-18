@@ -61,7 +61,13 @@ const App: React.FC = () => {
 
         // Save to local storage for the wizard to pick up later
         const savedState = localStorage.getItem('radar_state');
-        let stateObj = savedState ? JSON.parse(savedState) : { answers: {} };
+        let stateObj;
+        try {
+          stateObj = savedState ? JSON.parse(savedState) : { step: 0, answers: {}, isCompleted: false };
+        } catch (e) {
+          stateObj = { step: 0, answers: {}, isCompleted: false };
+        }
+        
         stateObj.answers = { ...stateObj.answers, email: email };
         localStorage.setItem('radar_state', JSON.stringify(stateObj));
 

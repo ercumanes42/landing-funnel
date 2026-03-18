@@ -128,22 +128,25 @@ const BookingPage: React.FC = () => {
 
             console.log("Payload being sent:", JSON.stringify(payload, null, 2));
 
-            // Enhanced Reliability: Use navigator.sendBeacon for confirmed bookings
-            const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-            if (navigator.sendBeacon && confirmed) {
-                const queued = navigator.sendBeacon(APP_CONFIG.POST_ENDPOINT_URL, blob);
-                console.log("Webhook fired via Beacon. Queued:", queued);
-            } else {
-                fetch(APP_CONFIG.POST_ENDPOINT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                    keepalive: true
-                }).then(r => console.log("Webhook fired via Fetch. Status:", r.status)).catch(err => {
-                    console.error("Fetch error:", err);
-                    logEvent(AnalyticsEvent.ERROR_SHOWN, { method: "booking_webhook_error", error: String(err) });
-                });
-            }
+            // Enhanced Reliability: Always use fetch to communicate with Make.com (SendBeacon can fail on non-standard JSON headers)
+            fetch(APP_CONFIG.POST_ENDPOINT_URL, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload),
+                cache: 'no-cache', // Prevents Safari/Chrome from caching the POST secretly
+                keepalive: true
+            }).then(r => {
+                console.log("Webhook FINAL fired via Fetch. Status:", r.status);
+                if (!r.ok) {
+                    console.error("Make.com rejected the payload with status", r.status);
+                }
+            }).catch(err => {
+                console.error("Fetch Network error:", err);
+                logEvent(AnalyticsEvent.ERROR_SHOWN, { method: "booking_webhook_error", error: String(err) });
+            });
         }
     };
 
