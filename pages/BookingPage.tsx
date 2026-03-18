@@ -47,25 +47,30 @@ const BookingPage: React.FC = () => {
     }, [state]);
 
     const handleBookingSuccess = () => {
-        if (isBooked) return; // Prevent double firing
-        setIsBooked(true);
-        logEvent(AnalyticsEvent.BOOK_CALL_CLICKED, { status: 'confirmed' });
-        logEvent(AnalyticsEvent.BOOK_CALL_COMPLETE);
+        setIsBooked(prev => {
+            if (prev) return true; // Already booked
+            
+            logEvent(AnalyticsEvent.BOOK_CALL_CLICKED, { status: 'confirmed' });
+            logEvent(AnalyticsEvent.BOOK_CALL_COMPLETE);
 
-        // 1. Update Local Storage to Unlocked
-        if (state) {
-            const newState = { ...state };
-            newState.answers['meeting_optin'] = "Sí, Confirmed Booking";
-            localStorage.setItem('radar_state', JSON.stringify(newState));
-            // Trigger Webhook Here ensuring "BOOKED" status
-            triggerWebhook(newState, true);
-        }
+            // Fetch the freshest state directly from localStorage to guarantee no stale closures
+            const savedRaw = localStorage.getItem('radar_state');
+            if (savedRaw) {
+                const freshState = JSON.parse(savedRaw);
+                freshState.answers['meeting_optin'] = "Sí, Confirmed Booking";
+                localStorage.setItem('radar_state', JSON.stringify(freshState));
+                // Trigger Webhook Here ensuring "BOOKED" status
+                triggerWebhook(freshState, true);
+            }
 
-        // 2. Delay redirect slightly for UX
-        setTimeout(() => {
-            localStorage.removeItem('radar_state'); // Clear to prevent contaminating next test
-            navigate('/resultado');
-        }, 2000);
+            // Delay redirect slightly for UX
+            setTimeout(() => {
+                localStorage.removeItem('radar_state'); // Clear to prevent contaminating next test
+                navigate('/resultado');
+            }, 2000);
+            
+            return true;
+        });
     };
 
     const handleSkip = () => {
