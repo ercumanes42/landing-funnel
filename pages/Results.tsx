@@ -127,7 +127,7 @@ const Results: React.FC = () => {
 
                 {/* Resultado simplificado - Teaser */}
                 <div className="bg-slate-800/50 rounded-2xl p-8 border border-slate-700 text-center mb-8">
-                    
+
                     {/* Check icon */}
                     <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                         <CheckCircle className="w-8 h-8 text-green-400" />
@@ -138,56 +138,92 @@ const Results: React.FC = () => {
                     </h2>
 
                     <p className="text-slate-400 mb-6">
-                        Tu informe está siendo procesado y llegará a tu email en menos de 5 minutos.
+                        Tu informe ejecutivo llegará a tu email en <span className="text-white font-semibold">menos de 5 minutos</span>.
                     </p>
 
                     {/* Nivel de exposición */}
                     <div className="inline-flex items-center px-6 py-3 rounded-full font-bold mb-4 bg-slate-700">
                         {results.globalScore < 40 ? (
-                            <span className="text-red-400">⚠️ Exposición Alta</span>
+                            <span className="text-red-400">🔴 Exposición Alta</span>
                         ) : results.globalScore < 70 ? (
-                            <span className="text-amber-400">⚡ Exposición Media</span>
+                            <span className="text-amber-400">🟡 Exposición Media</span>
                         ) : (
-                            <span className="text-green-400">✓ Exposición Baja</span>
+                            <span className="text-green-400">🟢 Exposición Baja</span>
                         )}
+                    </div>
+
+                    {/* Score global */}
+                    <div className="mb-6">
+                        <p className="text-sm text-slate-400 mb-1">Tu puntuación global</p>
+                        <p className="text-4xl font-bold text-white">{results.globalScore}<span className="text-lg text-slate-500">/100</span></p>
                     </div>
 
                     {/* Área principal - solo 1 */}
                     {results.topRisks[0] && (
                         <div className="mt-4 p-4 bg-slate-700/50 rounded-lg">
                             <p className="text-sm text-slate-400 mb-1">
-                                {results.globalScore >= 75 ? "Tu mayor fortaleza detectada:" : 
-                                 results.globalScore >= 40 ? "Tu principal área de mejora:" : 
-                                 "⚠️ Riesgo crítico a resolver:"}
+                                {results.globalScore >= 75 ? "Tu mayor fortaleza:" :
+                                 results.globalScore >= 40 ? "Prioridad inmediata:" :
+                                 "🚨 Riesgo crítico:"}
                             </p>
                             <p className="text-lg font-semibold text-white">
                                 {results.dimensionScores.find(d => d.id === results.topRisks[0].dimension)?.label}
                             </p>
+                            {results.quickWins[0] && (
+                                <p className="text-sm text-slate-300 mt-2 italic">"{results.quickWins[0]}"</p>
+                            )}
                         </div>
                     )}
 
+                    <div className="mt-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                        <p className="text-xs text-slate-400">📊 Informe completo con análisis de {results.dimensionScores.length} dimensiones + hoja de ruta personalizada</p>
+                    </div>
                 </div>
 
-                {/* CTA Principal */}
+                {/* Quick Win - Valor inmediato */}
+                {!isGuest && results.quickWins[0] && (
+                    <div className="bg-gradient-to-r from-accent1/20 to-accent2/20 rounded-xl p-6 border border-accent1/30 mb-8">
+                        <p className="text-sm text-slate-300 mb-2">💡 <span className="font-semibold text-white">Acción recomendada para esta semana:</span></p>
+                        <p className="text-white">{results.quickWins[0]}</p>
+                    </div>
+                )}
+
+                {/* CTA Principal - Más persuasivo */}
                 {!isGuest && (
                     <>
                     <div className="text-center mb-6">
-                        <p className="text-slate-300 mb-4">
-                            ¿Te gustaría que te expliquemos tu resultado personalmente?
-                        </p>
-                        <Button onClick={handleBookCall} className="px-8 py-4 text-lg shadow-lg shadow-accent1/20">
+                        <div className="mb-4 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                            <p className="text-slate-300 mb-2">¿Quieres entender <span className="text-white font-semibold">qué significan estos resultados</span> para tu equipo?</p>
+                            <ul className="text-sm text-slate-400 text-left max-w-md mx-auto space-y-1">
+                                <li className="flex items-start">
+                                    <span className="text-accent1 mr-2">✓</span>
+                                    Interpretación personalizada de tu diagnóstico
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-accent1 mr-2">✓</span>
+                                    Priorización de los 3 primeros pasos
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-accent1 mr-2">✓</span>
+                                    Sin coste, sin compromiso
+                                </li>
+                            </ul>
+                        </div>
+
+                        <Button onClick={handleBookCall} className="px-8 py-4 text-lg shadow-lg shadow-accent1/20 w-full sm:w-auto">
                             <Calendar className="w-5 h-5 mr-2" />
-                            Reservar revisión de 15 min
+                            Agendar llamada gratuita de 15 min
                         </Button>
+                        <p className="mt-2 text-xs text-slate-500">Disponible esta semana • Solo 3 cupos diarios</p>
                     </div>
 
                     {/* Secondary */}
-                    <div className="text-center mb-6">
-                        <button 
+                    <div className="text-center mb-8">
+                        <button
                             onClick={() => logEvent(AnalyticsEvent.CLICK_REQUEST_REVIEW)}
                             className="text-sm text-slate-500 hover:text-slate-400"
                         >
-                            No gracias, esperaré el informe por email
+                            No gracias, revisaré el informe por mi cuenta
                         </button>
                     </div>
                     </>
