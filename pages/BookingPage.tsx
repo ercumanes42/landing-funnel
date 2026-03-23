@@ -214,10 +214,26 @@ const BookingPage: React.FC = () => {
                             </div>
                         )}
                     </div>
-                    
-                    <div className="mt-8 text-center text-sm text-gray-500 hover:text-gray-400">
-                        <button onClick={() => navigate('/resultado')} className="underline">
-                            Volver a ver resultados preliminares
+
+                    {/* Manual Confirmation Button - shown only if not yet booked */}
+                    {!isBooked && (
+                        <div className="mt-6 bg-green-50 dark:bg-green-900/20 border-2 border-green-400 dark:border-green-600 rounded-2xl p-6 text-center">
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                                ✅ <strong>¿Ya has seleccionado tu horario en el calendario?</strong><br/>
+                                Pulsa el botón para confirmar y recibir tu informe ejecutivo personalizado.
+                            </p>
+                            <button
+                                onClick={handleBookingSuccess}
+                                className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl text-base transition-colors shadow-lg hover:shadow-xl"
+                            >
+                                ✅ He agendado mi sesión → Enviarme el informe
+                            </button>
+                        </div>
+                    )}
+
+                    <div className="mt-6 text-center text-sm text-gray-400">
+                        <button onClick={() => navigate('/resultado')} className="underline hover:text-gray-300">
+                            Omitir y ver los resultados directamente →
                         </button>
                     </div>
                 </div>
