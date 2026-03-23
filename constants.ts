@@ -219,34 +219,35 @@ export const WIZARD_STEPS: { title: string; questions: Question[] }[] = [
     ]
   },
   {
-    title: "Parte 3: Tu Informe Ejecutivo (3/3)",
-    subtitle: "¿Dónde enviamos tu diagnóstico completo?",
+    title: "Tu Informe Ejecutivo",
+    subtitle: "Completa tus datos para recibir el análisis detallado",
     questions: [
       {
         id: "email",
-        text: "Email corporativo",
-        hint: "Recibirás tu informe detallado en menos de 5 minutos",
+        text: "Email corporativo *",
+        hint: "Tu informe llegará en menos de 5 minutos",
         category: "lead",
         type: "text",
         required: true
       },
       {
         id: "firstname",
-        text: "Nombre",
+        text: "Tu nombre *",
         category: "lead",
         type: "text",
         required: true
       },
       {
         id: "company",
-        text: "Empresa",
+        text: "Empresa *",
         category: "lead",
         type: "text",
         required: true
       },
       {
         id: "pain_point",
-        text: "¿Qué te quita el sueño hoy? (opcional)",
+        text: "¿Qué desafío te preocupa más? (opcional)",
+        hint: "Selecciona hasta 3 opciones",
         category: "lead",
         type: "multiselect",
         options: [
@@ -262,7 +263,7 @@ export const WIZARD_STEPS: { title: string; questions: Question[] }[] = [
       },
       {
         id: "consent",
-        text: "Acepto recibir mi diagnóstico y un email de seguimiento relacionado con este resultado.",
+        text: "Acepto recibir mi diagnóstico ejecutivo y comunicaciones relacionadas con estrategia de talento.",
         category: "lead",
         type: "boolean",
         required: true

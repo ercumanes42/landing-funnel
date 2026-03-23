@@ -34,12 +34,49 @@ const Landing: React.FC = () => {
             <p className="flex items-center"><ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 mr-2.5 flex-shrink-0" /> <span className="font-medium">Sin coste, sin datos sensibles de tu equipo</span></p>
           </div>
 
+          {/* Social Proof - Credibilidad suave */}
+          <div className="mt-8 mb-6 animate-fade-in-up delay-250 text-center">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3 uppercase tracking-wider">Desarrollado por consultores de RRHH con +10 años de experiencia</p>
+            <div className="flex flex-wrap justify-center items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+              <span className="flex items-center gap-1">
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                Metodología validada
+              </span>
+              <span className="flex items-center gap-1">
+                <FileText className="w-4 h-4 text-emerald-500" />
+                Informe ejecutivo gratuito
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                GDPR compliant
+              </span>
+            </div>
+          </div>
+
           <div className="flex flex-col items-center animate-fade-in-up delay-300 w-full">
-            <Button onClick={handleStart} className="text-sm sm:text-base md:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full animate-glow font-bold tracking-wide hover:scale-105 transition-transform duration-200 shadow-2xl shadow-accent1/30 w-full sm:w-auto max-w-xl">
-              Iniciar diagnóstico
+            <Button onClick={handleStart} className="text-sm sm:text-base md:text-lg px-8 sm:px-10 py-4 sm:py-5 rounded-full animate-glow font-bold tracking-wide hover:scale-105 transition-transform duration-200 shadow-2xl shadow-accent1/30 w-full sm:w-auto max-w-xl text-base sm:text-lg">
+              Evaluar mi organización gratis
               <ArrowRight className="ml-2 w-5 h-5 pointer-events-none" />
             </Button>
-            <span className="mt-2 sm:mt-3 text-[10px] sm:text-xs md:text-sm font-medium text-gray-400 dark:text-gray-500">Menos de 3 minutos. Diseñado para equipos de RRHH y dirección.</span>
+            <span className="mt-3 sm:mt-4 text-[10px] sm:text-xs md:text-sm font-medium text-gray-400 dark:text-gray-500">3 minutos • Resultados inmediatos • Sin compromiso</span>
+          </div>
+
+          {/* Trust Indicators */}
+          <div className="mt-12 animate-fade-in-up delay-400 max-w-2xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+              <div className="p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-gray-100 dark:border-gray-700">
+                <p className="text-2xl font-bold text-accent1">3 min</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Diagnóstico completo</p>
+              </div>
+              <div className="p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-gray-100 dark:border-gray-700">
+                <p className="text-2xl font-bold text-accent1">5</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Dimensiones evaluadas</p>
+              </div>
+              <div className="p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-gray-100 dark:border-gray-700">
+                <p className="text-2xl font-bold text-accent1">100%</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Confidencial</p>
+              </div>
+            </div>
           </div>
 
         </div>
