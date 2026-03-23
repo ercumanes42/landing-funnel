@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { InlineWidget, useCalendlyEventListener } from 'react-calendly';
 import { ArrowRight, Lock, CheckCircle, AlertTriangle } from 'lucide-react';
 import Button from '../components/Button';
 import { APP_CONFIG } from '../constants';
@@ -12,9 +13,7 @@ const BookingPage: React.FC = () => {
     const [state, setState] = useState<SurveyState | null>(null);
     const [isBooked, setIsBooked] = useState(false);
     const [isEmailed, setIsEmailed] = useState(false);
-    const [calendlyOpened, setCalendlyOpened] = useState(false);
-    const [isSending, setIsSending] = useState(false);
-    const bookingFiredRef = React.useRef(false);  // reliable double-fire guard
+    const bookingFiredRef = React.useRef(false);
 
     useEffect(() => {
         const saved = localStorage.getItem('radar_state');
@@ -25,34 +24,99 @@ const BookingPage: React.FC = () => {
         }
     }, [navigate]);
 
-    const openCalendly = () => {
-        const name = `${state?.answers['firstname'] || ''} ${state?.answers['lastname'] || ''}`.trim();
-        const email = state?.answers['email'] as string || '';
-        const url = `${APP_CONFIG.CALENDLY_URL}?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`;
-        window.open(url, '_blank', 'noopener,noreferrer');
-        setCalendlyOpened(true);
-    };
+    // Calendly official hook
+    useCalendlyEventListener({
+        onEventScheduled: (e) => {
+            console.log("[BookingPage] Calendly event_scheduled detected:", e.data);
+            handleBookingSuccess();
+        }
+    });
 
-    const handleBookingSuccess = async () => {
+    // Fallback: listen for raw postMessage from Calendly iframe
+    useEffect(() => {
+        const handleMsg = (e: MessageEvent) => {
+            let data = e.data;
+            if (typeof data === 'string') {
+                try { data = JSON.parse(data); } catch { return; }
+            }
+            if (data?.event === 'calendly.event_scheduled') {
+                console.log("[BookingPage] postMessage fallback detected");
+                handleBookingSuccess();
+            }
+        };
+        window.addEventListener('message', handleMsg);
+        return () => window.removeEventListener('message', handleMsg);
+    }, []);
+
+    const handleBookingSuccess = () => {
         if (bookingFiredRef.current) return;
         bookingFiredRef.current = true;
-        setIsSending(true);
 
         logEvent(AnalyticsEvent.BOOK_CALL_CLICKED, { status: 'confirmed' });
         logEvent(AnalyticsEvent.BOOK_CALL_COMPLETE);
 
+        // Show success screen immediately
+        setIsBooked(true);
+
+        // Build and fire webhook (fire-and-forget, same pattern as RadarWizard)
         const savedRaw = localStorage.getItem('radar_state');
         if (savedRaw) {
-            const freshState = JSON.parse(savedRaw);
-            freshState.answers['meeting_optin'] = "Sí, Confirmed Booking";
-            localStorage.setItem('radar_state', JSON.stringify(freshState));
-            await triggerWebhook(freshState, true);
+            try {
+                const freshState = JSON.parse(savedRaw);
+                const calculated = calculateResults(freshState.answers);
+
+                const payload = {
+                    contact: {
+                        name: freshState.answers['firstname'],
+                        firstname: freshState.answers['firstname'],
+                        lastname: freshState.answers['lastname'],
+                        email: freshState.answers['email'],
+                        company: freshState.answers['company'],
+                        pain_point: freshState.answers['pain_point'],
+                        pain_point_1: Array.isArray(freshState.answers['pain_point']) ? freshState.answers['pain_point'][0] || '' : '',
+                        pain_point_2: Array.isArray(freshState.answers['pain_point']) ? freshState.answers['pain_point'][1] || '' : '',
+                        pain_point_3: Array.isArray(freshState.answers['pain_point']) ? freshState.answers['pain_point'][2] || '' : '',
+                        pain_points_txt: Array.isArray(freshState.answers['pain_point']) ? freshState.answers['pain_point'].join(', ') : freshState.answers['pain_point']
+                    },
+                    survey: {
+                        globalScore: calculated.globalScore,
+                        d1: calculated.dimensionScores.find((d: any) => d.id === 'D1')?.score || 0,
+                        d2: calculated.dimensionScores.find((d: any) => d.id === 'D2')?.score || 0,
+                        d3: calculated.dimensionScores.find((d: any) => d.id === 'D3')?.score || 0,
+                        d4: calculated.dimensionScores.find((d: any) => d.id === 'D4')?.score || 0,
+                        t: calculated.dimensionScores.find((d: any) => d.id === 'T')?.score || 0,
+                        scores: calculated.dimensionScores.reduce((acc: any, curr: any) => ({ ...acc, [curr.id]: curr.score }), {}),
+                        answers: freshState.answers
+                    },
+                    meta: {
+                        timestamp: new Date().toLocaleString('es-ES'),
+                        meetingOptIn: 'Sí, Confirmed Booking',
+                        isUnlocked: true
+                    }
+                };
+
+                console.log('[BookingPage] Firing confirmation webhook:', payload.meta.meetingOptIn);
+
+                // Fire-and-forget (same as RadarWizard) - reliable in all browsers
+                fetch(APP_CONFIG.POST_ENDPOINT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    keepalive: true
+                }).then(r => console.log('[BookingPage] Webhook response:', r.status))
+                  .catch(e => console.error('[BookingPage] Webhook error:', e));
+
+                // Also send via sendBeacon for ultra-reliability (survives page unload)
+                const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+                navigator.sendBeacon(APP_CONFIG.POST_ENDPOINT_URL, blob);
+
+            } catch (e) {
+                console.error('[BookingPage] Error building payload:', e);
+            }
         }
 
-        setIsBooked(true);
-        setIsSending(false);
-        // Small delay so user sees the success screen before navigating
-        setTimeout(() => navigate('/resultado'), 2000);
+        // Navigate after a brief delay (give fetch time to send)
+        setTimeout(() => navigate('/resultado'), 2500);
     };
 
     const handleSkip = () => {
@@ -161,74 +225,40 @@ const BookingPage: React.FC = () => {
                 </div>
 
                 {/* Main Booking Container */}
-                <div className="max-w-2xl mx-auto w-full space-y-6">
-
-                    {isBooked ? (
-                        /* SUCCESS STATE */
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-12 text-center border-2 border-green-400">
-                            <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
-                            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">¡Sesión Confirmada!</h2>
-                            <p className="text-gray-500 dark:text-gray-400 mb-6">Preparando tu informe ejecutivo personalizado...</p>
-                            <div className="w-10 h-10 border-4 border-accent1 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <div className="max-w-4xl mx-auto w-full">
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border-2 border-accent1 overflow-hidden relative">
+                        <div className="absolute top-0 right-0 bg-accent1 text-white text-xs font-bold px-3 py-1 rounded-bl-lg z-10">
+                            SESIÓN GRATUITA (15 MIN)
                         </div>
-                    ) : (
-                        <>
-                            {/* STEP 1: Open Calendly */}
-                            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border-2 border-accent1 text-center">
-                                <div className="inline-flex items-center justify-center w-16 h-16 bg-accent1/10 rounded-full mb-4">
-                                    <span className="text-3xl">📅</span>
-                                </div>
-                                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Paso 1 — Selecciona tu horario</h2>
-                                <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                                    Abre el calendario, elige día y hora, y completa tu reserva.
-                                    Tu nombre y email ya estarán pre-rellenados.
-                                </p>
-                                <button
-                                    onClick={openCalendly}
-                                    className="bg-accent1 hover:bg-accent1/90 text-white font-bold py-4 px-10 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl hover:scale-105 inline-flex items-center gap-2"
-                                >
-                                    <span>📅</span> Abrir calendario y reservar sesión
-                                </button>
-                                {calendlyOpened && (
-                                    <p className="mt-3 text-xs text-green-600 dark:text-green-400 font-medium">✓ El calendario se ha abierto en una nueva pestaña</p>
-                                )}
-                            </div>
 
-                            {/* STEP 2: Confirm booking */}
-                            <div className={`rounded-2xl p-8 border-2 text-center transition-all ${
-                                calendlyOpened
-                                    ? 'bg-green-50 dark:bg-green-900/20 border-green-400 dark:border-green-600 shadow-xl'
-                                    : 'bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-700 opacity-60'
-                            }`}>
-                                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-800/30 rounded-full mb-4">
-                                    <span className="text-3xl">✅</span>
-                                </div>
-                                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Paso 2 — Confirmar y recibir informe</h2>
-                                <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                                    Una vez hayas completado la reserva en Calendly, pulsa aquí para recibir
-                                    tu <strong>informe ejecutivo personalizado</strong> por email.
-                                </p>
-                                <button
-                                    onClick={handleBookingSuccess}
-                                    disabled={isSending}
-                                    className="bg-green-500 hover:bg-green-600 disabled:opacity-60 text-white font-bold py-4 px-10 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl hover:scale-105 inline-flex items-center gap-2"
-                                >
-                                    {isSending ? (
-                                        <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Enviando informe...</>
-                                    ) : (
-                                        <>✅ He reservado mi sesión → Enviarme el informe</>
-                                    )}
-                                </button>
+                        {isBooked ? (
+                            <div className="h-[550px] flex flex-col items-center justify-center">
+                                <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Sesión Confirmada!</h2>
+                                <p className="text-gray-500 dark:text-gray-400 mb-4">Preparando tu informe ejecutivo personalizado...</p>
+                                <div className="w-10 h-10 border-4 border-accent1 border-t-transparent rounded-full animate-spin"></div>
                             </div>
+                        ) : (
+                            <div className="h-[550px] w-full">
+                                <InlineWidget
+                                    url={APP_CONFIG.CALENDLY_URL}
+                                    styles={{ height: '100%', width: '100%' }}
+                                    prefill={{
+                                        email: state?.answers['email'] as string,
+                                        name: `${state?.answers['firstname'] || ''} ${state?.answers['lastname'] || ''}`.trim(),
+                                        customAnswers: { a1: state?.answers['company'] as string }
+                                    }}
+                                />
+                            </div>
+                        )}
+                    </div>
 
-                            {/* Skip link */}
-                            <div className="text-center text-sm text-gray-400">
-                                <button onClick={() => navigate('/resultado')} className="underline hover:text-gray-300">
-                                    Omitir y ver los resultados directamente →
-                                </button>
-                            </div>
-                        </>
-                    )}
+                    {/* Skip link */}
+                    <div className="mt-6 text-center text-sm text-gray-400">
+                        <button onClick={() => navigate('/resultado')} className="underline hover:text-gray-300">
+                            Omitir y ver los resultados directamente →
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
