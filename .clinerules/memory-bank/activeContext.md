@@ -1,19 +1,24 @@
 # Active Context - Current Task & State
 
 ## Current Focus
-We are implementing the **`agentMemory`** system to ensure persistence across sessions.
+Monitoring the new 3-question funnel and email automation flow.
 
 ## What we have done so far
-1.  **Skill Discovery:** Found `agent-memory-mcp` in the skill generator.
-2.  **Configuration:** Reproduced the skill inside `.agent/skills/agent-memory` of this project.
-3.  **Windows Fixes:** Patched `SocketBridge` to support named pipes on Windows and handled path encoding.
-4.  **Base Context:** Created a `projectBrief.md` with the current funnel logic (8-step diagnosis, PostHog analysis, scoring weights).
-5.  **Initialization:** Ran `tools.project_init` which created the storage and the `.agent/workflows/update-memory.md` workflow.
-6.  **Sync:** Performed the first sync, converting markdown files into searchable JSON in `.agentMemory/`.
+1.  **Survey Strategy:** Wizard starts with **3 questions** (Clima/Retención) to reduce Step 1 bounce.
+2.  **Booking UX:** Simplified `BookingPage.tsx` to remove summary redundancy.
+3.  **Webhook statuses:** Implemented logic for `Pending`, `Confirmed`, `Downloaded`, and `Skipped`.
+4.  **Landing Animations:** Added missing Tailwind keyframes and delays in `index.html`.
+5.  **Reports Persistence:** Dashboard now reconstructs state from URL params for cross-device visibility.
+6.  **Internal Analysis:** Updated Internal Alert email with `pain_points_txt` and scoring labels.
+
+## Current State
+- Deployed and pushed to `main` branch.
+- Automated email flow in Make.com is ready for filter updates matching new statuses.
+- PDF generation is integrated via URL parameters.
 
 ## Remaining Sub-tasks
--   [ ] Verify `memory_search` works within the MCP context (verified via manual sync).
--   [ ] Finalize the "Continuity" state for the user to close and reopen the project.
+- [ ] Monitor PostHog metrics for the new "3-question" funnel.
+- [ ] Verify Make.com filters match the new `Sí, Confirmed Booking` label.
 
 ## How to Resume
 At the start of the next session, the agent should:

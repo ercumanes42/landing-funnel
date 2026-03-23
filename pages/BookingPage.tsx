@@ -123,7 +123,7 @@ const BookingPage: React.FC = () => {
             },
             meta: {
                 timestamp: new Date().toISOString(),
-                meetingOptIn: confirmed ? "Confirmed Booking" : "Skipped",
+                meetingOptIn: confirmed ? "Sí, Confirmed Booking" : "Skipped",
                 isUnlocked: confirmed
             }
         };

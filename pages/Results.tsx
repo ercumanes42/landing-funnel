@@ -6,7 +6,7 @@ import PrintableReport from '../components/PrintableReport';
 import { calculateResults } from '../utils/scoring';
 import { ResultData, AnalyticsEvent } from '../types';
 import { logEvent } from '../utils/analytics';
-import { DIMENSIONS, QUICK_WINS } from '../constants';
+import { APP_CONFIG, DIMENSIONS, QUICK_WINS } from '../constants';
 
 const Results: React.FC = () => {
     const navigate = useNavigate();
@@ -124,7 +124,7 @@ const Results: React.FC = () => {
                 meta: { timestamp: new Date().toISOString(), meetingOptIn: status, isUnlocked: false }
             };
             
-            await fetch("https://hook.eu2.make.com/nz7fm8cbvtu1mng8xzrss5yu7239pscj", { 
+            await fetch(APP_CONFIG.POST_ENDPOINT_URL, { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify(payload), 
