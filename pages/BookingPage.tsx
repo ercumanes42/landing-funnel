@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { InlineWidget, useCalendlyEventListener } from 'react-calendly';
 import { ArrowRight, Lock, CheckCircle, AlertTriangle } from 'lucide-react';
 import Button from '../components/Button';
 import { APP_CONFIG } from '../constants';
@@ -13,6 +12,8 @@ const BookingPage: React.FC = () => {
     const [state, setState] = useState<SurveyState | null>(null);
     const [isBooked, setIsBooked] = useState(false);
     const [isEmailed, setIsEmailed] = useState(false);
+    const [calendlyOpened, setCalendlyOpened] = useState(false);
+    const [isSending, setIsSending] = useState(false);
     const bookingFiredRef = React.useRef(false);  // reliable double-fire guard
 
     useEffect(() => {
@@ -24,58 +25,34 @@ const BookingPage: React.FC = () => {
         }
     }, [navigate]);
 
-    // 1. Official hook from react-calendly
-    useCalendlyEventListener({
-        onEventScheduled: (e) => {
-            console.log("Calendly Event Scheduled (Hook):", e.data);
-            handleBookingSuccess();
-        }
-    });
-
-    // 2. Manual fallback for message communication
-    useEffect(() => {
-        const handleManualMessage = (e: MessageEvent) => {
-            // Calendly may send either an object or a JSON string
-            let eventData = e.data;
-            if (typeof e.data === 'string') {
-                try { eventData = JSON.parse(e.data); } catch { /* not JSON */ }
-            }
-            if (eventData?.event === 'calendly.event_scheduled') {
-                console.log("Calendly Event Scheduled (Manual postMessage):", eventData);
-                handleBookingSuccess();
-            }
-        };
-
-        window.addEventListener('message', handleManualMessage);
-        return () => window.removeEventListener('message', handleManualMessage);
-    }, [state]);
+    const openCalendly = () => {
+        const name = `${state?.answers['firstname'] || ''} ${state?.answers['lastname'] || ''}`.trim();
+        const email = state?.answers['email'] as string || '';
+        const url = `${APP_CONFIG.CALENDLY_URL}?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`;
+        window.open(url, '_blank', 'noopener,noreferrer');
+        setCalendlyOpened(true);
+    };
 
     const handleBookingSuccess = async () => {
-        // Prevent double firing with a reliable ref guard
-        if (bookingFiredRef.current) {
-            console.log("handleBookingSuccess: already fired, ignoring duplicate.");
-            return;
-        }
+        if (bookingFiredRef.current) return;
         bookingFiredRef.current = true;
-        setIsBooked(true);
+        setIsSending(true);
 
-        // We run this logic manually after ensuring isBooked check
         logEvent(AnalyticsEvent.BOOK_CALL_CLICKED, { status: 'confirmed' });
         logEvent(AnalyticsEvent.BOOK_CALL_COMPLETE);
 
-        // Read freshest state from localStorage (avoids stale closure)
         const savedRaw = localStorage.getItem('radar_state');
         if (savedRaw) {
             const freshState = JSON.parse(savedRaw);
             freshState.answers['meeting_optin'] = "Sí, Confirmed Booking";
             localStorage.setItem('radar_state', JSON.stringify(freshState));
-
-            // CRITICAL FIX: await the webhook so Make.com receives it BEFORE navigate() kills the request
             await triggerWebhook(freshState, true);
         }
 
-        // Only navigate AFTER the webhook has fully completed
-        navigate('/resultado');
+        setIsBooked(true);
+        setIsSending(false);
+        // Small delay so user sees the success screen before navigating
+        setTimeout(() => navigate('/resultado'), 2000);
     };
 
     const handleSkip = () => {
@@ -184,58 +161,74 @@ const BookingPage: React.FC = () => {
                 </div>
 
                 {/* Main Booking Container */}
-                <div className="max-w-4xl mx-auto w-full">
-                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border-2 border-accent1 overflow-hidden relative">
-                        {/* Recommended Badge */}
-                        <div className="absolute top-0 right-0 bg-accent1 text-white text-xs font-bold px-3 py-1 rounded-bl-lg z-10">
-                            SESIÓN GRATUITA (15 MIN)
-                        </div>
+                <div className="max-w-2xl mx-auto w-full space-y-6">
 
-                        {isBooked ? (
-                            <div className="h-[550px] flex flex-col items-center justify-center animate-fade-in">
-                                <CheckCircle className="w-16 h-16 text-green-500 mb-4 animate-bounce" />
-                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Sesión Confirmada!</h2>
-                                <p className="text-gray-500 dark:text-gray-400 mb-4">Estamos preparando tu informe ejecutivo personalizado...</p>
-                                <div className="w-10 h-10 border-4 border-accent1 border-t-transparent rounded-full animate-spin"></div>
-                            </div>
-                        ) : (
-                            <div className="h-[550px] w-full">
-                                <InlineWidget
-                                    url={APP_CONFIG.CALENDLY_URL}
-                                    styles={{ height: '100%', width: '100%' }}
-                                    prefill={{
-                                        email: state?.answers['email'] as string,
-                                        name: `${state?.answers['firstname']} ${state?.answers['lastname']}`,
-                                        customAnswers: {
-                                            a1: state?.answers['company'] as string
-                                        }
-                                    }}
-                                />
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Manual Confirmation Button - shown only if not yet booked */}
-                    {!isBooked && (
-                        <div className="mt-6 bg-green-50 dark:bg-green-900/20 border-2 border-green-400 dark:border-green-600 rounded-2xl p-6 text-center">
-                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                                ✅ <strong>¿Ya has seleccionado tu horario en el calendario?</strong><br/>
-                                Pulsa el botón para confirmar y recibir tu informe ejecutivo personalizado.
-                            </p>
-                            <button
-                                onClick={handleBookingSuccess}
-                                className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl text-base transition-colors shadow-lg hover:shadow-xl"
-                            >
-                                ✅ He agendado mi sesión → Enviarme el informe
-                            </button>
+                    {isBooked ? (
+                        /* SUCCESS STATE */
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-12 text-center border-2 border-green-400">
+                            <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
+                            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">¡Sesión Confirmada!</h2>
+                            <p className="text-gray-500 dark:text-gray-400 mb-6">Preparando tu informe ejecutivo personalizado...</p>
+                            <div className="w-10 h-10 border-4 border-accent1 border-t-transparent rounded-full animate-spin mx-auto"></div>
                         </div>
+                    ) : (
+                        <>
+                            {/* STEP 1: Open Calendly */}
+                            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border-2 border-accent1 text-center">
+                                <div className="inline-flex items-center justify-center w-16 h-16 bg-accent1/10 rounded-full mb-4">
+                                    <span className="text-3xl">📅</span>
+                                </div>
+                                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Paso 1 — Selecciona tu horario</h2>
+                                <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+                                    Abre el calendario, elige día y hora, y completa tu reserva.
+                                    Tu nombre y email ya estarán pre-rellenados.
+                                </p>
+                                <button
+                                    onClick={openCalendly}
+                                    className="bg-accent1 hover:bg-accent1/90 text-white font-bold py-4 px-10 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl hover:scale-105 inline-flex items-center gap-2"
+                                >
+                                    <span>📅</span> Abrir calendario y reservar sesión
+                                </button>
+                                {calendlyOpened && (
+                                    <p className="mt-3 text-xs text-green-600 dark:text-green-400 font-medium">✓ El calendario se ha abierto en una nueva pestaña</p>
+                                )}
+                            </div>
+
+                            {/* STEP 2: Confirm booking */}
+                            <div className={`rounded-2xl p-8 border-2 text-center transition-all ${
+                                calendlyOpened
+                                    ? 'bg-green-50 dark:bg-green-900/20 border-green-400 dark:border-green-600 shadow-xl'
+                                    : 'bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-700 opacity-60'
+                            }`}>
+                                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-800/30 rounded-full mb-4">
+                                    <span className="text-3xl">✅</span>
+                                </div>
+                                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Paso 2 — Confirmar y recibir informe</h2>
+                                <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+                                    Una vez hayas completado la reserva en Calendly, pulsa aquí para recibir
+                                    tu <strong>informe ejecutivo personalizado</strong> por email.
+                                </p>
+                                <button
+                                    onClick={handleBookingSuccess}
+                                    disabled={isSending}
+                                    className="bg-green-500 hover:bg-green-600 disabled:opacity-60 text-white font-bold py-4 px-10 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl hover:scale-105 inline-flex items-center gap-2"
+                                >
+                                    {isSending ? (
+                                        <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Enviando informe...</>
+                                    ) : (
+                                        <>✅ He reservado mi sesión → Enviarme el informe</>
+                                    )}
+                                </button>
+                            </div>
+
+                            {/* Skip link */}
+                            <div className="text-center text-sm text-gray-400">
+                                <button onClick={() => navigate('/resultado')} className="underline hover:text-gray-300">
+                                    Omitir y ver los resultados directamente →
+                                </button>
+                            </div>
+                        </>
                     )}
-
-                    <div className="mt-6 text-center text-sm text-gray-400">
-                        <button onClick={() => navigate('/resultado')} className="underline hover:text-gray-300">
-                            Omitir y ver los resultados directamente →
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
