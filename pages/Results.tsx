@@ -13,6 +13,7 @@ const Results: React.FC = () => {
     const [results, setResults] = useState<ResultData | null>(null);
     const [isGuest, setIsGuest] = useState(false);
     const [showPDF, setShowPDF] = useState(false);
+    const [isEmailed, setIsEmailed] = useState(false);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -91,12 +92,57 @@ const Results: React.FC = () => {
 
     if (!results) return <div className="min-h-screen flex items-center justify-center dark:text-white">Cargando...</div>;
 
+    const notifyMake = async (status: string) => {
+        const saved = localStorage.getItem('radar_state');
+        if (!saved) return;
+        
+        try {
+            const state = JSON.parse(saved);
+            state.answers['meeting_optin'] = status;
+            localStorage.setItem('radar_state', JSON.stringify(state));
+            
+            const calc = calculateResults(state.answers);
+            const payload = {
+                contact: {
+                    name: state.answers['firstname'], firstname: state.answers['firstname'], lastname: state.answers['lastname'],
+                    email: state.answers['email'], company: state.answers['company'], role: state.answers['role'],
+                    company_size: state.answers['company_size'], sector: state.answers['sector'], work_model: state.answers['work_model'],
+                    pain_point: state.answers['pain_point'],
+                    pain_point_1: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'][0] || "" : "",
+                    pain_point_2: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'][1] || "" : "",
+                    pain_point_3: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'][2] || "" : "",
+                    pain_points_txt: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'].join(", ") : state.answers['pain_point']
+                },
+                survey: {
+                    globalScore: calc.globalScore, d1: calc.dimensionScores.find(d => d.id === "D1")?.score || 0,
+                    d2: calc.dimensionScores.find(d => d.id === "D2")?.score || 0, d3: calc.dimensionScores.find(d => d.id === "D3")?.score || 0,
+                    d4: calc.dimensionScores.find(d => d.id === "D4")?.score || 0, t: calc.dimensionScores.find(d => d.id === "T")?.score || 0,
+                    r1: calc.topRisks[0]?.dimension || "D1", r2: calc.topRisks[1]?.dimension || "D2", r3: calc.topRisks[2]?.dimension || "T",
+                    risks: calc.topRisks, scores: calc.dimensionScores.reduce((acc, curr) => ({ ...acc, [curr.id]: curr.score }), {} as Record<string, number>),
+                    answers: state.answers
+                },
+                meta: { timestamp: new Date().toISOString(), meetingOptIn: status, isUnlocked: false }
+            };
+            
+            await fetch("https://hook.eu2.make.com/nz7fm8cbvtu1mng8xzrss5yu7239pscj", { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(payload), 
+                keepalive: true 
+            });
+        } catch(e) { 
+            console.error("Error notifying Make:", e); 
+        }
+    };
+
     const handleBookCall = () => {
         logEvent(AnalyticsEvent.BOOK_CALL_CLICKED);
         navigate('/agendar');
     };
 
     const handleDownloadPDF = () => {
+        logEvent(AnalyticsEvent.REPORT_DOWNLOAD);
+        notifyMake("Downloaded Report");
         window.print();
     };
 
@@ -218,13 +264,24 @@ const Results: React.FC = () => {
                     </div>
 
                     {/* Secondary */}
-                    <div className="text-center mb-8">
-                        <button
-                            onClick={() => logEvent(AnalyticsEvent.CLICK_REQUEST_REVIEW)}
-                            className="text-sm text-slate-500 hover:text-slate-400"
-                        >
-                            No gracias, revisaré el informe por mi cuenta
-                        </button>
+                    <div className="text-center mb-8 h-20 flex flex-col justify-center items-center">
+                        {isEmailed ? (
+                            <div className="flex items-center text-green-400 font-medium animate-fade-in">
+                                <CheckCircle className="w-5 h-5 mr-2" />
+                                <span>¡Solicitud recibida! Revisa tu email.</span>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={async () => {
+                                    logEvent(AnalyticsEvent.CLICK_REQUEST_REVIEW);
+                                    notifyMake("Skipped");
+                                    setIsEmailed(true);
+                                }}
+                                className="text-sm text-slate-500 hover:text-slate-400"
+                            >
+                                No gracias, revisaré el informe por mi cuenta
+                            </button>
+                        )}
                     </div>
                     </>
                 )}

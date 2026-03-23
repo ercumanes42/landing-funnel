@@ -388,11 +388,8 @@ const RadarWizard: React.FC = () => {
         if (score < 70) return { level: 'Media', color: 'bg-amber-500', text: 'text-amber-500', emoji: '🟡' };
         return { level: 'Baja', color: 'bg-green-500', text: 'text-green-500', emoji: '🟢' };
       };
-      const exposure = getExposureLevel(miniResults.globalScore);
-      const topRisk = miniResults.dimensionScores.find(d => d.id === 'D3');
-
-      // Calcular score parcial basado solo en D3 (las 3 primeras preguntas)
-      const d3Score = topRisk?.score || 0;
+      const d3Score = miniResults.dimensionScores.find(d => d.id === 'D3')?.score || 0;
+      const exposure = getExposureLevel(d3Score);
 
       const getInsight = (score: number) => {
         if (score < 40) return {

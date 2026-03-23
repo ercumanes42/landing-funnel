@@ -66,7 +66,6 @@ const BookingPage: React.FC = () => {
         }
 
         // Only navigate AFTER the webhook has fully completed
-        localStorage.removeItem('radar_state');
         navigate('/resultado');
     };
 
@@ -118,6 +117,8 @@ const BookingPage: React.FC = () => {
                 r1: calculated.topRisks[0]?.dimension || "D1",
                 r2: calculated.topRisks[1]?.dimension || "D2",
                 r3: calculated.topRisks[2]?.dimension || "T",
+                risks: calculated.topRisks,
+                scores: calculated.dimensionScores.reduce((acc, curr) => ({ ...acc, [curr.id]: curr.score }), {} as Record<string, number>),
                 answers: surveyState.answers
             },
             meta: {
@@ -164,87 +165,32 @@ const BookingPage: React.FC = () => {
         <div className="min-h-screen bg-bgLight dark:bg-darkBg flex flex-col items-center py-10 px-4 transition-colors duration-300">
             <div className="max-w-5xl w-full text-center space-y-6">
 
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-primary dark:text-white mb-8">
-                    Resumen de tu diagnóstico (privado)
-                </h1>
+                <div className="mb-4">
+                    <h1 className="text-3xl sm:text-4xl font-extrabold text-primary dark:text-white mb-2">
+                        📅 Asegura tu Análisis de Prioridades
+                    </h1>
+                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                        Selecciona un horario para interpretar tus resultados y definir los 3 primeros pasos de tu hoja de ruta.
+                    </p>
+                </div>
 
-                {/* THE PARTIAL SUMMARY */}
-                {calculated && (
-                    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 border border-gray-200 dark:border-gray-700 mx-auto max-w-4xl text-left shadow-md">
-
-                        <div className="flex flex-col sm:flex-row sm:items-center mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
-                            <span className="text-sm text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider w-full sm:w-1/3 mb-2 sm:mb-0">Nivel de exposición:</span>
-                            <span className={`px-4 py-1.5 text-sm font-bold rounded-full inline-block w-max ${calculated.globalScore < 40 ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : calculated.globalScore < 70 ? 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400' : 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'}`}>
-                                {nivelExposicion}
-                            </span>
-                        </div>
-
-                        <div className="mb-6">
-                            <span className="block text-sm text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-3">Tus 3 riesgos principales:</span>
-                            <ul className="space-y-2">
-                                {[0, 1, 2].map(i => {
-                                    const risk = calculated.topRisks[i];
-                                    if (!risk) return null;
-                                    const dimLabel = calculated.dimensionScores.find(d => d.id === risk.dimension)?.label;
-                                    return (
-                                        <li key={i} className="flex items-start">
-                                            <AlertTriangle className="w-5 h-5 text-red-400 mr-2 flex-shrink-0" />
-                                            <span className="text-gray-800 dark:text-gray-200 font-medium">{dimLabel}</span>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </div>
-
-                        <div className="mb-6">
-                            <span className="block text-sm text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-3">Prioridades recomendadas (top 2):</span>
-                            <ul className="space-y-3">
-                                {[0, 1].map(i => {
-                                    if (!calculated.quickWins[i]) return null;
-                                    return (
-                                        <li key={i} className="flex items-start bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                                            <div className="w-6 h-6 rounded-full bg-accent1/20 text-accent1 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">{i + 1}</div>
-                                            <span className="text-gray-700 dark:text-gray-300 text-sm">{calculated.quickWins[i]}</span>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </div>
-
-                        <div className="mt-8 pt-4 border-t border-gray-100 dark:border-gray-700 bg-accent1/10 p-4 rounded-xl text-center">
-                            <p className="text-primary dark:text-accent1 font-bold">
-                                El informe completo incluye el detalle y un plan de acción por cada prioridad.
-                            </p>
-                        </div>
-                    </div>
-                )}
-
-                {/* Two Options Layout */}
-                <div className="grid md:grid-cols-2 gap-6 mt-8">
-
-                    {/* OPTION A: Book a Call (Recommended) */}
+                {/* Main Booking Container */}
+                <div className="max-w-4xl mx-auto w-full">
                     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border-2 border-accent1 overflow-hidden relative">
                         {/* Recommended Badge */}
                         <div className="absolute top-0 right-0 bg-accent1 text-white text-xs font-bold px-3 py-1 rounded-bl-lg z-10">
-                            RECOMENDADO
-                        </div>
-
-                        <div className="p-4 border-b border-gray-100 dark:border-gray-700">
-                            <h3 className="text-lg font-bold text-primary dark:text-white">Revisión 15 min (recomendada)</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                Te explico el resultado y te doy un plan de acción inicial para tus 2 prioridades.
-                            </p>
+                            SESIÓN GRATUITA (15 MIN)
                         </div>
 
                         {isBooked ? (
-                            <div className="h-[450px] flex flex-col items-center justify-center animate-fade-in">
+                            <div className="h-[550px] flex flex-col items-center justify-center animate-fade-in">
                                 <CheckCircle className="w-16 h-16 text-green-500 mb-4 animate-bounce" />
                                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Sesión Confirmada!</h2>
-                                <p className="text-gray-500 dark:text-gray-400 mb-4">Preparando tu informe...</p>
+                                <p className="text-gray-500 dark:text-gray-400 mb-4">Estamos preparando tu informe ejecutivo personalizado...</p>
                                 <div className="w-10 h-10 border-4 border-accent1 border-t-transparent rounded-full animate-spin"></div>
                             </div>
                         ) : (
-                            <div className="h-[450px] w-full">
+                            <div className="h-[550px] w-full">
                                 <InlineWidget
                                     url={APP_CONFIG.CALENDLY_URL}
                                     styles={{ height: '100%', width: '100%' }}
@@ -259,38 +205,12 @@ const BookingPage: React.FC = () => {
                             </div>
                         )}
                     </div>
-
-                    {/* OPTION B: Skip and View Summary */}
-                    {!location.search.includes('retry=true') && (
-                        isEmailed ? (
-                            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 flex flex-col justify-center items-center h-full min-h-[450px] text-center animate-fade-in-up">
-                                <CheckCircle className="w-16 h-16 text-green-500 mb-6" />
-                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">¡Solicitud recibida!</h3>
-                                <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-                                    Recibirás tu informe completo en la bandeja de entrada de tu email corporativo en aproximadamente 5 minutos.
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-between h-full min-h-[450px]">
-                                <div>
-                                    <h3 className="text-lg font-bold text-primary dark:text-white mb-2">Prefiero no agendar (por ahora)</h3>
-                                    <p className="text-gray-600 dark:text-gray-300 mb-4 mt-2">
-                                        Te lo enviamos por email en 5 minutos.
-                                    </p>
-                                </div>
-
-                                <Button
-                                    variant="outline"
-                                    onClick={handleSkip}
-                                    fullWidth
-                                    className="mt-6 dark:bg-slate-700 dark:text-white dark:border-slate-600"
-                                >
-                                    <ArrowRight className="w-4 h-4 mr-2" />
-                                    Enviar informe a mi correo
-                                </Button>
-                            </div>
-                        )
-                    )}
+                    
+                    <div className="mt-8 text-center text-sm text-gray-500 hover:text-gray-400">
+                        <button onClick={() => navigate('/resultado')} className="underline">
+                            Volver a ver resultados preliminares
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
