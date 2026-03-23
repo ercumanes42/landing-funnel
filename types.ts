@@ -11,6 +11,12 @@ export interface Question {
   required?: boolean;
 }
 
+export interface WizardStep {
+  title: string;
+  subtitle?: string;
+  questions: Question[];
+}
+
 export interface SurveyState {
   step: number;
   answers: Record<string, AnswerValue>;

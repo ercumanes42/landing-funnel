@@ -384,38 +384,70 @@ const RadarWizard: React.FC = () => {
     if (q.type === 'mini_result') {
       const miniResults = calculateResults(state.answers);
       const getExposureLevel = (score: number) => {
-        if (score < 40) return { level: 'Alta', color: 'bg-red-500', text: 'text-red-500' };
-        if (score < 70) return { level: 'Media', color: 'bg-amber-500', text: 'text-amber-500' };
-        return { level: 'Baja', color: 'bg-green-500', text: 'text-green-500' };
+        if (score < 40) return { level: 'Alta', color: 'bg-red-500', text: 'text-red-500', emoji: '🔴' };
+        if (score < 70) return { level: 'Media', color: 'bg-amber-500', text: 'text-amber-500', emoji: '🟡' };
+        return { level: 'Baja', color: 'bg-green-500', text: 'text-green-500', emoji: '🟢' };
       };
       const exposure = getExposureLevel(miniResults.globalScore);
-      const topRisk = miniResults.dimensionScores.find(d => d.id === miniResults.topRisks[0]?.dimension);
-      
-      const getLabel = (score: number) => {
-        if (score >= 75) return "Tu mayor fortaleza detectada:";
-        if (score >= 40) return "Tu principal área de mejora:";
-        return "⚠️ Riesgo crítico a resolver:";
+      const topRisk = miniResults.dimensionScores.find(d => d.id === 'D3');
+
+      // Calcular score parcial basado solo en D3 (las 3 primeras preguntas)
+      const d3Score = topRisk?.score || 0;
+
+      const getInsight = (score: number) => {
+        if (score < 40) return {
+          title: "Alerta en Retención de Talento",
+          desc: "Tus respuestas indican riesgos significativos en clima y rotación. Las empresas con esta puntuación suelen perder hasta un 30% de talento clave anualmente.",
+          action: "Completa el diagnóstico para descubrir las 4 áreas restantes."
+        };
+        if (score < 70) return {
+          title: "Área de Mejora Detectada",
+          desc: "Tienes bases sólidas pero hay oportunidad clara de fortalecer tu estrategia de talento antes de que se convierta en un problema crítico.",
+          action: "5 preguntas más para un diagnóstico completo."
+        };
+        return {
+          title: "¡Excelente gestión del clima!",
+          desc: "Tu organización muestra fortalezas en retención. Veamos cómo optimizar el resto de dimensiones para mantener esa ventaja.",
+          action: "Descubre tu puntuación global en 5 preguntas más."
+        };
       };
+
+      const insight = getInsight(d3Score);
 
       return (
         <div className="mt-4 p-6 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700">
-          <div className="text-center mb-4">
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Tu diagnóstico preliminar</p>
-            <div className={`inline-flex items-center px-6 py-3 rounded-full text-white font-bold ${exposure.color}`}>
+          {/* Header con resultado */}
+          <div className="text-center mb-6">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">Vista previa basada en 3 dimensiones</p>
+            <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-white font-bold text-lg ${exposure.color}`}>
+              <span className="text-2xl">{exposure.emoji}</span>
               Exposición {exposure.level}
             </div>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              Dimension Clima y Retención: {d3Score}/100
+            </p>
           </div>
-          
-          {topRisk && (
-            <div className="text-center mb-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">{getLabel(miniResults.globalScore)}</p>
-              <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">{topRisk.label}</p>
-            </div>
-          )}
-          
-          <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-            <p className="text-sm text-green-700 dark:text-green-300 font-medium">
-              📧 Tu informe detallado llega a tu email en 5 minutos
+
+          {/* Insight personalizado */}
+          <div className="mb-6 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
+            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">{insight.title}</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{insight.desc}</p>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center p-4 bg-gradient-to-r from-accent1/10 to-accent2/10 dark:from-accent1/20 dark:to-accent2/20 rounded-lg border border-accent1/30">
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              {insight.action}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              ⏱️ 2 minutos más • Informe ejecutivo incluido
+            </p>
+          </div>
+
+          {/* Preview de qué falta */}
+          <div className="mt-4 text-center">
+            <p className="text-xs text-gray-400 dark:text-gray-500">
+              Falta evaluar: Equipos Híbridos • Adaptación • Sucesión • Gobernanza IA
             </p>
           </div>
         </div>
@@ -449,9 +481,16 @@ const RadarWizard: React.FC = () => {
           </span>
         </div>
 
-        <h2 className="text-2xl sm:text-3xl font-bold text-primary dark:text-white mb-6">
-          {currentStepConfig.title}
-        </h2>
+        <div className="mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-primary dark:text-white mb-2">
+            {currentStepConfig.title}
+          </h2>
+          {(currentStepConfig as any).subtitle && (
+            <p className="text-base text-gray-500 dark:text-gray-400">
+              {(currentStepConfig as any).subtitle}
+            </p>
+          )}
+        </div>
 
         <div className="space-y-8 sm:space-y-12">
           {currentStepConfig.questions[0]?.type === 'likert' && (
@@ -524,8 +563,15 @@ const RadarWizard: React.FC = () => {
                 onClick={nextStep}
                 disabled={false}
               >
-                {state.step === 0 ? 'Ver mi resultado preliminar' : state.step === WIZARD_STEPS.length - 1 ? 'Generar mi Resumen' : 'Siguiente'}
-                {state.step !== WIZARD_STEPS.length - 1 && <ChevronRight className="w-5 h-5 ml-1" />}
+                {state.step === 0
+                  ? 'Ver mi perfil de riesgo →'
+                  : state.step === 1
+                    ? 'Continuar diagnóstico completo →'
+                    : state.step === WIZARD_STEPS.length - 1
+                      ? 'Generar mi informe ejecutivo'
+                      : 'Siguiente'
+                }
+                {state.step !== WIZARD_STEPS.length - 1 && state.step !== 0 && state.step !== 1 && <ChevronRight className="w-5 h-5 ml-1" />}
               </Button>
             </div>
           </div>

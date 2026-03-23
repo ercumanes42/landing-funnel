@@ -192,11 +192,25 @@ export const EXECUTIVE_SUMMARIES = {
 
 export const WIZARD_STEPS: { title: string; questions: Question[] }[] = [
   {
-    title: "Diagnóstico de Talento y Organización",
+    title: "Parte 1: Clima y Retención (1/3)",
+    subtitle: "3 preguntas rápidas sobre tus principales desafíos de talento",
     questions: [
       { id: "q1", category: "D3", type: "likert", text: "Es difícil cubrir puestos clave con la velocidad y calidad necesarias." },
       { id: "q2", category: "D3", type: "likert", text: "La rotación no deseada está afectando la estabilidad, rendimiento o continuidad de los equipos." },
-      { id: "q3", category: "D3", type: "likert", text: "Se detecta el clima, fatiga o desconexión a tiempo antes de que genere renuncias." },
+      { id: "q3", category: "D3", type: "likert", text: "Se detecta el clima, fatiga o desconexión a tiempo antes de que genere renuncias." }
+    ]
+  },
+  {
+    title: "Tu perfil emerge...",
+    subtitle: "Vista previa de tu diagnóstico",
+    questions: [
+      { id: "mini_result", category: "result", type: "mini_result", text: "", required: false }
+    ]
+  },
+  {
+    title: "Parte 2: Equipos, Innovación y Futuro (2/3)",
+    subtitle: "5 preguntas para completar tu análisis",
+    questions: [
       { id: "q4", category: "D1", type: "likert", text: "Los mandos medios mantienen el rendimiento y compromiso sin necesidad de control constante." },
       { id: "q5", category: "D2", type: "likert", text: "El aprendizaje y desarrollo se adapta rápidamente a los cambios del negocio." },
       { id: "q6", category: "T", type: "likert", text: "La IA se utiliza con criterios claros, seguridad y sin improvisación." },
@@ -205,14 +219,17 @@ export const WIZARD_STEPS: { title: string; questions: Question[] }[] = [
     ]
   },
   {
-    title: "Resultado Preliminar",
+    title: "Parte 3: Tu Informe Ejecutivo (3/3)",
+    subtitle: "¿Dónde enviamos tu diagnóstico completo?",
     questions: [
-      { id: "mini_result", category: "result", type: "mini_result", text: "", required: false }
-    ]
-  },
-  {
-    title: "¿Donde te enviamos tu informe privado?",
-    questions: [
+      {
+        id: "email",
+        text: "Email corporativo",
+        hint: "Recibirás tu informe detallado en menos de 5 minutos",
+        category: "lead",
+        type: "text",
+        required: true
+      },
       {
         id: "firstname",
         text: "Nombre",
@@ -221,22 +238,8 @@ export const WIZARD_STEPS: { title: string; questions: Question[] }[] = [
         required: true
       },
       {
-        id: "lastname",
-        text: "Apellidos",
-        category: "lead",
-        type: "text",
-        required: true
-      },
-      {
         id: "company",
         text: "Empresa",
-        category: "lead",
-        type: "text",
-        required: true
-      },
-      {
-        id: "email",
-        text: "Email corporativo",
         category: "lead",
         type: "text",
         required: true
