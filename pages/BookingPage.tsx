@@ -13,6 +13,7 @@ const BookingPage: React.FC = () => {
     const [state, setState] = useState<SurveyState | null>(null);
     const [isBooked, setIsBooked] = useState(false);
     const [isEmailed, setIsEmailed] = useState(false);
+    const bookingFiredRef = React.useRef(false);  // reliable double-fire guard
 
     useEffect(() => {
         const saved = localStorage.getItem('radar_state');
@@ -34,10 +35,13 @@ const BookingPage: React.FC = () => {
     // 2. Manual fallback for message communication
     useEffect(() => {
         const handleManualMessage = (e: MessageEvent) => {
-            // Check for both common event formats
-            if (e.data.event === 'calendly.event_scheduled' || 
-                (typeof e.data === 'string' && e.data.includes('event_scheduled'))) {
-                console.log("Calendly Event Scheduled (Manual):", e.data);
+            // Calendly may send either an object or a JSON string
+            let eventData = e.data;
+            if (typeof e.data === 'string') {
+                try { eventData = JSON.parse(e.data); } catch { /* not JSON */ }
+            }
+            if (eventData?.event === 'calendly.event_scheduled') {
+                console.log("Calendly Event Scheduled (Manual postMessage):", eventData);
                 handleBookingSuccess();
             }
         };
@@ -47,8 +51,13 @@ const BookingPage: React.FC = () => {
     }, [state]);
 
     const handleBookingSuccess = async () => {
-        // Prevent double firing using a ref-like approach with the state setter
-        setIsBooked(prev => { if (prev) return true; return true; });
+        // Prevent double firing with a reliable ref guard
+        if (bookingFiredRef.current) {
+            console.log("handleBookingSuccess: already fired, ignoring duplicate.");
+            return;
+        }
+        bookingFiredRef.current = true;
+        setIsBooked(true);
 
         // We run this logic manually after ensuring isBooked check
         logEvent(AnalyticsEvent.BOOK_CALL_CLICKED, { status: 'confirmed' });
