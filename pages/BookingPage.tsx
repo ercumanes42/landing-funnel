@@ -67,7 +67,12 @@ const BookingPage: React.FC = () => {
                 freshState.answers['meeting_optin'] = "Sí, Confirmed Booking";
                 localStorage.setItem('radar_state', JSON.stringify(freshState));
                 
-                await triggerWebhook(freshState, true);
+                // Add a maximum wait time of 3 seconds for Make.com to respond
+                const timeoutPromise = new Promise(resolve => setTimeout(resolve, 3000));
+                await Promise.race([
+                    triggerWebhook(freshState, true),
+                    timeoutPromise
+                ]);
             } catch (e) {
                 console.error('[BookingPage] Error building payload:', e);
             }
