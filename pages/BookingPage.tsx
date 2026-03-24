@@ -48,7 +48,7 @@ const BookingPage: React.FC = () => {
         return () => window.removeEventListener('message', handleMsg);
     }, []);
 
-    const handleBookingSuccess = () => {
+    const handleBookingSuccess = async () => {
         if (bookingFiredRef.current) return;
         bookingFiredRef.current = true;
 
@@ -58,65 +58,23 @@ const BookingPage: React.FC = () => {
         // Show success screen immediately
         setIsBooked(true);
 
-        // Build and fire webhook (fire-and-forget, same pattern as RadarWizard)
+        // Build and fire webhook using the unified triggerWebhook method
         const savedRaw = localStorage.getItem('radar_state');
         if (savedRaw) {
             try {
                 const freshState = JSON.parse(savedRaw);
-                const calculated = calculateResults(freshState.answers);
-
-                const payload = {
-                    contact: {
-                        name: freshState.answers['firstname'],
-                        firstname: freshState.answers['firstname'],
-                        lastname: freshState.answers['lastname'],
-                        email: freshState.answers['email'],
-                        company: freshState.answers['company'],
-                        pain_point: freshState.answers['pain_point'],
-                        pain_point_1: Array.isArray(freshState.answers['pain_point']) ? freshState.answers['pain_point'][0] || '' : '',
-                        pain_point_2: Array.isArray(freshState.answers['pain_point']) ? freshState.answers['pain_point'][1] || '' : '',
-                        pain_point_3: Array.isArray(freshState.answers['pain_point']) ? freshState.answers['pain_point'][2] || '' : '',
-                        pain_points_txt: Array.isArray(freshState.answers['pain_point']) ? freshState.answers['pain_point'].join(', ') : freshState.answers['pain_point']
-                    },
-                    survey: {
-                        globalScore: calculated.globalScore,
-                        d1: calculated.dimensionScores.find((d: any) => d.id === 'D1')?.score || 0,
-                        d2: calculated.dimensionScores.find((d: any) => d.id === 'D2')?.score || 0,
-                        d3: calculated.dimensionScores.find((d: any) => d.id === 'D3')?.score || 0,
-                        d4: calculated.dimensionScores.find((d: any) => d.id === 'D4')?.score || 0,
-                        t: calculated.dimensionScores.find((d: any) => d.id === 'T')?.score || 0,
-                        scores: calculated.dimensionScores.reduce((acc: any, curr: any) => ({ ...acc, [curr.id]: curr.score }), {}),
-                        answers: freshState.answers
-                    },
-                    meta: {
-                        timestamp: new Date().toLocaleString('es-ES'),
-                        meetingOptIn: 'Sí, Confirmed Booking',
-                        isUnlocked: true
-                    }
-                };
-
-                console.log('[BookingPage] Firing confirmation webhook:', payload.meta.meetingOptIn);
-
-                // Fire-and-forget (same as RadarWizard) - reliable in all browsers
-                fetch(APP_CONFIG.POST_ENDPOINT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                    keepalive: true
-                }).then(r => console.log('[BookingPage] Webhook response:', r.status))
-                  .catch(e => console.error('[BookingPage] Webhook error:', e));
-
-                // Also send via sendBeacon for ultra-reliability (survives page unload)
-                const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-                navigator.sendBeacon(APP_CONFIG.POST_ENDPOINT_URL, blob);
-
+                // Mark as confirmed in local state
+                freshState.answers['meeting_optin'] = "Sí, Confirmed Booking";
+                localStorage.setItem('radar_state', JSON.stringify(freshState));
+                
+                await triggerWebhook(freshState, true);
             } catch (e) {
                 console.error('[BookingPage] Error building payload:', e);
             }
         }
 
-        // Navigate after a brief delay (give fetch time to send)
-        setTimeout(() => navigate('/resultado'), 2500);
+        // Navigate after webhook completes (or errors)
+        navigate('/resultado');
     };
 
     const handleSkip = () => {
