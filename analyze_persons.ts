@@ -1,9 +1,10 @@
+import 'dotenv/config';
 import axios from 'axios';
 import * as fs from 'fs';
 
-const POSTHOG_API_KEY = 'phx_O3nghSDIXUtsaeGYJz9AY2zfi1AGyNf9Pqc2czHO1GrrQbf';
+const POSTHOG_API_KEY = process.env.POSTHOG_API_KEY;
 const POSTHOG_HOST = 'https://eu.posthog.com';
-const PROJECT_ID = '122772';
+const PROJECT_ID = process.env.POSTHOG_PROJECT_ID;
 
 const phClient = axios.create({
     baseURL: `${POSTHOG_HOST}/api/projects/${PROJECT_ID}`,
