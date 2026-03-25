@@ -82,19 +82,26 @@ const BookingPage: React.FC = () => {
         navigate('/resultado');
     };
 
-    const handleSkip = () => {
-        // User chose NOT to book - save "Skipped" status to localStorage
+    const handleSkip = async () => {
+        if (bookingFiredRef.current) return;
+        bookingFiredRef.current = true;
+
         logEvent(AnalyticsEvent.SKIP_BOOKING);
 
         if (state) {
             const newState = { ...state };
-            newState.answers['meeting_optin'] = "Skipped"; // Explicitly mark as skipped
+            newState.answers['meeting_optin'] = "Skipped";
             localStorage.setItem('radar_state', JSON.stringify(newState));
-            // Trigger webhook with "Skipped" so Make.com knows this lead needs retargeting
-            triggerWebhook(newState, false);
+            
+            // Fire webhook and wait max 3 seconds
+            const timeoutPromise = new Promise(resolve => setTimeout(resolve, 3000));
+            await Promise.race([
+                triggerWebhook(newState, false),
+                timeoutPromise
+            ]);
         }
 
-        setIsEmailed(true);
+        navigate('/resultado');
     };
 
     const triggerWebhook = async (surveyState: SurveyState, confirmed: boolean): Promise<void> => {
@@ -216,11 +223,17 @@ const BookingPage: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Skip link */}
-                    <div className="mt-6 text-center text-sm text-gray-400">
-                        <button onClick={() => navigate('/resultado')} className="underline hover:text-gray-300">
-                            Omitir y ver los resultados directamente →
+                    {/* Skip link - BIGGER AND CONNECTED */}
+                    <div className="mt-8 text-center flex flex-col items-center justify-center">
+                        <button 
+                            onClick={handleSkip} 
+                            className="w-full max-w-md py-4 px-6 bg-gray-100 dark:bg-slate-800 border-2 border-transparent hover:border-gray-300 dark:hover:border-slate-600 rounded-xl text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-200 dark:hover:bg-slate-700 transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+                        >
+                            Prefiero revisar el informe yo mismo (Saltar agenda)
                         </button>
+                        <p className="mt-3 text-xs text-gray-400">
+                            Recibirás el informe por email para tu propia revisión.
+                        </p>
                     </div>
                 </div>
             </div>
