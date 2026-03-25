@@ -25,16 +25,30 @@ dist-ssr
 
 .vercel
 
-# Scripts con API keys (seguridad)
-posthog_*.ts
-track_user.ts
-landing_agent.ts
-find_latest_lead.ts
-get_today_report.ts
-test_posthog.ts
-check_excel*.ts
-clean_db.ts
+# Scripts con API keys (seguridad) y archivos generados
+analyze_persons.ts
+*.ts
+!App.tsx
+!index.tsx
+!constants.ts
+!types.ts
+!vite-env.d.ts
+!vite.config.ts
+
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!WEBHOOK_SCHEMA.json
+!make_blueprint*.json
+!robot_a_apuntador.json
+!metadata.json
+
 *.txt
 !README.md
 !agenda.md
 !CLAVES_VERCEL.md
+
+*.html
+!index.html
+!email_template_*.html
