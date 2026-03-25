@@ -277,7 +277,7 @@ const Results: React.FC = () => {
                                     notifyMake("Skipped");
                                     setIsEmailed(true);
                                 }}
-                                className="text-sm text-slate-500 hover:text-slate-400"
+                                className="w-full max-w-sm py-3 px-6 mt-4 bg-slate-800/80 border border-slate-600 hover:border-slate-500 rounded-xl text-slate-300 font-medium hover:bg-slate-700 transition-all shadow-sm active:scale-[0.98]"
                             >
                                 No gracias, revisaré el informe por mi cuenta
                             </button>
