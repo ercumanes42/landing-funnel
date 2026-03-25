@@ -5,11 +5,16 @@ export { AnalyticsEvent };
 
 // Initialize PostHog
 if (typeof window !== 'undefined') {
-  posthog.init(import.meta.env.VITE_POSTHOG_KEY || 'phc_E4F5hozddDirA8xEjRhoT5gHOLcPT4pFymLcC0jAr2G', {
-    api_host: import.meta.env.VITE_POSTHOG_HOST || 'https://eu.i.posthog.com',
-    person_profiles: 'identified_only',
-    capture_pageview: false // We use manual page view tracking via PageTracker
-  });
+  const posthogKey = import.meta.env.VITE_POSTHOG_KEY;
+  if (posthogKey) {
+    posthog.init(posthogKey, {
+      api_host: import.meta.env.VITE_POSTHOG_HOST || 'https://eu.i.posthog.com',
+      person_profiles: 'identified_only',
+      capture_pageview: false // We use manual page view tracking via PageTracker
+    });
+  } else {
+    console.warn("⚠️ PostHog: VITE_POSTHOG_KEY missing in environment variables. Analytics disabled.");
+  }
 }
 
 // Helper to get UTMs from URL
@@ -36,5 +41,7 @@ export const logEvent = (eventName: AnalyticsEvent, payload: Record<string, any>
   }
 
   // 2. PostHog
-  posthog.capture(eventName, fullPayload);
+  if (import.meta.env.VITE_POSTHOG_KEY) {
+    posthog.capture(eventName, fullPayload);
+  }
 };
