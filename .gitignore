@@ -43,6 +43,7 @@ analyze_persons.ts
 !make_blueprint*.json
 !robot_a_apuntador.json
 !metadata.json
+!dashboard_full_data.json
 
 *.txt
 !README.md

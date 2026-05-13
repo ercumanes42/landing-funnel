@@ -1,0 +1,172 @@
+{
+  "config": {
+    "projectName": "Diagnóstico Talento + IA",
+    "totalEmailsSent": 670,
+    "dateRange180": {
+      "start": "2025-10-07",
+      "end": "2026-04-07"
+    },
+    "landingV2ChangeDate": "2026-03-01",
+    "excludedEmail": "juanmartinez@gfs.es"
+  },
+  "historical_data": {
+    "period_feb_25_27": {
+      "name": "25-27 Febrero 2026",
+      "uniqueUsers": 20,
+      "view_landing": 16,
+      "started_survey": 4,
+      "completed_survey": 0,
+      "booked_call": 0,
+      "conversion_start": "20.0%",
+      "conversion_complete": "0.0%"
+    },
+    "period_mar_02_06": {
+      "name": "2-6 Marzo 2026",
+      "uniqueUsers": 92,
+      "view_landing": 81,
+      "started_survey": 19,
+      "completed_survey": 3,
+      "booked_call": 0,
+      "conversion_start": "15.2%",
+      "conversion_complete": "21.4%",
+      "leads_captured": 3
+    },
+    "period_mar_04": {
+      "name": "4 Marzo 2026",
+      "uniqueUsers": 15,
+      "view_landing": 35,
+      "started_survey": 6,
+      "completed_survey": 1,
+      "booked_call": 0,
+      "diagnostic_complete": 1,
+      "report_download": 2
+    },
+    "period_apr_03_05": {
+      "name": "3-5 Abril 2026",
+      "uniqueUsers": 8,
+      "view_landing": 7,
+      "started_survey": 3,
+      "completed_survey": 1,
+      "mini_result_view": 1,
+      "note": "Datos más recientes en PostHog"
+    }
+  },
+  "summary": {
+    "totalPersons": 188,
+    "totalEvents": 15000,
+    "date_range": {
+      "start": "2026-02-25",
+      "end": "2026-04-05"
+    },
+    "uniqueVisitorsWithEvents": 135,
+    "emailsTracked": 187,
+    "totalCompleted": 5,
+    "totalBooked": 0
+  },
+  "funnel": {
+    "view_landing": {
+      "count": 139,
+      "percentage": 100,
+      "label": "Vieron la Landing"
+    },
+    "diagnostic_start": {
+      "count": 32,
+      "percentage": 23,
+      "label": "Iniciaron Diagnóstico"
+    },
+    "block_1_complete": {
+      "count": 8,
+      "percentage": 6,
+      "label": "Completaron Bloque 1"
+    },
+    "block_2_complete": {
+      "count": 5,
+      "percentage": 4,
+      "label": "Completaron Bloque 2"
+    },
+    "complete_survey": {
+      "count": 5,
+      "percentage": 4,
+      "label": "Completaron Diagnóstico"
+    },
+    "book_call_clicked": {
+      "count": 0,
+      "percentage": 0,
+      "label": "Clic agendaron"
+    }
+  },
+  "periodComparison": {
+    "beforeV2": {
+      "dateRange": "25 Feb - 1 Mar",
+      "users": 35,
+      "conversionRate": "5.7%",
+      "completed": 0
+    },
+    "afterV2": {
+      "dateRange": "2 Mar - 5 Abr",
+      "users": 115,
+      "conversionRate": "4.3%",
+      "completed": 5,
+      "note": "Mejora en usuarios que completan"
+    }
+  },
+  "users": [
+    {"email": "oscar@herreraalonso.com", "company": "Herrera Alonso", "events": 10800, "stages": {"view_landing": true, "diagnostic_start": true, "block_1_complete": true, "block_2_complete": true, "mini_result_view": true, "book_call": false}, "sessionDuration": "18 min", "lastActive": "2026-04-05"},
+    {"email": "miriamreyes.prado@homeserve.es", "company": "Homeserve", "events": 1500, "stages": {"view_landing": true, "diagnostic_start": true, "block_1_complete": false, "block_2_complete": false, "mini_result_view": false, "book_call": false}, "sessionDuration": "5 min", "lastActive": "2026-04-05"},
+    {"email": "angelluis.gomez@homeserve.es", "company": "Homeserve", "events": 1500, "stages": {"view_landing": true, "diagnostic_start": true, "block_1_complete": false, "block_2_complete": false, "mini_result_view": false, "book_call": false}, "sessionDuration": "4 min", "lastActive": "2026-04-04"},
+    {"email": "patricia.carollo@chemogroup.com", "company": "Chemogroup", "events": 225, "stages": {"view_landing": true, "diagnostic_start": true, "block_1_complete": true, "block_2_complete": true, "block_3_complete": true, "block_4_complete": true, "complete_survey": true, "book_call": false}, "lastActive": "2026-03-04"},
+    {"email": "jhidalgo@hispasat.es", "company": "Hispasat", "events": 450, "stages": {"view_landing": false, "diagnostic_start": false, "block_1_complete": false, "block_2_complete": false, "mini_result_view": false, "book_call": false}, "sessionDuration": "1 min", "lastActive": "2026-04-03"}
+  ],
+  "companies": [
+    {"name": "Grupo Cortefiel", "leads": 5},
+    {"name": "Globalcaja", "leads": 5},
+    {"name": "Homeserve", "leads": 2},
+    {"name": "Hefame", "leads": 2},
+    {"name": "Cojali", "leads": 4},
+    {"name": "Eiffage", "leads": 3},
+    {"name": "Calidad Pascual", "leads": 4},
+    {"name": "Disagrupo", "leads": 4},
+    {"name": "Rey Corporacion", "leads": 3},
+    {"name": "CEU", "leads": 2}
+  ],
+  "topLeads": [
+    {"email": "patricia.carollo@chemogroup.com", "company": "Chemogroup", "score": 95, "status": "completed"},
+    {"email": "oscar@herreraalonso.com", "company": "Herrera Alonso", "score": 92, "status": "completed"},
+    {"email": "presidencia@hefame.es", "company": "Hefame", "score": 82, "status": "registered"},
+    {"email": "jorge.viera@hsf.com", "company": "HSF", "score": 88, "status": "registered"},
+    {"email": "miriamreyes.prado@homeserve.es", "company": "Homeserve", "score": 78, "status": "in_progress"},
+    {"email": "angelluis.gomez@homeserve.es", "company": "Homeserve", "score": 65, "status": "in_progress"}
+  ],
+  "sessionMetrics": {
+    "avgDuration": "6.5 min",
+    "maxDuration": "18 min",
+    "minDuration": "1 min",
+    "avgPagesViewed": 12,
+    "bounceRate": "74%"
+  },
+  "abandonmentPoints": {
+    "step_0": 59,
+    "step_1": 8,
+    "step_5": 1,
+    "step_8": 0
+  },
+  "eventsByType": {
+    "view_landing": 139,
+    "diagnostic_start": 32,
+    "click_start_survey": 28,
+    "survey_step_viewed": 58,
+    "block_1_complete": 8,
+    "block_2_complete": 5,
+    "block_3_complete": 3,
+    "block_4_complete": 3,
+    "complete_survey": 5,
+    "diagnostic_complete": 3,
+    "report_download": 4,
+    "pdf_clicked": 4,
+    "report_view": 5,
+    "book_call_clicked": 1,
+    "book_call_complete": 1,
+    "skip_booking": 2,
+    "email_captured": 4
+  }
+}
