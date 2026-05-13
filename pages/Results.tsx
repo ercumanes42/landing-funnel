@@ -1,317 +1,348 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, Calendar, Download } from 'lucide-react';
+import { AlertTriangle, BarChart3, Calendar, CheckCircle, Download } from 'lucide-react';
 import Button from '../components/Button';
 import PrintableReport from '../components/PrintableReport';
 import { calculateResults } from '../utils/scoring';
 import { ResultData, AnalyticsEvent } from '../types';
 import { logEvent } from '../utils/analytics';
-import { APP_CONFIG, DIMENSIONS, QUICK_WINS } from '../constants';
+import { APP_CONFIG, DIMENSIONS, QUICK_WINS, STORAGE_KEY } from '../constants';
 
 const Results: React.FC = () => {
-    const navigate = useNavigate();
-    const [results, setResults] = useState<ResultData | null>(null);
-    const [isGuest, setIsGuest] = useState(false);
-    const [showPDF, setShowPDF] = useState(false);
-    const [isEmailed, setIsEmailed] = useState(false);
+  const navigate = useNavigate();
+  const [results, setResults] = useState<ResultData | null>(null);
+  const [isGuest, setIsGuest] = useState(false);
+  const [showPDF, setShowPDF] = useState(false);
+  const [isEmailed, setIsEmailed] = useState(false);
 
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const urlScore = params.get('score');
-        
-        const getIntParam = (name: string) => {
-            const val = params.get(name);
-            if (!val || val.trim() === '') return 0;
-            const parsed = parseInt(val);
-            return isNaN(parsed) ? 0 : parsed;
-        };
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlScore = params.get('score');
+    const isDirectPdf = params.get('pdf') === 'true';
 
-        const isDirectPdf = params.get('pdf') === 'true';
-
-        if (urlScore !== null) {
-            const d1 = getIntParam('d1');
-            const d2 = getIntParam('d2');
-            const d3 = getIntParam('d3');
-            const d4 = getIntParam('d4');
-            const t = getIntParam('t');
-            
-            const dimensionScores = [
-                { id: "D1", label: DIMENSIONS.D1.label, score: d1, color: "#06b6d4" },
-                { id: "D2", label: DIMENSIONS.D2.label, score: d2, color: "#3b82f6" },
-                { id: "D3", label: DIMENSIONS.D3.label, score: d3, color: "#f59e0b" },
-                { id: "D4", label: DIMENSIONS.D4.label, score: d4, color: "#6366f1" },
-                { id: "T", label: DIMENSIONS.T.label, score: t, color: "#ec4899" }
-            ];
-            
-            const sorted = [...dimensionScores].sort((a, b) => a.score - b.score);
-            
-            const guestResults: ResultData = {
-                globalScore: getIntParam('score'),
-                dimensionScores,
-                topRisks: [
-                    { dimension: sorted[0].id, score: sorted[0].score },
-                    { dimension: sorted[1].id, score: sorted[1].score },
-                    { dimension: sorted[2].id, score: sorted[2].score }
-                ],
-                quickWins: [
-                    QUICK_WINS[sorted[0].id as keyof typeof QUICK_WINS],
-                    QUICK_WINS[sorted[1].id as keyof typeof QUICK_WINS],
-                    QUICK_WINS[sorted[2].id as keyof typeof QUICK_WINS]
-                ].filter(Boolean)
-            };
-            setResults(guestResults);
-            setIsGuest(true);
-            if (isDirectPdf) {
-                setShowPDF(true); // Using this to indicate direct PDF view
-                setTimeout(() => window.print(), 500); // Auto trigger print dialog
-            }
-            return;
-        }
-
-        const saved = localStorage.getItem('radar_state');
-        
-        if (saved) {
-            try {
-                const state = JSON.parse(saved);
-                if (!state.isCompleted) {
-                    navigate('/radar');
-                    return;
-                }
-
-                const calculated = calculateResults(state.answers);
-                setResults(calculated);
-                logEvent(AnalyticsEvent.REPORT_VIEW);
-                logEvent(AnalyticsEvent.FINAL_RESULT_VIEW);
-            } catch (e) {
-                navigate('/');
-            }
-        } else {
-            navigate('/');
-        }
-    }, [navigate]);
-
-    if (!results) return <div className="min-h-screen flex items-center justify-center dark:text-white">Cargando...</div>;
-
-    const notifyMake = async (status: string) => {
-        const saved = localStorage.getItem('radar_state');
-        if (!saved) return;
-        
-        try {
-            const state = JSON.parse(saved);
-            state.answers['meeting_optin'] = status;
-            localStorage.setItem('radar_state', JSON.stringify(state));
-            
-            const calc = calculateResults(state.answers);
-            const payload = {
-                contact: {
-                    name: state.answers['firstname'], firstname: state.answers['firstname'], lastname: state.answers['lastname'],
-                    email: state.answers['email'], company: state.answers['company'], role: state.answers['role'],
-                    company_size: state.answers['company_size'], sector: state.answers['sector'], work_model: state.answers['work_model'],
-                    pain_point: state.answers['pain_point'],
-                    pain_point_1: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'][0] || "" : "",
-                    pain_point_2: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'][1] || "" : "",
-                    pain_point_3: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'][2] || "" : "",
-                    pain_points_txt: Array.isArray(state.answers['pain_point']) ? state.answers['pain_point'].join(", ") : state.answers['pain_point']
-                },
-                survey: {
-                    globalScore: calc.globalScore, d1: calc.dimensionScores.find(d => d.id === "D1")?.score || 0,
-                    d2: calc.dimensionScores.find(d => d.id === "D2")?.score || 0, d3: calc.dimensionScores.find(d => d.id === "D3")?.score || 0,
-                    d4: calc.dimensionScores.find(d => d.id === "D4")?.score || 0, t: calc.dimensionScores.find(d => d.id === "T")?.score || 0,
-                    r1: calc.topRisks[0]?.dimension || "D1", r2: calc.topRisks[1]?.dimension || "D2", r3: calc.topRisks[2]?.dimension || "T",
-                    risks: calc.topRisks, scores: calc.dimensionScores.reduce((acc, curr) => ({ ...acc, [curr.id]: curr.score }), {} as Record<string, number>),
-                    answers: state.answers
-                },
-                meta: { timestamp: new Date().toISOString(), meetingOptIn: status, isUnlocked: false }
-            };
-            
-            await fetch(APP_CONFIG.POST_ENDPOINT_URL, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify(payload), 
-                keepalive: true 
-            });
-        } catch(e) { 
-            console.error("Error notifying Make:", e); 
-        }
+    const getIntParam = (name: string) => {
+      const val = params.get(name);
+      if (!val || val.trim() === '') return 0;
+      const parsed = parseInt(val);
+      return isNaN(parsed) ? 0 : parsed;
     };
 
-    const handleBookCall = () => {
-        logEvent(AnalyticsEvent.BOOK_CALL_CLICKED);
-        navigate('/agendar');
-    };
+    if (urlScore !== null) {
+      const dimensionScores = [
+        { id: "D1", label: DIMENSIONS.D1.label, score: getIntParam('d1'), color: "#0F766E" },
+        { id: "D2", label: DIMENSIONS.D2.label, score: getIntParam('d2'), color: "#1D4ED8" },
+        { id: "D3", label: DIMENSIONS.D3.label, score: getIntParam('d3'), color: "#F59E0B" },
+        { id: "D4", label: DIMENSIONS.D4.label, score: getIntParam('d4'), color: "#6366F1" },
+        { id: "T", label: DIMENSIONS.T.label, score: getIntParam('t'), color: "#DC2626" }
+      ];
 
-    const handleDownloadPDF = () => {
-        logEvent(AnalyticsEvent.REPORT_DOWNLOAD);
-        notifyMake("Downloaded Report");
-        window.print();
-    };
+      const sorted = [...dimensionScores].sort((a, b) => a.score - b.score);
+      const guestResults: ResultData = {
+        globalScore: getIntParam('score'),
+        dimensionScores,
+        topRisks: sorted.slice(0, 3).map(dim => ({ dimension: dim.id, score: dim.score })),
+        quickWins: sorted.slice(0, 3).map(dim => QUICK_WINS[dim.id as keyof typeof QUICK_WINS]).filter(Boolean)
+      };
 
-    if (showPDF) {
-        return (
-            <div className="min-h-screen bg-white">
-                <PrintableReport results={results} />
-                <div className="fixed bottom-4 right-4 print:hidden">
-                    <Button onClick={() => setShowPDF(false)} className="bg-slate-600">
-                        Volver
-                    </Button>
-                </div>
-            </div>
-        );
+      setResults(guestResults);
+      setIsGuest(true);
+
+      if (isDirectPdf) {
+        setShowPDF(true);
+        setTimeout(() => window.print(), 500);
+      }
+      return;
     }
 
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+      try {
+        const state = JSON.parse(saved);
+        if (!state.isCompleted) {
+          navigate('/radar');
+          return;
+        }
+
+        const calculated = calculateResults(state.answers);
+        setResults(calculated);
+        logEvent(AnalyticsEvent.REPORT_VIEW);
+        logEvent(AnalyticsEvent.FINAL_RESULT_VIEW);
+      } catch (e) {
+        navigate('/');
+      }
+    } else {
+      navigate('/');
+    }
+  }, [navigate]);
+
+  if (!results) {
+    return <div className="min-h-screen flex items-center justify-center dark:text-white">Cargando...</div>;
+  }
+
+  const getExposureMeta = (score: number) => {
+    if (score < 40) return { label: "Alta", badge: "bg-red-600", text: "text-red-600", border: "border-red-200" };
+    if (score < 70) return { label: "Media", badge: "bg-amber-500", text: "text-amber-600", border: "border-amber-200" };
+    return { label: "Baja", badge: "bg-green-600", text: "text-green-600", border: "border-green-200" };
+  };
+
+  const exposure = getExposureMeta(results.globalScore);
+  const mainRisk = results.topRisks[0];
+  const mainRiskLabel = results.dimensionScores.find(d => d.id === mainRisk?.dimension)?.label || "Coste invisible";
+  const summary =
+    results.globalScore < 40
+      ? "Tu diagnostico apunta a una fuga de capacidad que ya se esta pagando en coste, mandos o continuidad."
+      : results.globalScore < 70
+        ? "Tu empresa tiene parte del problema visible, pero aun hay zonas grises donde el absentismo se convierte en coste."
+        : "Tu empresa muestra una base razonable de control. El foco ahora es anticipar desviaciones y evitar costes normalizados.";
+
+  const buildPayload = (status: string) => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return null;
+
+    const state = JSON.parse(saved);
+    state.answers['meeting_optin'] = status;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
+    const calc = calculateResults(state.answers);
+    const firstRisk = calc.topRisks[0]?.dimension || "D1";
+    const firstRiskLabel = calc.dimensionScores.find(d => d.id === firstRisk)?.label || "";
+
+    return {
+      contact: {
+        name: state.answers['firstname'] || "",
+        firstname: state.answers['firstname'] || "",
+        lastname: "",
+        email: state.answers['email'] || "",
+        company: state.answers['company'] || "",
+        role: state.answers['role'] || "",
+        company_size: state.answers['company_size'] || "",
+        sector: state.answers['sector'] || "",
+        work_model: state.answers['work_model'] || "",
+        pain_point: firstRiskLabel,
+        pain_point_1: firstRiskLabel,
+        pain_point_2: calc.dimensionScores.find(d => d.id === calc.topRisks[1]?.dimension)?.label || "",
+        pain_point_3: calc.dimensionScores.find(d => d.id === calc.topRisks[2]?.dimension)?.label || "",
+        pain_points_txt: calc.topRisks
+          .map(r => calc.dimensionScores.find(d => d.id === r.dimension)?.label)
+          .filter(Boolean)
+          .join(", ")
+      },
+      survey: {
+        globalScore: calc.globalScore,
+        d1: calc.dimensionScores.find(d => d.id === "D1")?.score || 0,
+        d2: calc.dimensionScores.find(d => d.id === "D2")?.score || 0,
+        d3: calc.dimensionScores.find(d => d.id === "D3")?.score || 0,
+        d4: calc.dimensionScores.find(d => d.id === "D4")?.score || 0,
+        t: calc.dimensionScores.find(d => d.id === "T")?.score || 0,
+        r1: calc.topRisks[0]?.dimension || "D1",
+        r2: calc.topRisks[1]?.dimension || "D2",
+        r3: calc.topRisks[2]?.dimension || "T",
+        risks: calc.topRisks,
+        scores: calc.dimensionScores.reduce((acc, curr) => ({ ...acc, [curr.id]: curr.score }), {} as Record<string, number>),
+        answers: state.answers
+      },
+      meta: { timestamp: new Date().toISOString(), meetingOptIn: status, isUnlocked: false }
+    };
+  };
+
+  const notifyMake = async (status: string) => {
+    if (!APP_CONFIG.POST_ENDPOINT_URL) return;
+    const payload = buildPayload(status);
+    if (!payload) return;
+
+    try {
+      await fetch(APP_CONFIG.POST_ENDPOINT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      });
+    } catch (e) {
+      console.error("Error notifying Make:", e);
+    }
+  };
+
+  const handleBookCall = () => {
+    logEvent(AnalyticsEvent.BOOK_CALL_CLICKED);
+    navigate('/agendar');
+  };
+
+  const handleDownloadPDF = () => {
+    logEvent(AnalyticsEvent.REPORT_DOWNLOAD);
+    notifyMake("Downloaded Report");
+    window.print();
+  };
+
+  if (showPDF) {
     return (
-        <>
-        <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 pb-20 text-white print:hidden">
-            <div className="max-w-2xl mx-auto px-4 py-12">
-                
-                {/* Logo */}
-                <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
-                        GFS Consulting
-                    </h1>
-                </div>
-
-                {/* Resultado simplificado - Teaser */}
-                <div className="bg-slate-800/50 rounded-2xl p-8 border border-slate-700 text-center mb-8">
-
-                    {/* Check icon */}
-                    <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <CheckCircle className="w-8 h-8 text-green-400" />
-                    </div>
-
-                    <h2 className="text-2xl font-bold text-white mb-2">
-                        ¡Diagnóstico completado!
-                    </h2>
-
-                    <p className="text-slate-400 mb-6">
-                        Tu informe ejecutivo llegará a tu email en <span className="text-white font-semibold">menos de 5 minutos</span>.
-                    </p>
-
-                    {/* Nivel de exposición */}
-                    <div className="inline-flex items-center px-6 py-3 rounded-full font-bold mb-4 bg-slate-700">
-                        {results.globalScore < 40 ? (
-                            <span className="text-red-400">🔴 Exposición Alta</span>
-                        ) : results.globalScore < 70 ? (
-                            <span className="text-amber-400">🟡 Exposición Media</span>
-                        ) : (
-                            <span className="text-green-400">🟢 Exposición Baja</span>
-                        )}
-                    </div>
-
-                    {/* Score global */}
-                    <div className="mb-6">
-                        <p className="text-sm text-slate-400 mb-1">Tu puntuación global</p>
-                        <p className="text-4xl font-bold text-white">{results.globalScore}<span className="text-lg text-slate-500">/100</span></p>
-                    </div>
-
-                    {/* Área principal - solo 1 */}
-                    {results.topRisks[0] && (
-                        <div className="mt-4 p-4 bg-slate-700/50 rounded-lg">
-                            <p className="text-sm text-slate-400 mb-1">
-                                {results.globalScore >= 75 ? "Tu mayor fortaleza:" :
-                                 results.globalScore >= 40 ? "Prioridad inmediata:" :
-                                 "🚨 Riesgo crítico:"}
-                            </p>
-                            <p className="text-lg font-semibold text-white">
-                                {results.dimensionScores.find(d => d.id === results.topRisks[0].dimension)?.label}
-                            </p>
-                            {results.quickWins[0] && (
-                                <p className="text-sm text-slate-300 mt-2 italic">"{results.quickWins[0]}"</p>
-                            )}
-                        </div>
-                    )}
-
-                    <div className="mt-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600/50">
-                        <p className="text-xs text-slate-400">📊 Informe completo con análisis de {results.dimensionScores.length} dimensiones + hoja de ruta personalizada</p>
-                    </div>
-                </div>
-
-                {/* Quick Win - Valor inmediato */}
-                {!isGuest && results.quickWins[0] && (
-                    <div className="bg-gradient-to-r from-accent1/20 to-accent2/20 rounded-xl p-6 border border-accent1/30 mb-8">
-                        <p className="text-sm text-slate-300 mb-2">💡 <span className="font-semibold text-white">Acción recomendada para esta semana:</span></p>
-                        <p className="text-white">{results.quickWins[0]}</p>
-                    </div>
-                )}
-
-                {/* CTA Principal - Más persuasivo */}
-                {!isGuest && (
-                    <>
-                    <div className="text-center mb-6">
-                        <div className="mb-4 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-                            <p className="text-slate-300 mb-2">¿Quieres entender <span className="text-white font-semibold">qué significan estos resultados</span> para tu equipo?</p>
-                            <ul className="text-sm text-slate-400 text-left max-w-md mx-auto space-y-1">
-                                <li className="flex items-start">
-                                    <span className="text-accent1 mr-2">✓</span>
-                                    Interpretación personalizada de tu diagnóstico
-                                </li>
-                                <li className="flex items-start">
-                                    <span className="text-accent1 mr-2">✓</span>
-                                    Priorización de los 3 primeros pasos
-                                </li>
-                                <li className="flex items-start">
-                                    <span className="text-accent1 mr-2">✓</span>
-                                    Sin coste, sin compromiso
-                                </li>
-                            </ul>
-                        </div>
-
-                        <Button onClick={handleBookCall} className="px-8 py-4 text-lg shadow-lg shadow-accent1/20 w-full sm:w-auto">
-                            <Calendar className="w-5 h-5 mr-2" />
-                            Agendar llamada gratuita de 15 min
-                        </Button>
-                        <p className="mt-2 text-xs text-slate-500">Disponible esta semana • Solo 3 cupos diarios</p>
-                    </div>
-
-                    {/* Secondary */}
-                    <div className="text-center mb-8 h-20 flex flex-col justify-center items-center">
-                        {isEmailed ? (
-                            <div className="flex items-center text-green-400 font-medium animate-fade-in">
-                                <CheckCircle className="w-5 h-5 mr-2" />
-                                <span>¡Solicitud recibida! Revisa tu email.</span>
-                            </div>
-                        ) : (
-                            <button
-                                onClick={async () => {
-                                    logEvent(AnalyticsEvent.CLICK_REQUEST_REVIEW);
-                                    notifyMake("Skipped");
-                                    setIsEmailed(true);
-                                }}
-                                className="w-full max-w-sm py-3 px-6 mt-4 bg-slate-800/80 border border-slate-600 hover:border-slate-500 rounded-xl text-slate-300 font-medium hover:bg-slate-700 transition-all shadow-sm active:scale-[0.98]"
-                            >
-                                No gracias, revisaré el informe por mi cuenta
-                            </button>
-                        )}
-                    </div>
-                    </>
-                )}
-
-                <div className="mt-4 text-center">
-                    <p className="text-slate-300 mb-4">
-                        Descarga tu informe ejecutivo detallado aquí:
-                    </p>
-                    <button 
-                        onClick={handleDownloadPDF}
-                        className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center justify-center gap-2 mx-auto bg-slate-800/50 px-6 py-3 rounded-full border border-slate-700"
-                    >
-                        <Download className="w-5 h-5" />
-                        Descargar Informe PDF
-                    </button>
-                </div>
-
-                {/* Footer */}
-                <div className="mt-12 text-center text-xs text-slate-600">
-                    <p>© {new Date().getFullYear()} GFS Consulting</p>
-                </div>
-            </div>
+      <div className="min-h-screen bg-white">
+        <PrintableReport results={results} />
+        <div className="fixed bottom-4 right-4 print:hidden">
+          <Button onClick={() => setShowPDF(false)} className="bg-slate-600">
+            Volver
+          </Button>
         </div>
-
-        {/* Hidden area strictly for native printing without state change */}
-        <div className="hidden print:block bg-white text-black min-h-screen">
-            <PrintableReport results={results} />
-        </div>
-        </>
+      </div>
     );
+  }
+
+  return (
+    <>
+      <div className="min-h-screen bg-bgLight dark:bg-darkBg pb-20 print:hidden">
+        <div className="max-w-5xl mx-auto px-4 py-10 sm:py-14">
+          <div className="text-center mb-8">
+            <p className="text-sm font-bold uppercase tracking-wide text-accent1">Informe de fuga de capacidad</p>
+            <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold text-primary dark:text-white">
+              Diagnostico completado
+            </h1>
+            {!isGuest && (
+              <p className="mt-3 text-slate-600 dark:text-slate-300">
+                Tambien enviaremos una copia a tu email para que puedas revisarla o reenviarla internamente.
+              </p>
+            )}
+          </div>
+
+          <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-6">
+            <div className={`bg-white dark:bg-slate-900 border ${exposure.border} dark:border-slate-700 rounded-lg p-6 shadow-sm`}>
+              <div className="flex items-center justify-between gap-4 mb-6">
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Nivel de exposicion</p>
+                  <p className={`text-3xl font-black ${exposure.text}`}>{exposure.label}</p>
+                </div>
+                <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                  <span className="text-3xl font-black text-primary dark:text-white">{results.globalScore}</span>
+                </div>
+              </div>
+
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{summary}</p>
+
+              <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <p className="text-sm text-slate-500 dark:text-slate-400">Tu fuga principal</p>
+                <p className="mt-1 text-xl font-bold text-primary dark:text-white">{mainRiskLabel}</p>
+                {results.quickWins[0] && (
+                  <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">{results.quickWins[0]}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-primary dark:text-white mb-4 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-accent1" />
+                Resultado por foco
+              </h2>
+
+              <div className="space-y-4">
+                {results.dimensionScores.map((dim) => {
+                  const dimExposure = getExposureMeta(dim.score);
+                  return (
+                    <div key={dim.id}>
+                      <div className="flex items-center justify-between gap-4 mb-2">
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{dim.label}</span>
+                        <span className={`text-xs font-bold ${dimExposure.text}`}>{dimExposure.label}</span>
+                      </div>
+                      <div className="h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full ${dimExposure.badge}`}
+                          style={{ width: `${Math.max(dim.score, 8)}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-6 grid sm:grid-cols-3 gap-3">
+                <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                  <p className="text-xl font-black text-accent1">7,1%</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">horas pactadas perdidas</p>
+                </div>
+                <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                  <p className="text-xl font-black text-accent1">5,5%</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">por baja medica</p>
+                </div>
+                <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                  <p className="text-xl font-black text-accent1">12,3%</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">sectores de mayor exposicion</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {!isGuest && (
+            <div className="mt-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 shadow-sm">
+              <div className="grid lg:grid-cols-[1fr_auto] gap-5 items-center">
+                <div>
+                  <h2 className="text-xl font-bold text-primary dark:text-white flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-amber-500" />
+                    El siguiente paso natural
+                  </h2>
+                  <p className="mt-2 text-slate-600 dark:text-slate-300">
+                    Tu resultado ya muestra una prioridad clara. En una revision de 15 minutos vemos que significa tu nivel de exposicion, que respuesta apunta a mayor coste oculto y que dato pedir primero a RRHH u Operaciones.
+                  </p>
+                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                    Sin preparacion previa. Sin datos medicos. Solo interpretacion ejecutiva del diagnostico.
+                  </p>
+                </div>
+                <Button onClick={handleBookCall} className="px-7 py-4 text-base rounded-md w-full lg:w-auto">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Revisar mis 3 palancas
+                </Button>
+              </div>
+
+              <div className="mt-5 flex flex-col sm:flex-row gap-3 items-center justify-center">
+                {isEmailed ? (
+                  <div className="flex items-center text-green-600 font-medium">
+                    <CheckCircle className="w-5 h-5 mr-2" />
+                    Lo dejamos marcado para revision por tu cuenta.
+                  </div>
+                ) : (
+                  <button
+                    onClick={async () => {
+                      logEvent(AnalyticsEvent.CLICK_REQUEST_REVIEW);
+                      await notifyMake("Skipped");
+                      setIsEmailed(true);
+                    }}
+                    className="w-full sm:w-auto py-3 px-5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                  >
+                    Prefiero revisar el informe por mi cuenta
+                  </button>
+                )}
+
+                <button
+                  onClick={handleDownloadPDF}
+                  className="w-full sm:w-auto text-sm text-accent2 hover:text-accent1 flex items-center justify-center gap-2 bg-white dark:bg-slate-900 px-5 py-3 rounded-lg border border-slate-200 dark:border-slate-700 font-semibold"
+                >
+                  <Download className="w-5 h-5" />
+                  Descargar informe PDF
+                </button>
+              </div>
+            </div>
+          )}
+
+          {isGuest && (
+            <div className="mt-6 text-center">
+              <button
+                onClick={handleDownloadPDF}
+                className="text-sm text-accent2 hover:text-accent1 inline-flex items-center justify-center gap-2 bg-white dark:bg-slate-900 px-5 py-3 rounded-lg border border-slate-200 dark:border-slate-700 font-semibold"
+              >
+                <Download className="w-5 h-5" />
+                Descargar informe PDF
+              </button>
+            </div>
+          )}
+
+          <div className="mt-10 text-center text-xs text-slate-500">
+            <p>GFS Consulting. Diagnostico generado automaticamente.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="hidden print:block bg-white text-black min-h-screen">
+        <PrintableReport results={results} />
+      </div>
+    </>
+  );
 };
 
 export default Results;

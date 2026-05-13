@@ -1,67 +1,122 @@
 import { DIMENSIONS, QUICK_WINS } from "../constants";
 import { AnswerValue, ResultData } from "../types";
 
+const OPTION_SCORES: Record<string, Record<string, number>> = {
+  q1: {
+    "Hoy no parece un problema serio": 82,
+    "En operaciones: hay que mover turnos o tareas": 45,
+    "En clientes: bajan tiempos, calidad o servicio": 38,
+    "En los mandos: acaban tapando huecos": 32,
+    "En el equipo: se reparte la carga y se tensa": 30
+  },
+  q2: {
+    "Tenemos sustitucion clara y funciona": 88,
+    "Tiramos de companeros hasta que vuelva": 42,
+    "Se acumula trabajo y luego hay que recuperarlo": 35,
+    "Depende demasiado del jefe directo": 30,
+    "No lo vemos hasta que ya molesta": 22
+  },
+  q3: {
+    "Si: lo vemos en euros y por area": 90,
+    "Vemos dias perdidos, pero no euros": 55,
+    "Sabemos que duele, pero no cuanto": 38,
+    "Solo lo miramos cuando hay una crisis": 28,
+    "No tenemos un dato fiable": 20
+  },
+  q4: {
+    "Cansancio, estres o saturacion": 42,
+    "Dolor fisico, lesiones o problemas de salud": 50,
+    "Mal ambiente, jefes o conflictos": 35,
+    "Picos de carga, turnos o mala organizacion": 38,
+    "No vemos un patron claro": 22
+  },
+  q5: {
+    "Antes de que la baja se alargue": 90,
+    "En la primera semana": 78,
+    "Cuando ya afecta al equipo": 42,
+    "Cuando el mando pide ayuda": 36,
+    "Cuando la persona vuelve": 24
+  },
+  q6: {
+    "Se notaria en margen o costes": 48,
+    "Se notaria en clientes o servicio": 42,
+    "Se notaria en el cansancio del equipo": 36,
+    "Lo absorberiamos como siempre": 28,
+    "No lo hemos calculado": 20
+  }
+};
+
+const QUESTION_MAPPING: Record<string, string[]> = {
+  D1: ["q3"],
+  D2: ["q1", "q2"],
+  D3: ["q4"],
+  D4: ["q5"],
+  T: ["q6"]
+};
+
+const getQuestionScore = (questionId: string, value: AnswerValue): number | null => {
+  if (typeof value === "number") {
+    return Math.round(((value - 1) / 4) * 100);
+  }
+
+  if (typeof value === "string") {
+    return OPTION_SCORES[questionId]?.[value] ?? null;
+  }
+
+  return null;
+};
+
 export const calculateResults = (answers: Record<string, AnswerValue>): ResultData => {
-
   const getDimensionScore = (dimKey: string): number => {
-    const questionMapping: Record<string, string[]> = {
-      'D1': ['q4'],
-      'D2': ['q5'],
-      'D3': ['q1', 'q2', 'q3', 'q8'],
-      'D4': ['q7'],
-      'T': ['q6']
-    };
-    
-    const questionIds = questionMapping[dimKey] || [];
-    const answeredKeys = questionIds.filter(id => {
-      const val = answers[id];
-      return typeof val === 'number';
-    });
+    const questionIds = QUESTION_MAPPING[dimKey] || [];
+    const scores = questionIds
+      .map((id) => getQuestionScore(id, answers[id]))
+      .filter((score): score is number => typeof score === "number");
 
-    if (answeredKeys.length === 0) return 0;
+    if (scores.length === 0) return 100;
 
-    const sum = answeredKeys.reduce((acc, key) => {
-      const val = answers[key] as number;
-      return acc + val;
-    }, 0);
-
-    const average = sum / answeredKeys.length;
-    return Math.round(((average - 1) / 4) * 100);
+    const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    return Math.round(average);
   };
 
   const scores = Object.entries(DIMENSIONS).map(([key, config]) => ({
     id: key,
     label: config.label,
     score: getDimensionScore(key),
-    color: '#22D3EE'
+    color: "#0F766E"
   }));
 
   let weightedSum = 0;
-  scores.forEach(s => {
-    const weight = DIMENSIONS[s.id as keyof typeof DIMENSIONS].weight;
-    weightedSum += s.score * weight;
+  let totalWeight = 0;
+
+  scores.forEach((score) => {
+    const questionIds = QUESTION_MAPPING[score.id] || [];
+    const hasAnsweredDimension = questionIds.some((id) => answers[id] !== undefined && answers[id] !== null);
+
+    if (hasAnsweredDimension) {
+      const weight = DIMENSIONS[score.id as keyof typeof DIMENSIONS].weight;
+      weightedSum += score.score * weight;
+      totalWeight += weight;
+    }
   });
 
-  const globalScore = Math.round(weightedSum);
+  const globalScore = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
+  const answeredScores = scores.filter((score) => {
+    const questionIds = QUESTION_MAPPING[score.id] || [];
+    return questionIds.some((id) => answers[id] !== undefined && answers[id] !== null);
+  });
 
-  const sortedByScore = [...scores].sort((a, b) => a.score - b.score);
+  const sortedByScore = [...(answeredScores.length ? answeredScores : scores)].sort((a, b) => a.score - b.score);
 
-  const governanceScore = scores.find(s => s.id === 'T')?.score || 100;
+  const topRisks = sortedByScore.slice(0, 3).map((score) => ({
+    dimension: score.id,
+    score: score.score
+  }));
 
-  const topRisks = [];
-  topRisks.push({ dimension: sortedByScore[0].id, score: sortedByScore[0].score });
-
-  if (governanceScore <= 40 && sortedByScore[0].id !== 'T') {
-    topRisks.push({ dimension: 'T', score: governanceScore });
-  } else {
-    const second = sortedByScore.find(s => s.id !== topRisks[0].dimension);
-    if (second) topRisks.push({ dimension: second.id, score: second.score });
-  }
-
-  const third = sortedByScore.find(s => !topRisks.map(r => r.dimension).includes(s.id));
-  if (third) topRisks.push({ dimension: third.id, score: third.score });
-
-  const suggestedWins = sortedByScore.slice(0, 3).map(s => QUICK_WINS[s.id as keyof typeof QUICK_WINS]);
+  const suggestedWins = sortedByScore
+    .slice(0, 3)
+    .map((score) => QUICK_WINS[score.id as keyof typeof QUICK_WINS])
+    .filter(Boolean);
 
   return {
     globalScore,

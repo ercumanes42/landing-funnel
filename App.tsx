@@ -8,12 +8,12 @@ import BookingPage from './pages/BookingPage';
 import Dashboard from './pages/Dashboard';
 import DashboardResults from './pages/DashboardResults';
 import { logEvent, AnalyticsEvent } from './utils/analytics';
+import { STORAGE_KEY } from './constants';
 
 const PageTracker = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Log page views
     logEvent(AnalyticsEvent.VIEW_LANDING, { path: location.pathname });
     window.scrollTo(0, 0);
   }, [location]);
@@ -48,32 +48,26 @@ const App: React.FC = () => {
     }
   };
 
-  // Auto-identify user from URL (Email Tracking)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const emailFromUrl = params.get('email');
 
     if (emailFromUrl) {
-      // Clean potential dirty chars
       const email = emailFromUrl.trim().replace(/\s/g, '');
       if (email.includes('@')) {
-        console.log(`[Auto-Identify] Found email in URL: ${email}`);
-
-        // Save to local storage for the wizard to pick up later
-        const savedState = localStorage.getItem('radar_state');
+        const savedState = localStorage.getItem(STORAGE_KEY);
         let stateObj;
         try {
           stateObj = savedState ? JSON.parse(savedState) : { step: 0, answers: {}, isCompleted: false };
         } catch (e) {
           stateObj = { step: 0, answers: {}, isCompleted: false };
         }
-        
-        stateObj.answers = { ...stateObj.answers, email: email };
-        localStorage.setItem('radar_state', JSON.stringify(stateObj));
 
-        // Identify in PostHog immediately
+        stateObj.answers = { ...stateObj.answers, email };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stateObj));
+
         import('posthog-js').then(({ default: posthog }) => {
-          posthog.identify(email, { email: email, source: 'email_campaign' });
+          posthog.identify(email, { email, source: 'email_campaign' });
           posthog.capture('auto_identified_from_email', { email });
         });
       }
@@ -87,19 +81,18 @@ const App: React.FC = () => {
         <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 dark:border-gray-800 print:hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-accent1 to-accent2">
-                DIAGNÓSTICO
+              <span className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-accent1 to-accent2">
+                DIAGNOSTICO ABSENTISMO
               </span>
             </div>
             <div className="flex items-center gap-4">
               <button
                 onClick={toggleTheme}
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-300 transition-colors"
-                aria-label="Toggle Dark Mode"
+                aria-label="Cambiar modo visual"
               >
                 {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </button>
-
             </div>
           </div>
         </header>
@@ -116,15 +109,17 @@ const App: React.FC = () => {
           </Routes>
         </main>
 
-        <footer className="bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-gray-800 py-12 print:hidden transition-colors duration-300">
+        <footer className="bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-gray-800 py-10 print:hidden transition-colors duration-300">
           <div className="max-w-7xl mx-auto px-4 text-center text-gray-500 dark:text-gray-400 text-sm">
             <p className="mb-4">© 2026 GFS Consulting. Todos los derechos reservados.</p>
             <div className="flex justify-center space-x-6">
-              <a href="#" className="hover:text-primary dark:hover:text-white transition-colors">Política de Privacidad</a>
+              <a href="#" className="hover:text-primary dark:hover:text-white transition-colors">Politica de Privacidad</a>
               <a href="#" className="hover:text-primary dark:hover:text-white transition-colors">Cookies</a>
               <a href="#" className="hover:text-primary dark:hover:text-white transition-colors">Contacto</a>
             </div>
-            <p className="mt-4 text-xs text-gray-400">Este es un prototipo demostrativo. Los datos no se almacenan permanentemente en servidor.</p>
+            <p className="mt-4 text-xs text-gray-400">
+              Diagnostico ejecutivo automatizado. No solicita datos medicos ni informacion individual de empleados.
+            </p>
           </div>
         </footer>
       </div>

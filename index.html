@@ -3,10 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DIAGNÓSTICO TALENTO+IA 2026 | Estrategia</title>
-    <meta name="description" content="Detecta tus 3 mayores riesgos de personas para 2026 y recibe un informe ejecutivo." />
-    
-    <!-- Google Fonts: Outfit -->
+    <title>Diagnostico de Coste Oculto del Absentismo | GFS Consulting</title>
+    <meta name="description" content="Calcula en 2 minutos donde se convierte el absentismo en coste, carga operativa o riesgo para el equipo." />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,13 +17,13 @@
         theme: {
           extend: {
             colors: {
-              primary: '#0B1220', // Negro suave
-              secondary: '#566079', // Gris
-              accent1: '#22D3EE', // Cian/Teal
-              accent2: '#A78BFA', // Violeta
-              success: '#22C55E',
+              primary: '#111827',
+              secondary: '#566079',
+              accent1: '#0F766E',
+              accent2: '#1D4ED8',
+              success: '#16A34A',
               warning: '#F59E0B',
-              danger: '#EF4444',
+              danger: '#DC2626',
               bgLight: '#F7F8FB',
               darkBg: '#0f172a'
             },
@@ -33,11 +32,11 @@
             },
             keyframes: {
               'glow': {
-                '0%, 100%': { 
-                  boxShadow: '0 0 5px rgba(34, 211, 238, 0.5), 0 0 10px rgba(34, 211, 238, 0.3)'
+                '0%, 100%': {
+                  boxShadow: '0 0 5px rgba(15, 118, 110, 0.35), 0 0 10px rgba(29, 78, 216, 0.2)'
                 },
-                '50%': { 
-                  boxShadow: '0 0 20px rgba(34, 211, 238, 0.8), 0 0 35px rgba(167, 139, 250, 0.6)'
+                '50%': {
+                  boxShadow: '0 0 18px rgba(15, 118, 110, 0.55), 0 0 30px rgba(29, 78, 216, 0.3)'
                 }
               },
               'fade-in': {
@@ -60,32 +59,32 @@
       }
     </script>
     <style>
-      /* Custom utilities for animation delays */
       .delay-100 { animation-delay: 100ms; }
       .delay-200 { animation-delay: 200ms; }
       .delay-250 { animation-delay: 250ms; }
       .delay-300 { animation-delay: 300ms; }
       .delay-400 { animation-delay: 400ms; }
       .delay-500 { animation-delay: 500ms; }
-      
+
       @media print {
         @page { margin: 0; size: auto; }
-        body { 
-          -webkit-print-color-adjust: exact; 
+        body {
+          -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
         }
         .no-print, header, footer { display: none !important; }
         .min-h-screen { min-height: auto !important; }
         .bg-gradient-to-b { background: white !important; }
       }
+
       .gradient-text {
-        background: linear-gradient(90deg, #22D3EE, #A78BFA);
+        background: linear-gradient(90deg, #0F766E, #1D4ED8);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
       }
     </style>
-  <script type="importmap">
+    <script type="importmap">
 {
   "imports": {
     "react/": "https://esm.sh/react@^19.2.3/",
@@ -96,10 +95,10 @@
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
   }
 }
-</script>
-</head>
+    </script>
+  </head>
   <body class="bg-bgLight dark:bg-darkBg text-primary dark:text-gray-100 antialiased transition-colors duration-300 font-sans">
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, FileText, ArrowRight, ShieldCheck, Clock } from 'lucide-react';
+import { ArrowRight, BarChart3, Calculator, Clock, FileText, ShieldCheck } from 'lucide-react';
 import Button from '../components/Button';
 import { logEvent, AnalyticsEvent } from '../utils/analytics';
 
@@ -15,70 +15,112 @@ const Landing: React.FC = () => {
 
   return (
     <div className="bg-bgLight dark:bg-darkBg transition-colors duration-300 overflow-x-hidden">
-      {/* Hero Section */}
-      <section className="min-h-[100svh] relative flex flex-col items-center justify-center pt-16 sm:pt-20 pb-8 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-100 via-white to-white dark:from-slate-900 dark:via-darkBg dark:to-darkBg">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full text-center flex flex-col items-center">
-          
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-primary dark:text-white mb-3 sm:mb-4 leading-tight max-w-4xl mx-auto animate-fade-in-up">
-            Diagnóstico Ejecutivo de <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent1 to-accent2">Talento y Organización 2026</span>
-          </h1>
-
-          <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 mb-5 sm:mb-6 leading-relaxed max-w-3xl mx-auto animate-fade-in-up delay-100">
-            Detecta tus principales riesgos en rotación, liderazgo, sucesión, clima y uso de IA en menos de 3 minutos.
-          </p>
-
-          <div className="flex flex-col gap-2 text-left mb-6 sm:mb-8 animate-fade-in-up delay-200 text-gray-700 dark:text-gray-300 mx-auto justify-center bg-white dark:bg-slate-800/50 p-3 sm:p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm inline-flex text-xs sm:text-sm">
-            <p className="flex items-center"><Clock className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 mr-2.5 flex-shrink-0" /> <span className="font-medium">8 preguntas rápidas</span></p>
-            <p className="flex items-center"><FileText className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 mr-2.5 flex-shrink-0" /> <span className="font-medium">Resultado instantáneo privado</span></p>
-            <p className="flex items-center"><CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 mr-2.5 flex-shrink-0" /> <span className="font-medium">Informe ejecutivo enviado por email</span></p>
-            <p className="flex items-center"><ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 mr-2.5 flex-shrink-0" /> <span className="font-medium">Sin coste, sin datos sensibles de tu equipo</span></p>
-          </div>
-
-          {/* Social Proof - Credibilidad suave */}
-          <div className="mt-8 mb-6 animate-fade-in-up delay-250 text-center">
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3 uppercase tracking-wider">Desarrollado por consultores de RRHH con +10 años de experiencia</p>
-            <div className="flex flex-wrap justify-center items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-              <span className="flex items-center gap-1">
-                <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                Metodología validada
-              </span>
-              <span className="flex items-center gap-1">
-                <FileText className="w-4 h-4 text-emerald-500" />
-                Informe ejecutivo gratuito
-              </span>
-              <span className="flex items-center gap-1">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                GDPR compliant
-              </span>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center animate-fade-in-up delay-300 w-full">
-            <Button onClick={handleStart} className="text-sm sm:text-base md:text-lg px-8 sm:px-10 py-4 sm:py-5 rounded-full animate-glow font-bold tracking-wide hover:scale-105 transition-transform duration-200 shadow-2xl shadow-accent1/30 w-full sm:w-auto max-w-xl text-base sm:text-lg">
-              Evaluar mi organización gratis
-              <ArrowRight className="ml-2 w-5 h-5 pointer-events-none" />
-            </Button>
-            <span className="mt-3 sm:mt-4 text-[10px] sm:text-xs md:text-sm font-medium text-gray-400 dark:text-gray-500">3 minutos • Resultados inmediatos • Sin compromiso</span>
-          </div>
-
-          {/* Trust Indicators */}
-          <div className="mt-12 animate-fade-in-up delay-400 max-w-2xl mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-              <div className="p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-gray-100 dark:border-gray-700">
-                <p className="text-2xl font-bold text-accent1">3 min</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Diagnóstico completo</p>
+      <section className="min-h-[calc(100svh-4rem)] flex items-center py-8 sm:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid lg:grid-cols-[1.02fr_0.98fr] gap-8 lg:gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 mb-5">
+                <ShieldCheck className="w-4 h-4 text-accent1" />
+                Sin datos medicos ni datos sensibles de empleados
               </div>
-              <div className="p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-gray-100 dark:border-gray-700">
-                <p className="text-2xl font-bold text-accent1">5</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Dimensiones evaluadas</p>
+
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-primary dark:text-white leading-tight max-w-4xl">
+                Diagnostico de Coste Oculto del Absentismo
+              </h1>
+
+              <p className="mt-5 text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
+                En 2 minutos identifica donde se esta convirtiendo el absentismo en coste, carga para mandos o riesgo operativo.
+              </p>
+
+              <div className="mt-7 flex flex-col sm:flex-row gap-3 sm:items-center">
+                <Button onClick={handleStart} className="text-base sm:text-lg px-7 py-4 rounded-md shadow-lg shadow-accent1/20 w-full sm:w-auto">
+                  Calcular mi fuga de capacidad
+                  <ArrowRight className="ml-2 w-5 h-5 pointer-events-none" />
+                </Button>
+                <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                  6 preguntas. Resultado inmediato. Informe descargable.
+                </span>
               </div>
-              <div className="p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-gray-100 dark:border-gray-700">
-                <p className="text-2xl font-bold text-accent1">100%</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Confidencial</p>
+
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                  <p className="text-2xl font-extrabold text-accent1">7,1%</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">horas pactadas perdidas en Espana, 2025T4</p>
+                </div>
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                  <p className="text-2xl font-extrabold text-accent1">5,5%</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">por baja medica en el mismo periodo</p>
+                </div>
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                  <p className="text-2xl font-extrabold text-accent1">12,3%</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">en los sectores con mayor exposicion</p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-500 dark:text-slate-400">
+                <span className="inline-flex items-center gap-1.5">
+                  <BarChart3 className="w-4 h-4 text-accent1" />
+                  Basado en fuentes publicas y benchmarks sectoriales
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <FileText className="w-4 h-4 text-accent1" />
+                  Pensado para Direccion, RRHH y Operaciones
+                </span>
               </div>
             </div>
-          </div>
 
+            <div className="lg:pl-4">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
+                <div className="border-b border-slate-200 dark:border-slate-700 px-5 py-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 font-bold">Vista previa</p>
+                    <p className="font-bold text-primary dark:text-white">Informe de fuga de capacidad</p>
+                  </div>
+                  <Calculator className="w-6 h-6 text-accent1" />
+                </div>
+
+                <div className="p-5 space-y-5">
+                  <div className="grid grid-cols-[88px_1fr] gap-4 items-center">
+                    <div className="w-20 h-20 rounded-full border-8 border-amber-400 flex items-center justify-center">
+                      <span className="text-2xl font-black text-primary dark:text-white">52</span>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Nivel estimado</p>
+                      <p className="text-xl font-bold text-primary dark:text-white">Exposicion media</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">El coste existe, pero todavia no esta completamente trazado.</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    {[
+                      { label: 'Coste invisible', value: 'Alto', color: 'bg-red-500' },
+                      { label: 'Sobrecarga operativa', value: 'Medio', color: 'bg-amber-500' },
+                      { label: 'Respuesta tardia', value: 'Medio', color: 'bg-amber-500' }
+                    ].map((item) => (
+                      <div key={item.label} className="flex items-center justify-between gap-4 border border-slate-100 dark:border-slate-800 rounded-md px-4 py-3">
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{item.label}</span>
+                        <span className={`text-xs font-bold text-white rounded px-2.5 py-1 ${item.color}`}>{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                    <p className="text-sm font-semibold text-primary dark:text-white flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-accent1" />
+                      Accion recomendada
+                    </p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300 mt-2">
+                      Convertir ausencias de los ultimos 90 dias en coste por area antes de lanzar medidas generales.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-4 text-xs text-slate-500 dark:text-slate-500 text-center">
+                Referencias: Randstad Research, INE, ONS, OMS/OIT y evidencia OCDE sobre retorno al trabajo.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </div>
