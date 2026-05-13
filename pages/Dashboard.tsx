@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Users, CheckCircle, Calendar, TrendingUp, MousePointer, Download, ArrowRight, Clock, Building2, Mail, Filter, Activity, Search, X, BarChart3, PieChart, Globe, AlertTriangle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, CartesianGrid } from 'recharts';
 import FunnelChart from '../components/FunnelChart';
-import dashboardData from '../dashboard_full_data.json';
+import dashboardData from '../dashboard_public_data.json';
 
 const StatCard = ({ title, value, icon: Icon, color, trend, subtitle }: any) => (
   <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all">

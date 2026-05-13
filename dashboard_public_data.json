@@ -1,0 +1,173 @@
+{
+  "config": {
+    "projectName": "Diagnostico Absentismo Laboral",
+    "totalEmailsSent": 670,
+    "dateRange180": {
+      "start": "2025-10-07",
+      "end": "2026-04-07"
+    },
+    "landingV2ChangeDate": "2026-03-01",
+    "excludedEmail": "privado"
+  },
+  "historical_data": {
+    "period_feb_25_27": {
+      "name": "25-27 Febrero 2026",
+      "uniqueUsers": 20,
+      "view_landing": 16,
+      "started_survey": 4,
+      "completed_survey": 0,
+      "booked_call": 0,
+      "conversion_start": "20.0%",
+      "conversion_complete": "0.0%"
+    },
+    "period_mar_02_06": {
+      "name": "2-6 Marzo 2026",
+      "uniqueUsers": 92,
+      "view_landing": 81,
+      "started_survey": 19,
+      "completed_survey": 3,
+      "booked_call": 0,
+      "conversion_start": "15.2%",
+      "conversion_complete": "21.4%",
+      "leads_captured": 3
+    },
+    "period_mar_04": {
+      "name": "4 Marzo 2026",
+      "uniqueUsers": 15,
+      "view_landing": 35,
+      "started_survey": 6,
+      "completed_survey": 1,
+      "booked_call": 0,
+      "diagnostic_complete": 1,
+      "report_download": 2
+    },
+    "period_apr_03_05": {
+      "name": "3-5 Abril 2026",
+      "uniqueUsers": 8,
+      "view_landing": 7,
+      "started_survey": 3,
+      "completed_survey": 1,
+      "mini_result_view": 1,
+      "note": "Datos agregados y anonimizados"
+    }
+  },
+  "summary": {
+    "totalPersons": 188,
+    "totalEvents": 15000,
+    "date_range": {
+      "start": "2026-02-25",
+      "end": "2026-04-05"
+    },
+    "uniqueVisitorsWithEvents": 135,
+    "emailsTracked": 187,
+    "totalCompleted": 5,
+    "totalBooked": 0
+  },
+  "funnel": {
+    "view_landing": {
+      "count": 139,
+      "percentage": 100,
+      "label": "Vieron la Landing"
+    },
+    "diagnostic_start": {
+      "count": 32,
+      "percentage": 23,
+      "label": "Iniciaron Diagnostico"
+    },
+    "block_1_complete": {
+      "count": 8,
+      "percentage": 6,
+      "label": "Completaron Bloque 1"
+    },
+    "block_2_complete": {
+      "count": 8,
+      "percentage": 6,
+      "label": "Completaron Bloque 2"
+    },
+    "mini_result_view": {
+      "count": 8,
+      "percentage": 6,
+      "label": "Vieron Resultados"
+    }
+  },
+  "users": [
+    {
+      "email": "lead-001@example.invalid",
+      "company": "Empresa A",
+      "events": 10800,
+      "sessionDuration": "38m",
+      "lastActive": "2026-04-05",
+      "stages": {
+        "view_landing": true,
+        "diagnostic_start": true,
+        "block_1_complete": true,
+        "block_2_complete": true,
+        "mini_result_view": true
+      }
+    },
+    {
+      "email": "lead-002@example.invalid",
+      "company": "Empresa B",
+      "events": 1500,
+      "sessionDuration": "12m",
+      "lastActive": "2026-04-04",
+      "stages": {
+        "view_landing": true,
+        "diagnostic_start": true,
+        "block_1_complete": true,
+        "block_2_complete": false,
+        "mini_result_view": false
+      }
+    },
+    {
+      "email": "lead-003@example.invalid",
+      "company": "Empresa C",
+      "events": 450,
+      "sessionDuration": "8m",
+      "lastActive": "2026-04-03",
+      "stages": {
+        "view_landing": true,
+        "diagnostic_start": true,
+        "block_1_complete": false,
+        "block_2_complete": false,
+        "mini_result_view": false
+      }
+    },
+    {
+      "email": "lead-004@example.invalid",
+      "company": "Empresa D",
+      "events": 225,
+      "sessionDuration": "4m",
+      "lastActive": "2026-04-03",
+      "stages": {
+        "view_landing": true,
+        "diagnostic_start": false,
+        "block_1_complete": false,
+        "block_2_complete": false,
+        "mini_result_view": false
+      }
+    }
+  ],
+  "companies": [
+    { "name": "Empresa A", "leads": 5 },
+    { "name": "Empresa B", "leads": 5 },
+    { "name": "Empresa C", "leads": 4 },
+    { "name": "Empresa D", "leads": 4 },
+    { "name": "Empresa E", "leads": 3 },
+    { "name": "Empresa F", "leads": 3 },
+    { "name": "Empresa G", "leads": 2 },
+    { "name": "Empresa H", "leads": 2 }
+  ],
+  "topLeads": [
+    { "email": "lead-001@example.invalid", "company": "Empresa A", "score": 95, "status": "completed" },
+    { "email": "lead-002@example.invalid", "company": "Empresa B", "score": 88, "status": "registered" },
+    { "email": "lead-003@example.invalid", "company": "Empresa C", "score": 78, "status": "in_progress" },
+    { "email": "lead-004@example.invalid", "company": "Empresa D", "score": 65, "status": "in_progress" }
+  ],
+  "sessionMetrics": {
+    "avgDuration": "9m 24s",
+    "avgPagesViewed": "4.2",
+    "bounceRate": "38%",
+    "maxDuration": "38m"
+  }
+}

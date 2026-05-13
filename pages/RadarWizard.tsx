@@ -189,7 +189,9 @@ const RadarWizard: React.FC = () => {
       },
       meta: {
         timestamp: new Date().toISOString(),
-        meetingOptIn
+        meetingOptIn,
+        reportDelivery: "all_completed_leads",
+        conversionLogic: "report_for_internal_review_booking_for_interpretation"
       }
     };
   };

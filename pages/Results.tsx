@@ -142,7 +142,13 @@ const Results: React.FC = () => {
         scores: calc.dimensionScores.reduce((acc, curr) => ({ ...acc, [curr.id]: curr.score }), {} as Record<string, number>),
         answers: state.answers
       },
-      meta: { timestamp: new Date().toISOString(), meetingOptIn: status, isUnlocked: false }
+      meta: {
+        timestamp: new Date().toISOString(),
+        meetingOptIn: status,
+        reportDelivery: "all_completed_leads",
+        conversionLogic: "report_for_internal_review_booking_for_interpretation",
+        isUnlocked: false
+      }
     };
   };
 
@@ -171,6 +177,7 @@ const Results: React.FC = () => {
   const handleDownloadPDF = () => {
     logEvent(AnalyticsEvent.REPORT_DOWNLOAD);
     notifyMake("Downloaded Report");
+    setIsEmailed(true);
     window.print();
   };
 
@@ -198,7 +205,7 @@ const Results: React.FC = () => {
             </h1>
             {!isGuest && (
               <p className="mt-3 text-slate-600 dark:text-slate-300">
-                Tambien enviaremos una copia a tu email para que puedas revisarla o reenviarla internamente.
+                El informe queda disponible ahora para revisarlo, descargarlo o reenviarlo internamente.
               </p>
             )}
           </div>
@@ -275,47 +282,38 @@ const Results: React.FC = () => {
                 <div>
                   <h2 className="text-xl font-bold text-primary dark:text-white flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-amber-500" />
-                    El siguiente paso natural
+                    Del diagnostico a decision interna
                   </h2>
                   <p className="mt-2 text-slate-600 dark:text-slate-300">
-                    Tu resultado ya muestra una prioridad clara. En una revision de 15 minutos vemos que significa tu nivel de exposicion, que respuesta apunta a mayor coste oculto y que dato pedir primero a RRHH u Operaciones.
+                    El informe te muestra donde esta la fuga. La revision te muestra que palanca mover primero: coste real, causa probable o momento de actuacion.
                   </p>
                   <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                    Sin preparacion previa. Sin datos medicos. Solo interpretacion ejecutiva del diagnostico.
+                    En 15 minutos ordenamos tus 3 palancas y dejamos claro que dato pedir primero a RRHH, Operaciones o Finanzas.
                   </p>
                 </div>
                 <Button onClick={handleBookCall} className="px-7 py-4 text-base rounded-md w-full lg:w-auto">
                   <Calendar className="w-5 h-5 mr-2" />
-                  Revisar mis 3 palancas
+                  Saber que palanca mover primero
                 </Button>
               </div>
 
-              <div className="mt-5 flex flex-col sm:flex-row gap-3 items-center justify-center">
+              <div className="mt-5 flex flex-col gap-3 items-center justify-center">
                 {isEmailed ? (
                   <div className="flex items-center text-green-600 font-medium">
                     <CheckCircle className="w-5 h-5 mr-2" />
-                    Lo dejamos marcado para revision por tu cuenta.
+                    Informe listo para revision interna.
                   </div>
                 ) : (
                   <button
-                    onClick={async () => {
-                      logEvent(AnalyticsEvent.CLICK_REQUEST_REVIEW);
-                      await notifyMake("Skipped");
-                      setIsEmailed(true);
-                    }}
+                    onClick={handleDownloadPDF}
                     className="w-full sm:w-auto py-3 px-5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                   >
-                    Prefiero revisar el informe por mi cuenta
+                    Descargar informe para revisarlo internamente
                   </button>
                 )}
-
-                <button
-                  onClick={handleDownloadPDF}
-                  className="w-full sm:w-auto text-sm text-accent2 hover:text-accent1 flex items-center justify-center gap-2 bg-white dark:bg-slate-900 px-5 py-3 rounded-lg border border-slate-200 dark:border-slate-700 font-semibold"
-                >
-                  <Download className="w-5 h-5" />
-                  Descargar informe PDF
-                </button>
+                <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
+                  El informe es tuyo aunque no agendes. La revision solo sirve para priorizar la decision.
+                </p>
               </div>
             </div>
           )}
@@ -327,7 +325,7 @@ const Results: React.FC = () => {
                 className="text-sm text-accent2 hover:text-accent1 inline-flex items-center justify-center gap-2 bg-white dark:bg-slate-900 px-5 py-3 rounded-lg border border-slate-200 dark:border-slate-700 font-semibold"
               >
                 <Download className="w-5 h-5" />
-                Descargar informe PDF
+                Descargar informe para revisarlo internamente
               </button>
             </div>
           )}

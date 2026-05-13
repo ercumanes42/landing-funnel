@@ -378,43 +378,41 @@ Usar frases como:
 
 ### Rama A: agenda
 
-La pagina de resultados debe hacer que agendar sea interpretacion, no venta.
+La pagina de resultados debe hacer que agendar sea interpretacion, no venta. El informe no es el premio por agendar: el informe se entrega a todos los que completan. La llamada existe para ordenar la decision.
 
 Copy recomendado:
 
-> Tu resultado ya muestra una prioridad clara. La pregunta ahora no es "hacer mas cosas", sino decidir que dato mirar primero para no atacar el absentismo a ciegas.
+> El informe te muestra donde esta la fuga. La revision te muestra que palanca mover primero: coste real, causa probable o momento de actuacion.
 
 Bloque previo al CTA:
 
-> En una revision de 15 minutos vemos:
-> 1. Que significa tu nivel de exposicion.
-> 2. Que respuesta apunta a mayor coste oculto.
-> 3. Que primer dato pedir a RRHH/Operaciones antes de lanzar medidas.
+> En 15 minutos ordenamos tus 3 palancas y dejamos claro que dato pedir primero a RRHH, Operaciones o Finanzas.
 
 CTA exacto:
 
-> Revisar mis 3 palancas
+> Saber que palanca mover primero
 
 Microcopy:
 
-> Sin preparacion previa. Sin datos medicos. Solo interpretacion ejecutiva del diagnostico.
+> El informe es tuyo aunque no agendes. La revision solo sirve para priorizar la decision.
 
 ### Rama B: no agenda
 
 Boton secundario:
 
-> Prefiero revisar el informe por mi cuenta
+> Descargar informe para revisarlo internamente
 
 PDF descargable:
 
-Debe estar disenado para volver mas tarde:
+Debe estar disenado para circular internamente y volver mas tarde:
 
 - Portada sobria con nombre y fecha.
 - Resultado en una frase.
 - Benchmark con 3 cifras duras.
 - "Dato que deberias pedir esta semana".
 - "Senal de que conviene revisarlo con direccion".
-- CTA discreto al final: "Si quieres contrastarlo, usa este enlace para elegir 15 minutos".
+- Bloque final: "Siguiente decision interna: ordenar coste real, causa probable y momento de actuacion".
+- CTA discreto al final: "Si quieres priorizarlo con criterio externo, elige 15 minutos".
 
 No incluir precios, servicios, paquetes, promesas comerciales ni presentacion corporativa larga.
 
@@ -608,8 +606,8 @@ Email 5: Cierre util. Deja el diagnostico como recurso, sin insistir en reunion.
    - Causa no segmentada.
    - Respuesta tardia.
    - Normalizacion del impacto.
-7. Cambiar el CTA de agenda a "Revisar mis 3 palancas".
-8. Mantener PDF, pero convertirlo en one-pager ejecutivo reenviable.
+7. Cambiar el CTA de agenda a "Saber que palanca mover primero".
+8. Entregar el PDF a todos los que completan; convertirlo en one-pager ejecutivo reenviable.
 9. En Make, separar automatizaciones por:
    - completo y agenda,
    - completo y descarga,

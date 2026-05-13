@@ -64,6 +64,8 @@ const BookingPage: React.FC = () => {
       meta: {
         timestamp: new Date().toISOString(),
         meetingOptIn: confirmed ? "Confirmed Booking" : "Skipped",
+        reportDelivery: "all_completed_leads",
+        conversionLogic: "report_for_internal_review_booking_for_interpretation",
         isUnlocked: confirmed
       }
     };
@@ -177,19 +179,19 @@ const BookingPage: React.FC = () => {
         </button>
 
         <div className="text-center mb-6">
-          <p className="text-sm font-bold uppercase tracking-wide text-accent1">Revision ejecutiva de 15 minutos</p>
+          <p className="text-sm font-bold uppercase tracking-wide text-accent1">Interpretacion ejecutiva de 15 minutos</p>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-primary dark:text-white mt-2">
-            Revisar mis 3 palancas
+            Saber que palanca mover primero
           </h1>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mt-3">
-            Tu foco principal es {mainRiskLabel}. Selecciona un horario para interpretar el resultado y decidir que dato mirar primero.
+            Ya tienes el informe. Esta revision no es para repetirlo: es para traducir {mainRiskLabel} en una prioridad defendible ante Direccion, RRHH u Operaciones.
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto w-full">
           <div className="bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden relative">
             <div className="absolute top-0 right-0 bg-accent1 text-white text-xs font-bold px-3 py-1 rounded-bl-md z-10">
-              SIN PREPARACION PREVIA
+              SIN DEMO NI PREPARACION
             </div>
 
             {isBooked ? (
@@ -219,10 +221,10 @@ const BookingPage: React.FC = () => {
               onClick={handleSkip}
               className="w-full max-w-md py-4 px-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-lg text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-50 dark:hover:bg-slate-800 transition-all shadow-sm active:scale-[0.98]"
             >
-              Prefiero revisar el informe por mi cuenta
+              Volver al informe ejecutivo
             </button>
             <p className="mt-3 text-xs text-gray-400">
-              Recibiras el informe para revisarlo o reenviarlo internamente.
+              El informe seguira disponible para descargarlo y compartirlo internamente.
             </p>
           </div>
         </div>

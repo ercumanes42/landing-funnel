@@ -23,8 +23,8 @@ const PrintableReport: React.FC<PrintableReportProps> = ({ results }) => {
       <div className="p-8">
         <div className="flex justify-between items-start border-b-2 border-slate-900 pb-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Informe de Fuga de Capacidad por Absentismo</h1>
-            <p className="text-sm text-slate-500 mt-1">Diagnostico ejecutivo de coste, continuidad y respuesta temprana</p>
+            <h1 className="text-2xl font-bold text-slate-900">Informe Ejecutivo de Fuga de Capacidad por Absentismo</h1>
+            <p className="text-sm text-slate-500 mt-1">Diagnostico compartible para Direccion, RRHH y Operaciones</p>
           </div>
           <div className="text-right">
             <p className="font-bold text-lg text-slate-900">GFS Consulting</p>
@@ -115,8 +115,17 @@ const PrintableReport: React.FC<PrintableReportProps> = ({ results }) => {
           </p>
         </div>
 
+        <div className="mb-6 p-4 bg-slate-900 text-white rounded-lg">
+          <h3 className="font-bold text-lg mb-2">Siguiente decision interna</h3>
+          <p className="text-sm leading-relaxed text-slate-100">
+            Este informe identifica la fuga. La decision siguiente es ordenar las 3 palancas:
+            coste real, causa probable y momento de actuacion. Si no hay un dato claro, empieza por
+            calcular coste por area en los ultimos 90 dias antes de lanzar nuevas medidas.
+          </p>
+        </div>
+
         <div className="text-center text-xs text-slate-400 pt-4 border-t">
-          <p>Generado automaticamente por GFS Consulting. Este informe no contiene datos medicos ni informacion individual de empleados.</p>
+          <p>Generado automaticamente por GFS Consulting. Pensado para revision interna. No contiene datos medicos ni informacion individual de empleados.</p>
         </div>
       </div>
     </div>
