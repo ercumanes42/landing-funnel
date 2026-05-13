@@ -296,23 +296,24 @@ const RadarWizard: React.FC = () => {
       const exposure = getExposureLevel(miniResults.globalScore);
       const firstRisk = miniResults.topRisks[0];
       const firstRiskLabel = miniResults.dimensionScores.find(d => d.id === firstRisk?.dimension)?.label || "Coste invisible";
+      const firstQuickWin = miniResults.quickWins[0];
 
       const insight = miniResults.globalScore < 40
         ? {
-            title: "Ya aparece una fuga clara",
-            desc: "Tus primeras respuestas apuntan a un absentismo que probablemente se está pagando en coste, mandos o continuidad operativa.",
-            action: "Completa las 3 preguntas finales para ver el foco exacto."
+            title: "Diagnóstico Preliminar: Fuga de Capacidad Activa",
+            desc: "Tus respuestas indican que el absentismo ya está impactando directamente en tus operaciones o costes. No es solo un dato de RRHH, es capacidad que estás perdiendo cada día.",
+            action: "Completa los últimos 3 pasos para cuantificar el impacto real y obtener tu hoja de ruta."
           }
         : miniResults.globalScore < 70
           ? {
-              title: "Hay una señal que conviene ordenar",
-              desc: "No parece solo un problema de volumen. La clave será separar coste, causa y momento de actuación.",
-              action: "Completa las 3 preguntas finales para cerrar el diagnóstico."
+              title: "Atención: Hay zonas grises que generan coste",
+              desc: "El problema está contenido pero es frágil. Si no segmentamos la causa y el momento de actuación, el coste seguirá oculto en los presupuestos.",
+              action: "Finaliza el diagnóstico para descubrir qué palanca priorizar."
             }
           : {
-              title: "Buen punto de partida",
-              desc: "Tus primeras respuestas muestran control inicial. Las últimas preguntas validan si ese control también existe en causas y respuesta temprana.",
-              action: "Completa el diagnóstico de coste."
+              title: "Base de control detectada",
+              desc: "Muestras un buen nivel inicial. El reto ahora es evitar que el absentismo se normalice y se convierta en un coste fijo estructural.",
+              action: "Completa el test para validar tu capacidad de respuesta temprana."
             };
 
       return (
@@ -323,21 +324,28 @@ const RadarWizard: React.FC = () => {
               Exposición {exposure.level}
             </div>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              Primer foco probable: {firstRiskLabel}
+              Primer foco probable: <span className="font-bold text-primary dark:text-white">{firstRiskLabel}</span>
             </p>
           </div>
 
           <div className="mb-6 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
-            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">{insight.title}</h4>
+            <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-2">{insight.title}</h4>
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{insight.desc}</p>
           </div>
 
-          <div className="text-center p-4 bg-accent1/10 dark:bg-accent1/15 rounded-lg border border-accent1/30">
+          {firstQuickWin && (
+            <div className="mb-6 p-4 bg-accent1/5 dark:bg-accent1/10 rounded-lg border-l-4 border-accent1">
+              <p className="text-xs uppercase text-accent1 dark:text-indigo-400 font-bold mb-1">Acción prioritaria recomendada (Quick Win)</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{firstQuickWin}</p>
+            </div>
+          )}
+
+          <div className="text-center p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {insight.action}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Menos de 1 minuto más. Informe ejecutivo incluido.
+            <p className="text-base font-bold text-accent2 dark:text-rose-400 mt-2">
+              Un minuto más y tendrás el informe ejecutivo incluido
             </p>
           </div>
 
