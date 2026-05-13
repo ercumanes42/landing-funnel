@@ -4,17 +4,18 @@
 Monitoring the new 3-question funnel and email automation flow.
 
 ## What we have done so far
-1.  **Survey Strategy:** Wizard starts with **3 questions** (Clima/Retención) to reduce Step 1 bounce.
-2.  **Booking UX:** Simplified `BookingPage.tsx` to remove summary redundancy.
-3.  **Webhook statuses:** Implemented logic for `Pending`, `Confirmed`, `Downloaded`, and `Skipped`.
-4.  **Landing Animations:** Added missing Tailwind keyframes and delays in `index.html`.
-5.  **Reports Persistence:** Dashboard now reconstructs state from URL params for cross-device visibility.
-6.  **Internal Analysis:** Updated Internal Alert email with `pain_points_txt` and scoring labels.
+1.  **Security Overhaul:** Moved all hardcoded PostHog keys to environment variables. Separated **Public (`phc_`)** from **Private (`phx_`)** keys to prevent GitHub sensor leaks.
+2.  **PostHog 2.0:** Implemented granular tracking for all 8 diagnostic steps, skip-booking actions, and PDF downloads.
+3.  **Source Attribution:** Added UTM mapping to distinguish between **LinkedIn** and **Email/Direct** traffic.
+4.  **Reporting Automation:** Created `posthog_current_report.ts`, a smart script that auto-calculates funnel metrics, average session duration, and lead activity.
+5.  **Lead Management:** Developed a formatting tool for **Apollo Exports**, organizing contacts into a standardized 6-column Excel structure.
+6.  **UX Polish:** Re-styled the "No gracias" link as a prominent secondary button in both `BookingPage.tsx` and `Results.tsx` to reduce friction.
 
 ## Current State
-- Deployed and pushed to `main` branch.
-- Automated email flow in Make.com is ready for filter updates matching new statuses.
-- PDF generation is integrated via URL parameters.
+- Repository is clean of sensitive data and leaked files.
+- `.env.local` contains the new rotated keys: `VITE_POSTHOG_KEY` and `POSTHOG_PERSONAL_KEY`.
+- `.gitignore` is hardened to prevent future commits of `.ts` scripts or `.json` outputs.
+- Deployed on Vercel with matching environment variables.
 
 ## Remaining Sub-tasks
 - [ ] Monitor PostHog metrics for the new "3-question" funnel.

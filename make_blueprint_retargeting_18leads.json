@@ -1,0 +1,90 @@
+{
+    "name": "Campañá Retargeting - 18 Leads Inició Diagnóstico",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-sheets:watchRows",
+            "version": 4,
+            "parameters": {
+                "__IMTCONN__": 13840688
+            },
+            "mapper": {
+                "spreadsheetId": "TU_ID_DE_SPREADSHEET",
+                "sheetId": "Hoja 1",
+                "limit": 50
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0,
+                    "name": "1. Leer Leads (Excel/Google Sheets)"
+                }
+            }
+        },
+        {
+            "id": 2,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 3,
+                            "module": "microsoft-email:createAndSendAMessage",
+                            "version": 2,
+                            "parameters": {
+                                "__IMTCONN__": 8240324
+                            },
+                            "filter": {
+                                "name": "Solo los 18 que iniciaron",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{1.Etapa}}",
+                                            "o": "text:equal",
+                                            "b": "Inició Diagnóstico"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "toRecipients": [
+                                    {
+                                        "address": "{{1.Email}}",
+                                        "name": "{{1.Nombre}}"
+                                    }
+                                ],
+                                "from": [
+                                    {
+                                        "address": "jgpino@gfs.es",
+                                        "name": "Joaquín González"
+                                    }
+                                ],
+                                "subject": "{{1.Nombre}}, ¿retomamos tu diagnóstico?",
+                                "content": "<div style=\"font-family:Arial,sans-serif;max-width:600px;line-height:1.6;\">\n    <p>Buenos días <strong>{{1.Nombre}}</strong>,</p>\n    <p>Es genial volver a saludarte.</p>\n    <p>Vimos que empezaste el diagnóstico sobre talento en tu empresa (<strong>{{1.Empresa}}</strong>), pero no llegaste a finalizarlo.</p>\n    <p>Te recordamos que en menos de 1 minuto, contestando a 8 preguntas, tendrás disponible el informe 🙂</p>\n    <p>Puedes retomarlo aquí:</p>\n    <p style=\"text-align:center;margin:25px 0;\">\n        <a href=\"https://diagnostico-rrhh-2026.vercel.app/\" style=\"background:#0ea5e9;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;\">RETOMAR DIAGNÓSTICO</a>\n    </p>\n    <p>Si te encaja más, podemos hacerlo contigo en una breve reunión y dejarlo listo en el momento, comentando además los resultados.</p>\n    <p><a href=\"https://calendly.com/joaquingfs/diagnostico-ejecutivo-y-hoja-de-ruta\" style=\"color:#0ea5e9;\">Agendar breve reunión aquí</a></p>\n    <hr style=\"border:none;border-top:1px solid #eee;margin:20px 0;\">\n    <p>Un saludo,<br><strong>Joaquín González del Pino</strong><br>GFS Consulting</p>\n</div>",
+                                "contentType": "html"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 300,
+                                    "y": 0,
+                                    "name": "2. Enviar Email Outlook"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true
+        },
+        "zone": "eu2.make.com"
+    }
+}

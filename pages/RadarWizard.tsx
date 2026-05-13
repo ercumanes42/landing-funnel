@@ -17,6 +17,19 @@ const RadarWizard: React.FC = () => {
   });
   const [showValidation, setShowValidation] = useState(false);
 
+  // Auto-fill from URL parameters (UTMs and Email)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlEmail = params.get('email');
+    
+    if (urlEmail) {
+      setState(prev => ({
+        ...prev,
+        answers: { ...prev.answers, email: urlEmail }
+      }));
+    }
+  }, []);
+
   // Load from local storage on mount
   useEffect(() => {
     const saved = localStorage.getItem('radar_state');
@@ -43,8 +56,15 @@ const RadarWizard: React.FC = () => {
         console.error("Error loading state", e);
       }
     } else {
-      logEvent(AnalyticsEvent.START_SURVEY);
-      logEvent(AnalyticsEvent.DIAGNOSTIC_START);
+      const params = new URLSearchParams(window.location.search);
+      const utms: Record<string, string> = {};
+      ['utm_source', 'utm_medium', 'utm_campaign'].forEach(key => {
+        const val = params.get(key);
+        if (val) utms[key] = val;
+      });
+
+      logEvent(AnalyticsEvent.START_SURVEY, { ...utms });
+      logEvent(AnalyticsEvent.DIAGNOSTIC_START, { ...utms });
     }
   }, []);
 
