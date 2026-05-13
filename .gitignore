@@ -51,4 +51,5 @@ analyze_persons.ts
 
 *.html
 !index.html
+!dashboard.html
 !email_template_*.html

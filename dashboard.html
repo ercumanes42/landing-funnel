@@ -1,0 +1,1193 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostHog Dashboard | Landing Funnel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0d1117; color: #f8fafc; }
+        .glass { background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .accent-gradient { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); }
+        .funnel-bar { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .btn-download { 
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 min-h-screen bg-[#0d1117]">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 border-b border-gray-800 pb-8">
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
+                    Dashboard Ejecutivo de Conversión
+                </h1>
+                <p class="text-slate-500 text-lg">Métricas de Rendimiento del Funnel • Campaña 80 Emails</p>
+            </div>
+            <div class="bg-blue-500/10 border border-blue-500/20 px-4 py-2 rounded-2xl flex items-center gap-3">
+                <span class="flex h-3 w-3 rounded-full bg-blue-500 animate-pulse"></span>
+                <span class="text-sm font-semibold text-blue-400">Datos Sincronizados (PostHog)</span>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="glass p-8 rounded-3xl shadow-2xl">
+                <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-2">Emails Enviados</p>
+                <div class="flex items-end gap-2">
+                    <p class="text-5xl font-black text-blue-400">80</p>
+                </div>
+            </div>
+            <div class="glass p-8 rounded-3xl shadow-2xl">
+                <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-2">CTR (Clics)</p>
+                <div class="flex items-end gap-2">
+                    <p class="text-5xl font-black text-white">43.8%</p>
+                    <span class="text-slate-500 text-sm font-bold mb-1">(35 vis.)</span>
+                </div>
+            </div>
+            <div class="glass p-8 rounded-3xl shadow-2xl border-l-4 border-l-indigo-500">
+                <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-2">Lead Conversion</p>
+                <p class="text-5xl font-black text-indigo-400">31.4%</p>
+            </div>
+            <div class="glass p-8 rounded-3xl shadow-2xl">
+                <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-2">Completados</p>
+                <p class="text-5xl font-black text-emerald-400">0</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Funnel Visual -->
+            <div class="glass p-10 rounded-[2.5rem] shadow-2xl">
+                <h2 class="text-2xl font-bold mb-8 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    Visualización del Embudo
+                </h2>
+                <div class="space-y-6">
+                    
+                        <div>
+                            <div class="flex justify-between text-sm mb-2 px-1">
+                                <span class="text-slate-400 font-medium">Emails Enviados</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-white font-bold">80</span>
+                                    <span class="text-[10px] text-slate-600 bg-slate-800 px-2 py-0.5 rounded-full">100%</span>
+                                </div>
+                            </div>
+                            <div class="w-full bg-slate-800/50 rounded-full h-4 overflow-hidden p-0.5 border border-white/5">
+                                <div class="bg-gradient-to-r from-blue-800 to-blue-600 h-full rounded-full funnel-bar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    
+                        <div>
+                            <div class="flex justify-between text-sm mb-2 px-1">
+                                <span class="text-slate-400 font-medium">Abraron Landing</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-white font-bold">35</span>
+                                    <span class="text-[10px] text-slate-600 bg-slate-800 px-2 py-0.5 rounded-full">44%</span>
+                                </div>
+                            </div>
+                            <div class="w-full bg-slate-800/50 rounded-full h-4 overflow-hidden p-0.5 border border-white/5">
+                                <div class="bg-gradient-to-r from-blue-600 to-blue-400 h-full rounded-full funnel-bar" style="width: 43.75%"></div>
+                            </div>
+                        </div>
+                    
+                        <div>
+                            <div class="flex justify-between text-sm mb-2 px-1">
+                                <span class="text-slate-400 font-medium">Empezaron Test</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-white font-bold">11</span>
+                                    <span class="text-[10px] text-slate-600 bg-slate-800 px-2 py-0.5 rounded-full">14%</span>
+                                </div>
+                            </div>
+                            <div class="w-full bg-slate-800/50 rounded-full h-4 overflow-hidden p-0.5 border border-white/5">
+                                <div class="bg-gradient-to-r from-indigo-600 to-indigo-400 h-full rounded-full funnel-bar" style="width: 13.750000000000002%"></div>
+                            </div>
+                        </div>
+                    
+                        <div>
+                            <div class="flex justify-between text-sm mb-2 px-1">
+                                <span class="text-slate-400 font-medium">Paso 4 (Mitad)</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-white font-bold">0</span>
+                                    <span class="text-[10px] text-slate-600 bg-slate-800 px-2 py-0.5 rounded-full">0%</span>
+                                </div>
+                            </div>
+                            <div class="w-full bg-slate-800/50 rounded-full h-4 overflow-hidden p-0.5 border border-white/5">
+                                <div class="bg-gradient-to-r from-purple-600 to-purple-400 h-full rounded-full funnel-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    
+                        <div>
+                            <div class="flex justify-between text-sm mb-2 px-1">
+                                <span class="text-slate-400 font-medium">Paso 8 (Final)</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-white font-bold">0</span>
+                                    <span class="text-[10px] text-slate-600 bg-slate-800 px-2 py-0.5 rounded-full">0%</span>
+                                </div>
+                            </div>
+                            <div class="w-full bg-slate-800/50 rounded-full h-4 overflow-hidden p-0.5 border border-white/5">
+                                <div class="bg-gradient-to-r from-pink-600 to-pink-400 h-full rounded-full funnel-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    
+                        <div>
+                            <div class="flex justify-between text-sm mb-2 px-1">
+                                <span class="text-slate-400 font-medium">Completados</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-white font-bold">0</span>
+                                    <span class="text-[10px] text-slate-600 bg-slate-800 px-2 py-0.5 rounded-full">0%</span>
+                                </div>
+                            </div>
+                            <div class="w-full bg-slate-800/50 rounded-full h-4 overflow-hidden p-0.5 border border-white/5">
+                                <div class="bg-gradient-to-r from-emerald-600 to-emerald-400 h-full rounded-full funnel-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    
+
+                </div>
+            </div>
+
+            <!-- Leads Identification -->
+            <div class="glass p-10 rounded-[2.5rem] shadow-2xl flex flex-col">
+                <div class="flex justify-between items-start mb-8">
+                    <h2 class="text-2xl font-bold flex items-center gap-3">
+                        Leads Identificados
+                        <span class="text-xs bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl text-emerald-500 font-bold uppercase tracking-widest">50</span>
+                    </h2>
+                    <button onclick="exportToExcel()" class="btn-download flex items-center gap-2 px-5 py-2.5 rounded-2xl text-white text-sm font-bold shadow-lg">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Exportar Excel
+                    </button>
+                </div>
+                <div class="overflow-y-auto max-h-[440px] -mx-4 px-4 scrollbar-hide">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-slate-500 text-xs uppercase font-bold tracking-widest border-b border-white/5">
+                                <th class="pb-6">E-mail</th>
+                                <th class="pb-6">Origen</th>
+                                <th class="pb-6">Estado / Drop-off</th>
+                                <th class="pb-6 text-right">Paso</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            alberto.arias@stellantis-finance.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            alberto.arias@stellantis-finance.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            victor.morales@melia.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Abandonó en Paso 1
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">1/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            anastasiia.demidova@form.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            victor.morales@melia.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            anastasiia.demidova@form.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            yhuang@ebroauto.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            yhuang@ebroauto.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            isabel.castillo@betssongroup.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            isabel.castillo@betssongroup.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            anna.pascual@freudenberg-pm.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            anna.pascual@freudenberg-pm.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            amartinez@comunycarse.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            amartinez@comunycarse.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            alejandra.blanco@melia.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Abandonó en Paso 0
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            alejandra.blanco@melia.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            falvarez@gestamp.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            fatima.ramiro@globalcaja.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Abandonó en Paso 1
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">1/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            fatima.ramiro@globalcaja.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            fatima.ramiro@globalcaja.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            maria.domingo@globalcaja.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            maria.domingo@globalcaja.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            ana.torres@globalcaja.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Abandonó en Paso 1
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">1/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            ana.torres@globalcaja.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            mmonge@gasnaturalfenosa.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            mmonge@gasnaturalfenosa.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            mgomezmo@gasnaturalfenosa.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            mgomezmo@gasnaturalfenosa.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            usgestproycsc@gasnaturalfenosa.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            usgestproycsc@gasnaturalfenosa.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            carmen.desantiago@garrido.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Abandonó en Paso 1
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">1/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            carmen.desantiago@garrido.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            vicente.sais@galp.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Abandonó en Paso 1
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">1/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            vicente.sais@galp.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            david.cervantes@galp.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Abandonó en Paso 1
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">1/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            david.cervantes@galp.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            marta.castillo@tomillo.org
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            marta.castillo@tomillo.org
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            fundacion@fundacionrepsol.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            fundacion@fundacionrepsol.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            vmontes@frdelpino.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Abandonó en Paso 1
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">1/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            vmontes@frdelpino.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            almudena.jerez@globalcaja.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            carla.aviles@globalcaja.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Abandonó en Paso 1
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">1/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            almudena.jerez@globalcaja.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            carla.aviles@globalcaja.es
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            aruzo@fundacionecoalf.org
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Abandonó en Paso 1
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">1/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            aruzo@fundacionecoalf.org
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            margar@frimancha.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Abandonó en Paso 0
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                                <tr class="hover:bg-white/5 transition-all duration-300 group">
+                                    <td class="py-5 pr-2">
+                                        <div class="text-sm font-bold text-blue-300 group-hover:text-white transition-colors">
+                                            margar@frimancha.com
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                            cold_email
+                                        </div>
+                                    </td>
+                                    <td class="py-5">
+                                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                            Solo visitó
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right font-mono text-slate-400 font-bold">0/8</td>
+                                </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-auto pt-8 border-t border-white/5">
+                    <div class="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20 flex items-center gap-4">
+                        <div class="bg-indigo-500 p-2 rounded-lg">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L22 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-indigo-400 uppercase tracking-tighter">Acción Sugerida</p>
+                            <p class="text-xs text-slate-400">Exportar estos leads para campaña de retargeting por abandono.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer / Credits -->
+        <div class="text-center py-8">
+            <p class="text-slate-600 text-xs font-medium uppercase tracking-widest">© 2026 Innovation Marketing Suite • Antigravity AI Engine</p>
+        </div>
+    </div>
+
+    <script>
+        function exportToExcel() {
+            const data = [{"email":"alberto.arias@stellantis-finance.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"alberto.arias@stellantis-finance.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"victor.morales@melia.com","maxStep":1,"source":"cold_email","status":"Abandonó en Paso 1"},{"email":"anastasiia.demidova@form.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"victor.morales@melia.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"anastasiia.demidova@form.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"yhuang@ebroauto.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"yhuang@ebroauto.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"isabel.castillo@betssongroup.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"isabel.castillo@betssongroup.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"anna.pascual@freudenberg-pm.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"anna.pascual@freudenberg-pm.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"amartinez@comunycarse.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"amartinez@comunycarse.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"alejandra.blanco@melia.com","maxStep":0,"source":"cold_email","status":"Abandonó en Paso 0"},{"email":"alejandra.blanco@melia.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"falvarez@gestamp.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"fatima.ramiro@globalcaja.es","maxStep":1,"source":"cold_email","status":"Abandonó en Paso 1"},{"email":"fatima.ramiro@globalcaja.es","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"fatima.ramiro@globalcaja.es","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"maria.domingo@globalcaja.es","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"maria.domingo@globalcaja.es","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"ana.torres@globalcaja.es","maxStep":1,"source":"cold_email","status":"Abandonó en Paso 1"},{"email":"ana.torres@globalcaja.es","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"mmonge@gasnaturalfenosa.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"mmonge@gasnaturalfenosa.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"mgomezmo@gasnaturalfenosa.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"mgomezmo@gasnaturalfenosa.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"usgestproycsc@gasnaturalfenosa.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"usgestproycsc@gasnaturalfenosa.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"carmen.desantiago@garrido.es","maxStep":1,"source":"cold_email","status":"Abandonó en Paso 1"},{"email":"carmen.desantiago@garrido.es","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"vicente.sais@galp.com","maxStep":1,"source":"cold_email","status":"Abandonó en Paso 1"},{"email":"vicente.sais@galp.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"david.cervantes@galp.com","maxStep":1,"source":"cold_email","status":"Abandonó en Paso 1"},{"email":"david.cervantes@galp.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"marta.castillo@tomillo.org","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"marta.castillo@tomillo.org","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"fundacion@fundacionrepsol.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"fundacion@fundacionrepsol.com","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"vmontes@frdelpino.es","maxStep":1,"source":"cold_email","status":"Abandonó en Paso 1"},{"email":"vmontes@frdelpino.es","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"almudena.jerez@globalcaja.es","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"carla.aviles@globalcaja.es","maxStep":1,"source":"cold_email","status":"Abandonó en Paso 1"},{"email":"almudena.jerez@globalcaja.es","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"carla.aviles@globalcaja.es","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"aruzo@fundacionecoalf.org","maxStep":1,"source":"cold_email","status":"Abandonó en Paso 1"},{"email":"aruzo@fundacionecoalf.org","maxStep":0,"source":"cold_email","status":"Solo visitó"},{"email":"margar@frimancha.com","maxStep":0,"source":"cold_email","status":"Abandonó en Paso 0"},{"email":"margar@frimancha.com","maxStep":0,"source":"cold_email","status":"Solo visitó"}];
+            
+            // Format data for Excel
+            const excelData = data.map(u => ({
+                'Email': u.email,
+                'Origen': u.source,
+                'Estado': u.status,
+                'Paso Alcanzado': u.maxStep + '/8'
+            }));
+
+            // Create worksheet
+            const ws = XLSX.utils.json_to_sheet(excelData);
+            
+            // Set column widths
+            const wscols = [
+                {wch: 35}, // Email
+                {wch: 25}, // Origen
+                {wch: 25}, // Estado
+                {wch: 15}  // Paso
+            ];
+            ws['!cols'] = wscols;
+
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Leads");
+
+            // Download
+            const date = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `Leads_Funnel_${date}.xlsx`);
+        }
+    </script>
+</body>
+</html>
