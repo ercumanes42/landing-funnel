@@ -22,16 +22,16 @@ const Landing: React.FC = () => {
       <section className="min-h-[calc(100svh-4rem)] flex items-center py-12 sm:py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-16 items-center">
-            <div className="animate-fade-in-up">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-primary dark:text-white leading-[1.1] max-w-4xl">
+            <div className="animate-fade-in-up text-center lg:text-left">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-primary dark:text-white leading-[1.1] max-w-4xl mx-auto lg:mx-0">
                 Diagnóstico de <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent1 to-accent2">Coste Oculto</span> del Absentismo
               </h1>
 
-              <p className="mt-5 text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
+              <p className="mt-5 text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl mx-auto lg:mx-0">
                 En 2 minutos identifica dónde se está convirtiendo el absentismo en coste, carga para mandos o riesgo operativo.
               </p>
 
-              <div className="mt-7 flex flex-col sm:flex-row gap-4 sm:items-center">
+              <div className="mt-7 flex flex-col sm:flex-row gap-4 sm:items-center justify-center lg:justify-start">
                 <Button onClick={handleStart} className="text-base sm:text-lg px-8 py-4 rounded-xl shadow-xl shadow-accent1/30 w-full sm:w-auto bg-gradient-to-r from-accent1 to-accent2 hover:opacity-90 transition-all transform hover:scale-[1.02] text-white font-bold">
                   Calcular mi fuga de capacidad
                   <ArrowRight className="ml-2 w-5 h-5 pointer-events-none" />

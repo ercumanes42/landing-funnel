@@ -82,7 +82,7 @@ const App: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-accent1 to-accent2">
-                DIAGNOSTICO ABSENTISMO
+                DIAGNÓSTICO ABSENTISMO
               </span>
             </div>
             <div className="flex items-center gap-4">
@@ -113,12 +113,12 @@ const App: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 text-center text-gray-500 dark:text-gray-400 text-sm">
             <p className="mb-4">© 2026 GFS Consulting. Todos los derechos reservados.</p>
             <div className="flex justify-center space-x-6">
-              <a href="#" className="hover:text-primary dark:hover:text-white transition-colors">Politica de Privacidad</a>
+              <a href="#" className="hover:text-primary dark:hover:text-white transition-colors">Política de Privacidad</a>
               <a href="#" className="hover:text-primary dark:hover:text-white transition-colors">Cookies</a>
               <a href="#" className="hover:text-primary dark:hover:text-white transition-colors">Contacto</a>
             </div>
             <p className="mt-4 text-xs text-gray-400">
-              Diagnostico ejecutivo automatizado. No solicita datos medicos ni informacion individual de empleados.
+              Diagnóstico ejecutivo automatizado.
             </p>
           </div>
         </footer>
