@@ -200,6 +200,9 @@ const RadarWizard: React.FC = () => {
       meta: {
         timestamp: new Date().toISOString(),
         meetingOptIn,
+        eventType: "lead_submitted",
+        funnelId: "absentismo_laboral",
+        payloadVersion: "2026_05_absentismo_v1",
         reportDelivery: "all_completed_leads",
         conversionLogic: "report_for_internal_review_booking_for_interpretation"
       }
@@ -235,18 +238,15 @@ const RadarWizard: React.FC = () => {
 
     if (APP_CONFIG.POST_ENDPOINT_URL) {
       try {
-        fetch(APP_CONFIG.POST_ENDPOINT_URL, {
+        await fetch(APP_CONFIG.POST_ENDPOINT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
           keepalive: true
-        }).catch(e => {
-          console.error("Webhook error", e);
-          logEvent(AnalyticsEvent.WEBHOOK_ERROR, { method: 'fetch_catch', error: String(e) });
         });
       } catch (e) {
         console.error("Error triggering webhook", e);
-        logEvent(AnalyticsEvent.WEBHOOK_ERROR, { method: 'try_catch', error: String(e) });
+        logEvent(AnalyticsEvent.WEBHOOK_ERROR, { method: 'lead_submit_fetch', error: String(e) });
       }
     }
 

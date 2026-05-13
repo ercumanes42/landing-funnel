@@ -64,6 +64,9 @@ const BookingPage: React.FC = () => {
       meta: {
         timestamp: new Date().toISOString(),
         meetingOptIn: confirmed ? "Confirmed Booking" : "Skipped",
+        eventType: confirmed ? "booking_confirmed" : "booking_skipped",
+        funnelId: "absentismo_laboral",
+        payloadVersion: "2026_05_absentismo_v1",
         reportDelivery: "all_completed_leads",
         conversionLogic: "report_for_internal_review_booking_for_interpretation",
         isUnlocked: confirmed

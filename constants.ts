@@ -2,7 +2,7 @@ import { Question } from './types';
 
 export const APP_CONFIG = {
   CALENDLY_URL: "https://calendly.com/joaquingfs/diagnostico-ejecutivo-y-hoja-de-ruta",
-  POST_ENDPOINT_URL: "https://hook.eu2.make.com/bvsqarrcivpds6dcri5m4yy4h68jrv36",
+  POST_ENDPOINT_URL: import.meta.env.VITE_MAKE_WEBHOOK_URL || "https://hook.eu2.make.com/bvsqarrcivpds6dcri5m4yy4h68jrv36",
   PRIVACY_POLICY_URL: "#",
   COOKIES_URL: "#"
 };
