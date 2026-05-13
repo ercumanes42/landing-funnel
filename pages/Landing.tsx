@@ -8,8 +8,9 @@ const Landing: React.FC = () => {
   const navigate = useNavigate();
 
   const handleStart = () => {
-    logEvent(AnalyticsEvent.CLICK_START);
-    logEvent(AnalyticsEvent.DIAGNOSTIC_START);
+    logEvent(AnalyticsEvent.LANDING_CTA_CLICKED, {
+      cta_text: 'Calcular mi fuga de capacidad'
+    });
     navigate('/radar');
   };
 

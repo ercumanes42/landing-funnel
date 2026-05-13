@@ -5,7 +5,7 @@ import Button from '../components/Button';
 import PrintableReport from '../components/PrintableReport';
 import { calculateResults } from '../utils/scoring';
 import { ResultData, AnalyticsEvent } from '../types';
-import { logEvent } from '../utils/analytics';
+import { buildResultAnalyticsPayload, logEvent } from '../utils/analytics';
 import { APP_CONFIG, DIMENSIONS, QUICK_WINS, STORAGE_KEY } from '../constants';
 
 const Results: React.FC = () => {
@@ -46,6 +46,10 @@ const Results: React.FC = () => {
 
       setResults(guestResults);
       setIsGuest(true);
+      logEvent(AnalyticsEvent.RESULT_VIEWED, {
+        ...buildResultAnalyticsPayload(guestResults),
+        result_source: 'shared_url'
+      });
 
       if (isDirectPdf) {
         setShowPDF(true);
@@ -66,8 +70,10 @@ const Results: React.FC = () => {
 
         const calculated = calculateResults(state.answers);
         setResults(calculated);
-        logEvent(AnalyticsEvent.REPORT_VIEW);
-        logEvent(AnalyticsEvent.FINAL_RESULT_VIEW);
+        logEvent(AnalyticsEvent.RESULT_VIEWED, {
+          ...buildResultAnalyticsPayload(calculated),
+          result_source: 'completed_diagnostic'
+        });
       } catch (e) {
         navigate('/');
       }
@@ -170,12 +176,18 @@ const Results: React.FC = () => {
   };
 
   const handleBookCall = () => {
-    logEvent(AnalyticsEvent.BOOK_CALL_CLICKED);
+    logEvent(AnalyticsEvent.BOOKING_CTA_CLICKED, {
+      ...buildResultAnalyticsPayload(results),
+      cta_text: 'Saber qué palanca mover primero'
+    });
     navigate('/agendar');
   };
 
   const handleDownloadPDF = () => {
-    logEvent(AnalyticsEvent.REPORT_DOWNLOAD);
+    logEvent(AnalyticsEvent.REPORT_DOWNLOADED, {
+      ...buildResultAnalyticsPayload(results),
+      report_format: 'print_pdf'
+    });
     notifyMake("Downloaded Report");
     setIsEmailed(true);
     window.print();

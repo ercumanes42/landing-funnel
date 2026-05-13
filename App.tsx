@@ -7,14 +7,16 @@ import Results from './pages/Results';
 import BookingPage from './pages/BookingPage';
 import Dashboard from './pages/Dashboard';
 import DashboardResults from './pages/DashboardResults';
-import { logEvent, AnalyticsEvent } from './utils/analytics';
+import { identifyLead, logEvent, AnalyticsEvent } from './utils/analytics';
 import { STORAGE_KEY } from './constants';
 
 const PageTracker = () => {
   const location = useLocation();
 
   useEffect(() => {
-    logEvent(AnalyticsEvent.VIEW_LANDING, { path: location.pathname });
+    logEvent(AnalyticsEvent.PAGE_VIEW, {
+      hash_route: window.location.hash || '#/'
+    });
     window.scrollTo(0, 0);
   }, [location]);
 
@@ -66,9 +68,12 @@ const App: React.FC = () => {
         stateObj.answers = { ...stateObj.answers, email };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(stateObj));
 
-        import('posthog-js').then(({ default: posthog }) => {
-          posthog.identify(email, { email, source: 'email_campaign' });
-          posthog.capture('auto_identified_from_email', { email });
+        identifyLead(email, {
+          source: 'email_campaign',
+          identification_step: 'url_email_param'
+        });
+        logEvent(AnalyticsEvent.IDENTIFIED_FROM_EMAIL_LINK, {
+          source: 'email_campaign'
         });
       }
     }

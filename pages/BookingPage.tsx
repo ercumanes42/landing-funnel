@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { InlineWidget, useCalendlyEventListener } from 'react-calendly';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
 import { APP_CONFIG, STORAGE_KEY } from '../constants';
-import { logEvent, AnalyticsEvent } from '../utils/analytics';
+import { buildResultAnalyticsPayload, logEvent, AnalyticsEvent } from '../utils/analytics';
 import { SurveyState } from '../types';
 import { calculateResults } from '../utils/scoring';
 
@@ -90,7 +90,7 @@ const BookingPage: React.FC = () => {
       }
     } catch (err) {
       console.error("Booking webhook network error:", err);
-      logEvent(AnalyticsEvent.ERROR_SHOWN, { method: "booking_webhook_error", error: String(err) });
+      logEvent(AnalyticsEvent.WEBHOOK_ERROR, { method: "booking_webhook_error", error: String(err) });
     }
   };
 
@@ -98,14 +98,18 @@ const BookingPage: React.FC = () => {
     if (bookingFiredRef.current) return;
     bookingFiredRef.current = true;
 
-    logEvent(AnalyticsEvent.BOOK_CALL_CLICKED, { status: 'confirmed' });
-    logEvent(AnalyticsEvent.BOOK_CALL_COMPLETE);
+    const savedRaw = localStorage.getItem(STORAGE_KEY);
+    const freshState = savedRaw ? JSON.parse(savedRaw) : null;
+    const calculated = freshState ? calculateResults(freshState.answers) : null;
+
+    logEvent(AnalyticsEvent.BOOKING_CONFIRMED, {
+      ...(calculated ? buildResultAnalyticsPayload(calculated) : {}),
+      status: 'confirmed'
+    });
     setIsBooked(true);
 
-    const savedRaw = localStorage.getItem(STORAGE_KEY);
-    if (savedRaw) {
+    if (freshState) {
       try {
-        const freshState = JSON.parse(savedRaw);
         freshState.answers['meeting_optin'] = "Confirmed Booking";
         localStorage.setItem(STORAGE_KEY, JSON.stringify(freshState));
 
@@ -147,11 +151,15 @@ const BookingPage: React.FC = () => {
     if (bookingFiredRef.current) return;
     bookingFiredRef.current = true;
 
-    logEvent(AnalyticsEvent.SKIP_BOOKING);
-
     if (state) {
       const newState = { ...state, answers: { ...state.answers, meeting_optin: "Skipped" } };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+      const calculated = calculateResults(newState.answers);
+
+      logEvent(AnalyticsEvent.BOOKING_SKIPPED, {
+        ...buildResultAnalyticsPayload(calculated),
+        status: 'skipped'
+      });
 
       const timeoutPromise = new Promise(resolve => setTimeout(resolve, 3000));
       await Promise.race([

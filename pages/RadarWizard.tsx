@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, ChevronLeft, ChevronRight, Save, X } from 'lucide-react';
 import Button from '../components/Button';
 import { APP_CONFIG, STORAGE_KEY, WIZARD_STEPS } from '../constants';
 import { AnswerValue, SurveyState } from '../types';
-import { logEvent, AnalyticsEvent } from '../utils/analytics';
+import { buildResultAnalyticsPayload, identifyLead, logEvent, AnalyticsEvent } from '../utils/analytics';
 import { calculateResults } from '../utils/scoring';
 
 const RadarWizard: React.FC = () => {
@@ -16,6 +16,7 @@ const RadarWizard: React.FC = () => {
     startTime: Date.now()
   });
   const [showValidation, setShowValidation] = useState(false);
+  const leadFormViewedRef = useRef(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -51,8 +52,7 @@ const RadarWizard: React.FC = () => {
       if (val) utms[key] = val;
     });
 
-    logEvent(AnalyticsEvent.START_SURVEY, { ...utms });
-    logEvent(AnalyticsEvent.DIAGNOSTIC_START, { ...utms });
+    logEvent(AnalyticsEvent.DIAGNOSTIC_STARTED, { ...utms });
   }, []);
 
   useEffect(() => {
@@ -61,14 +61,23 @@ const RadarWizard: React.FC = () => {
 
   useEffect(() => {
     if (!state.isCompleted && WIZARD_STEPS[state.step]) {
-      logEvent(AnalyticsEvent.SURVEY_STEP_VIEWED, {
+      const stepQuestions = WIZARD_STEPS[state.step].questions;
+
+      logEvent(AnalyticsEvent.DIAGNOSTIC_STEP_VIEWED, {
         step_number: state.step + 1,
         total_steps: WIZARD_STEPS.length,
         step_title: WIZARD_STEPS[state.step].title
       });
 
-      if (WIZARD_STEPS[state.step].questions[0]?.type === 'mini_result') {
-        logEvent(AnalyticsEvent.MINI_RESULT_VIEW);
+      if (stepQuestions[0]?.type === 'mini_result') {
+        logEvent(AnalyticsEvent.MINI_RESULT_VIEWED, {
+          ...buildResultAnalyticsPayload(calculateResults(state.answers))
+        });
+      }
+
+      if (!leadFormViewedRef.current && stepQuestions.some(q => q.category === 'lead')) {
+        leadFormViewedRef.current = true;
+        logEvent(AnalyticsEvent.LEAD_FORM_VIEWED);
       }
     }
   }, [state.step, state.isCompleted]);
@@ -84,19 +93,11 @@ const RadarWizard: React.FC = () => {
 
     const questionNumber = parseInt(questionId.replace('q', ''));
     if (!isNaN(questionNumber) && questionNumber >= 1 && questionNumber <= 6) {
-      const eventMap: Record<number, AnalyticsEvent> = {
-        1: AnalyticsEvent.DIAGNOSTIC_Q1_ANSWERED,
-        2: AnalyticsEvent.DIAGNOSTIC_Q2_ANSWERED,
-        3: AnalyticsEvent.DIAGNOSTIC_Q3_ANSWERED,
-        4: AnalyticsEvent.DIAGNOSTIC_Q4_ANSWERED,
-        5: AnalyticsEvent.DIAGNOSTIC_Q5_ANSWERED,
-        6: AnalyticsEvent.DIAGNOSTIC_Q6_ANSWERED
-      };
-      logEvent(eventMap[questionNumber], { question_id: questionId, value });
-    }
-
-    if (questionId === 'firstname' || questionId === 'email') {
-      logEvent(AnalyticsEvent.LEAD_FORM_VIEW);
+      logEvent(AnalyticsEvent.DIAGNOSTIC_QUESTION_ANSWERED, {
+        question_id: questionId,
+        question_number: questionNumber,
+        answer: value
+      });
     }
   };
 
@@ -122,9 +123,18 @@ const RadarWizard: React.FC = () => {
 
     setShowValidation(false);
 
-    if (state.step === 0) logEvent(AnalyticsEvent.BLOCK_1_COMPLETE);
-    if (state.step === 3) logEvent(AnalyticsEvent.BLOCK_2_COMPLETE);
-    if (state.step === 6) logEvent(AnalyticsEvent.BLOCK_3_COMPLETE);
+    if (state.step === 2) {
+      logEvent(AnalyticsEvent.DIAGNOSTIC_SECTION_COMPLETED, {
+        section: 'initial_diagnosis',
+        completed_questions: 3
+      });
+    }
+    if (state.step === 6) {
+      logEvent(AnalyticsEvent.DIAGNOSTIC_SECTION_COMPLETED, {
+        section: 'diagnostic_questions',
+        completed_questions: 6
+      });
+    }
 
     if (state.step < WIZARD_STEPS.length - 1) {
       setState(prev => ({ ...prev, step: prev.step + 1 }));
@@ -201,25 +211,27 @@ const RadarWizard: React.FC = () => {
     setState(finalState);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(finalState));
 
-    const payload = buildPayload(finalState, "Pending Booking");
-
-    logEvent(AnalyticsEvent.LEAD_SUBMITTED);
-    logEvent(AnalyticsEvent.COMPLETE_SURVEY, payload);
-    logEvent(AnalyticsEvent.DIAGNOSTIC_COMPLETE, payload);
-
     if (finalState.answers['email'] && typeof window !== 'undefined') {
-      import('posthog-js').then(({ default: posthog }) => {
-        posthog.identify(finalState.answers['email'] as string, {
-          email: finalState.answers['email'],
-          name: finalState.answers['firstname'] as string,
-          $set: {
-            email: finalState.answers['email'],
-            contact_name: finalState.answers['firstname']
-          }
-        });
+      identifyLead(finalState.answers['email'] as string, {
+        name: finalState.answers['firstname'] as string,
+        contact_name: finalState.answers['firstname'] as string,
+        identification_step: 'lead_form_submit'
       });
-      logEvent(AnalyticsEvent.EMAIL_CAPTURED);
     }
+
+    const payload = buildPayload(finalState, "Pending Booking");
+    const results = calculateResults(finalState.answers);
+    const analyticsPayload = {
+      ...buildResultAnalyticsPayload(results),
+      duration_seconds: Math.round((Date.now() - finalState.startTime) / 1000),
+      answered_questions: Object.keys(finalState.answers).filter(key => /^q\d+$/.test(key)).length,
+      lead_email_present: Boolean(finalState.answers['email'])
+    };
+
+    logEvent(AnalyticsEvent.LEAD_SUBMITTED, {
+      lead_email_present: Boolean(finalState.answers['email'])
+    });
+    logEvent(AnalyticsEvent.DIAGNOSTIC_COMPLETED, analyticsPayload);
 
     if (APP_CONFIG.POST_ENDPOINT_URL) {
       try {
@@ -230,11 +242,11 @@ const RadarWizard: React.FC = () => {
           keepalive: true
         }).catch(e => {
           console.error("Webhook error", e);
-          logEvent(AnalyticsEvent.ERROR_SHOWN, { method: 'fetch_catch', error: String(e) });
+          logEvent(AnalyticsEvent.WEBHOOK_ERROR, { method: 'fetch_catch', error: String(e) });
         });
       } catch (e) {
         console.error("Error triggering webhook", e);
-        logEvent(AnalyticsEvent.ERROR_SHOWN, { method: 'try_catch', error: String(e) });
+        logEvent(AnalyticsEvent.WEBHOOK_ERROR, { method: 'try_catch', error: String(e) });
       }
     }
 

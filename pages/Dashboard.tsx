@@ -32,11 +32,11 @@ const Dashboard: React.FC = () => {
   const data = dashboardData;
 
   const funnelSteps = [
-    { key: 'view_landing', label: 'Vieron Landing', count: data.funnel.view_landing.count, percent: 100, icon: Users, color: 'bg-blue-500' },
-    { key: 'diagnostic_start', label: 'Iniciaron', count: data.funnel.diagnostic_start.count, percent: 43, icon: MousePointer, color: 'bg-indigo-500' },
-    { key: 'block_1_complete', label: 'Bloque 1', count: data.funnel.block_1_complete.count, percent: 14, icon: CheckCircle, color: 'bg-violet-500' },
-    { key: 'block_2_complete', label: 'Bloque 2', count: data.funnel.block_2_complete.count, percent: 14, icon: Activity, color: 'bg-purple-500' },
-    { key: 'mini_result_view', label: 'Resultados', count: data.funnel.mini_result_view.count, percent: 14, icon: ArrowRight, color: 'bg-pink-500' },
+    { key: 'abs_page_view', label: 'Vieron Landing', count: data.funnel.abs_page_view.count, percent: 100, icon: Users, color: 'bg-blue-500' },
+    { key: 'abs_diagnostic_started', label: 'Iniciaron', count: data.funnel.abs_diagnostic_started.count, percent: 43, icon: MousePointer, color: 'bg-indigo-500' },
+    { key: 'abs_mini_result_viewed', label: 'Vieron patrón', count: data.funnel.abs_mini_result_viewed.count, percent: 14, icon: CheckCircle, color: 'bg-violet-500' },
+    { key: 'abs_lead_submitted', label: 'Lead capturado', count: data.funnel.abs_lead_submitted.count, percent: 14, icon: Activity, color: 'bg-purple-500' },
+    { key: 'abs_result_viewed', label: 'Resultados', count: data.funnel.abs_result_viewed.count, percent: 14, icon: ArrowRight, color: 'bg-pink-500' },
   ];
 
   const filteredUsers = useMemo(() => {
@@ -99,8 +99,8 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCard title="Leads Totales" value={data.summary.emailsTracked} icon={Users} color="bg-blue-500" subtitle=" emails únicos" />
           <StatCard title="Visitantes Activos" value={data.summary.uniqueVisitorsWithEvents} icon={Globe} color="bg-indigo-500" subtitle=" con eventos" />
-          <StatCard title="Tasa Inicio" value={`${((data.funnel.diagnostic_start.count / data.funnel.view_landing.count) * 100).toFixed(0)}%`} icon={MousePointer} color="bg-violet-500" subtitle="iniciaron diagnóstico" />
-          <StatCard title="Tasa Conversión" value={`${((data.funnel.mini_result_view.count / data.funnel.view_landing.count) * 100).toFixed(1)}%`} icon={ArrowRight} color="bg-pink-500" subtitle="completaron todo" />
+          <StatCard title="Tasa Inicio" value={`${((data.funnel.abs_diagnostic_started.count / data.funnel.abs_page_view.count) * 100).toFixed(0)}%`} icon={MousePointer} color="bg-violet-500" subtitle="iniciaron diagnóstico" />
+          <StatCard title="Tasa Conversión" value={`${((data.funnel.abs_result_viewed.count / data.funnel.abs_page_view.count) * 100).toFixed(1)}%`} icon={ArrowRight} color="bg-pink-500" subtitle="completaron todo" />
         </div>
 
         {/* Main Grid */}
@@ -181,10 +181,10 @@ const Dashboard: React.FC = () => {
                 className="px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="">Todas las etapas</option>
-                <option value="view_landing">Vieron landing</option>
-                <option value="diagnostic_start">Iniciaron diagnóstico</option>
-                <option value="block_1_complete">Completaron Bloque 1</option>
-                <option value="mini_result_view">Vieron resultados</option>
+                <option value="abs_page_view">Vieron landing</option>
+                <option value="abs_diagnostic_started">Iniciaron diagnóstico</option>
+                <option value="abs_mini_result_viewed">Vieron patrón</option>
+                <option value="abs_result_viewed">Vieron resultados</option>
               </select>
             </div>
           </div>
@@ -216,7 +216,7 @@ const Dashboard: React.FC = () => {
                       <td className="px-6 py-4 text-center">
                         <div className="flex items-center justify-center gap-1">
                           {stages.map(s => (
-                            <span key={s} className={`w-2 h-2 rounded-full ${s === 'view_landing' ? 'bg-blue-500' : s === 'diagnostic_start' ? 'bg-indigo-500' : s === 'block_1_complete' ? 'bg-violet-500' : s === 'block_2_complete' ? 'bg-purple-500' : 'bg-pink-500'}`} title={s} />
+                            <span key={s} className={`w-2 h-2 rounded-full ${s === 'abs_page_view' ? 'bg-blue-500' : s === 'abs_diagnostic_started' ? 'bg-indigo-500' : s === 'abs_mini_result_viewed' ? 'bg-violet-500' : s === 'abs_lead_submitted' ? 'bg-purple-500' : 'bg-pink-500'}`} title={s} />
                           ))}
                           <span className="ml-1 text-xs text-gray-500">{progress}%</span>
                         </div>

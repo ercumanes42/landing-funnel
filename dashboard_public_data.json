@@ -13,8 +13,8 @@
     "period_feb_25_27": {
       "name": "25-27 Febrero 2026",
       "uniqueUsers": 20,
-      "view_landing": 16,
-      "started_survey": 4,
+      "abs_page_view": 16,
+      "abs_diagnostic_started": 4,
       "completed_survey": 0,
       "booked_call": 0,
       "conversion_start": "20.0%",
@@ -23,8 +23,8 @@
     "period_mar_02_06": {
       "name": "2-6 Marzo 2026",
       "uniqueUsers": 92,
-      "view_landing": 81,
-      "started_survey": 19,
+      "abs_page_view": 81,
+      "abs_diagnostic_started": 19,
       "completed_survey": 3,
       "booked_call": 0,
       "conversion_start": "15.2%",
@@ -34,20 +34,20 @@
     "period_mar_04": {
       "name": "4 Marzo 2026",
       "uniqueUsers": 15,
-      "view_landing": 35,
-      "started_survey": 6,
+      "abs_page_view": 35,
+      "abs_diagnostic_started": 6,
       "completed_survey": 1,
       "booked_call": 0,
       "diagnostic_complete": 1,
-      "report_download": 2
+      "abs_report_downloaded": 2
     },
     "period_apr_03_05": {
       "name": "3-5 Abril 2026",
       "uniqueUsers": 8,
-      "view_landing": 7,
-      "started_survey": 3,
+      "abs_page_view": 7,
+      "abs_diagnostic_started": 3,
       "completed_survey": 1,
-      "mini_result_view": 1,
+      "abs_mini_result_viewed": 1,
       "note": "Datos agregados y anonimizados"
     }
   },
@@ -64,27 +64,27 @@
     "totalBooked": 0
   },
   "funnel": {
-    "view_landing": {
+    "abs_page_view": {
       "count": 139,
       "percentage": 100,
       "label": "Vieron la Landing"
     },
-    "diagnostic_start": {
+    "abs_diagnostic_started": {
       "count": 32,
       "percentage": 23,
       "label": "Iniciaron Diagnostico"
     },
-    "block_1_complete": {
+    "abs_mini_result_viewed": {
       "count": 8,
       "percentage": 6,
-      "label": "Completaron Bloque 1"
+      "label": "Vieron Primer Patron"
     },
-    "block_2_complete": {
+    "abs_lead_submitted": {
       "count": 8,
       "percentage": 6,
-      "label": "Completaron Bloque 2"
+      "label": "Lead Capturado"
     },
-    "mini_result_view": {
+    "abs_result_viewed": {
       "count": 8,
       "percentage": 6,
       "label": "Vieron Resultados"
@@ -98,11 +98,11 @@
       "sessionDuration": "38m",
       "lastActive": "2026-04-05",
       "stages": {
-        "view_landing": true,
-        "diagnostic_start": true,
-        "block_1_complete": true,
-        "block_2_complete": true,
-        "mini_result_view": true
+        "abs_page_view": true,
+        "abs_diagnostic_started": true,
+        "abs_mini_result_viewed": true,
+        "abs_lead_submitted": true,
+        "abs_result_viewed": true
       }
     },
     {
@@ -112,11 +112,11 @@
       "sessionDuration": "12m",
       "lastActive": "2026-04-04",
       "stages": {
-        "view_landing": true,
-        "diagnostic_start": true,
-        "block_1_complete": true,
-        "block_2_complete": false,
-        "mini_result_view": false
+        "abs_page_view": true,
+        "abs_diagnostic_started": true,
+        "abs_mini_result_viewed": true,
+        "abs_lead_submitted": false,
+        "abs_result_viewed": false
       }
     },
     {
@@ -126,11 +126,11 @@
       "sessionDuration": "8m",
       "lastActive": "2026-04-03",
       "stages": {
-        "view_landing": true,
-        "diagnostic_start": true,
-        "block_1_complete": false,
-        "block_2_complete": false,
-        "mini_result_view": false
+        "abs_page_view": true,
+        "abs_diagnostic_started": true,
+        "abs_mini_result_viewed": false,
+        "abs_lead_submitted": false,
+        "abs_result_viewed": false
       }
     },
     {
@@ -140,11 +140,11 @@
       "sessionDuration": "4m",
       "lastActive": "2026-04-03",
       "stages": {
-        "view_landing": true,
-        "diagnostic_start": false,
-        "block_1_complete": false,
-        "block_2_complete": false,
-        "mini_result_view": false
+        "abs_page_view": true,
+        "abs_diagnostic_started": false,
+        "abs_mini_result_viewed": false,
+        "abs_lead_submitted": false,
+        "abs_result_viewed": false
       }
     }
   ],
