@@ -9,9 +9,9 @@ interface PrintableReportProps {
 
 const PrintableReport: React.FC<PrintableReportProps> = ({ results }) => {
   const getScoreLabel = (score: number) => {
-    if (score < 40) return { text: "EXPOSICION ALTA", color: "#dc2626", summary: EXECUTIVE_SUMMARIES.critical };
-    if (score < 70) return { text: "EXPOSICION MEDIA", color: "#d97706", summary: EXECUTIVE_SUMMARIES.transition };
-    return { text: "EXPOSICION BAJA", color: "#16a34a", summary: EXECUTIVE_SUMMARIES.solid };
+    if (score < 40) return { text: "EXPOSICIÓN ALTA", color: "#dc2626", summary: EXECUTIVE_SUMMARIES.critical };
+    if (score < 70) return { text: "EXPOSICIÓN MEDIA", color: "#d97706", summary: EXECUTIVE_SUMMARIES.transition };
+    return { text: "EXPOSICIÓN BAJA", color: "#16a34a", summary: EXECUTIVE_SUMMARIES.solid };
   };
 
   const scoreMeta = getScoreLabel(results.globalScore);
@@ -24,7 +24,7 @@ const PrintableReport: React.FC<PrintableReportProps> = ({ results }) => {
         <div className="flex justify-between items-start border-b-2 border-slate-900 pb-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Informe Ejecutivo de Fuga de Capacidad por Absentismo</h1>
-            <p className="text-sm text-slate-500 mt-1">Diagnostico compartible para Direccion, RRHH y Operaciones</p>
+            <p className="text-sm text-slate-500 mt-1">Diagnóstico compartible para Dirección, RRHH y Operaciones</p>
           </div>
           <div className="text-right">
             <p className="font-bold text-lg text-slate-900">GFS Consulting</p>
@@ -75,15 +75,15 @@ const PrintableReport: React.FC<PrintableReportProps> = ({ results }) => {
         <div className="mb-6 grid grid-cols-3 gap-3">
           <div className="p-3 border border-slate-200 rounded-lg">
             <p className="text-2xl font-black text-slate-900">7,1%</p>
-            <p className="text-xs text-slate-600">horas pactadas perdidas en Espana, 2025T4</p>
+            <p className="text-xs text-slate-600">horas pactadas perdidas en España, 2025T4</p>
           </div>
           <div className="p-3 border border-slate-200 rounded-lg">
             <p className="text-2xl font-black text-slate-900">5,5%</p>
-            <p className="text-xs text-slate-600">por baja medica en el mismo periodo</p>
+            <p className="text-xs text-slate-600">por baja médica en el mismo periodo</p>
           </div>
           <div className="p-3 border border-slate-200 rounded-lg">
             <p className="text-2xl font-black text-slate-900">12,3%</p>
-            <p className="text-xs text-slate-600">en sectores de mayor exposicion</p>
+            <p className="text-xs text-slate-600">en sectores de mayor exposición</p>
           </div>
         </div>
 
@@ -105,7 +105,7 @@ const PrintableReport: React.FC<PrintableReportProps> = ({ results }) => {
         <div className="mb-6 p-4 border border-slate-200 rounded-lg">
           <h3 className="font-bold text-lg mb-2 flex items-center">
             <FileText className="w-5 h-5 mr-2 text-slate-700" />
-            Formula de coste a revisar
+            Fórmula de coste a revisar
           </h3>
           <p className="text-sm text-slate-700">
             Horas perdidas x coste hora + sustituciones + horas extra + retrasos + impacto en servicio.
@@ -116,16 +116,21 @@ const PrintableReport: React.FC<PrintableReportProps> = ({ results }) => {
         </div>
 
         <div className="mb-6 p-4 bg-slate-900 text-white rounded-lg">
-          <h3 className="font-bold text-lg mb-2">Siguiente decision interna</h3>
+          <h3 className="font-bold text-lg mb-2">Siguiente decisión interna</h3>
           <p className="text-sm leading-relaxed text-slate-100">
-            Este informe identifica la fuga. La decision siguiente es ordenar las 3 palancas:
-            coste real, causa probable y momento de actuacion. Si no hay un dato claro, empieza por
-            calcular coste por area en los ultimos 90 dias antes de lanzar nuevas medidas.
+            Este informe identifica la fuga principal ({mainRiskLabel}). La decisión siguiente es ordenar las palancas corporativas: 
+            coste real, causa probable y momento de actuación. Recomendación prioritaria: 
+            {mainRisk?.dimension === 'D1' && " empezar por calcular el coste por área en los últimos 90 días antes de lanzar nuevas medidas."}
+            {mainRisk?.dimension === 'D2' && " empezar por revisar quién absorbe la carga operativa para evitar quemar a los mandos intermedios y equipos clave."}
+            {mainRisk?.dimension === 'D3' && " empezar por cruzar los datos de ausencias por área y turno para detectar patrones repetitivos (cansancio, rotación, carga)."}
+            {mainRisk?.dimension === 'D4' && " empezar por establecer un protocolo claro de actuación temprana para evitar que bajas cortas se conviertan en largas."}
+            {mainRisk?.dimension === 'T' && " empezar por proyectar el impacto económico y operativo si el absentismo sube 1 punto este año, para escalar el problema a Dirección."}
+            {!mainRisk?.dimension && " empezar por calcular el coste por área en los últimos 90 días antes de lanzar nuevas medidas."}
           </p>
         </div>
 
         <div className="text-center text-xs text-slate-400 pt-4 border-t">
-          <p>Generado automaticamente por GFS Consulting. Pensado para revision interna. No contiene datos medicos ni informacion individual de empleados.</p>
+          <p>Generado automáticamente por GFS Consulting. Pensado para revisión interna.</p>
         </div>
       </div>
     </div>

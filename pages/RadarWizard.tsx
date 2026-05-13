@@ -143,7 +143,7 @@ const RadarWizard: React.FC = () => {
   };
 
   const exitSurvey = () => {
-    if (confirm("Seguro que quieres salir? Se conservara tu avance en este navegador.")) {
+    if (confirm("¿Seguro que quieres salir? Se conservará tu avance en este navegador.")) {
       navigate('/');
     }
   };
@@ -300,19 +300,19 @@ const RadarWizard: React.FC = () => {
       const insight = miniResults.globalScore < 40
         ? {
             title: "Ya aparece una fuga clara",
-            desc: "Tus primeras respuestas apuntan a un absentismo que probablemente se esta pagando en coste, mandos o continuidad operativa.",
+            desc: "Tus primeras respuestas apuntan a un absentismo que probablemente se está pagando en coste, mandos o continuidad operativa.",
             action: "Completa las 3 preguntas finales para ver el foco exacto."
           }
         : miniResults.globalScore < 70
           ? {
-              title: "Hay una senal que conviene ordenar",
-              desc: "No parece solo un problema de volumen. La clave sera separar coste, causa y momento de actuacion.",
-              action: "Completa las 3 preguntas finales para cerrar el diagnostico."
+              title: "Hay una señal que conviene ordenar",
+              desc: "No parece solo un problema de volumen. La clave será separar coste, causa y momento de actuación.",
+              action: "Completa las 3 preguntas finales para cerrar el diagnóstico."
             }
           : {
               title: "Buen punto de partida",
-              desc: "Tus primeras respuestas muestran control inicial. Las ultimas preguntas validan si ese control tambien existe en causas y respuesta temprana.",
-              action: "Completa el diagnostico de coste."
+              desc: "Tus primeras respuestas muestran control inicial. Las últimas preguntas validan si ese control también existe en causas y respuesta temprana.",
+              action: "Completa el diagnóstico de coste."
             };
 
       return (
@@ -320,7 +320,7 @@ const RadarWizard: React.FC = () => {
           <div className="text-center mb-6">
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">Vista previa basada en tus primeras respuestas</p>
             <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-md text-white font-bold text-lg ${exposure.color}`}>
-              Exposicion {exposure.level}
+              Exposición {exposure.level}
             </div>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               Primer foco probable: {firstRiskLabel}
@@ -337,13 +337,13 @@ const RadarWizard: React.FC = () => {
               {insight.action}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Menos de 1 minuto mas. Informe ejecutivo incluido.
+              Menos de 1 minuto más. Informe ejecutivo incluido.
             </p>
           </div>
 
           <div className="mt-4 text-center">
             <p className="text-xs text-gray-400 dark:text-gray-500">
-              Falta revisar: causa probable, momento de actuacion y escenario de impacto.
+              Falta revisar: causa probable, momento de actuación y escenario de impacto.
             </p>
           </div>
         </div>
@@ -354,9 +354,9 @@ const RadarWizard: React.FC = () => {
   };
 
   const getButtonLabel = () => {
-    if (state.step === 2) return 'Ver primer patron';
-    if (state.step === 3) return 'Completar diagnostico de coste';
-    if (state.step === WIZARD_STEPS.length - 1) return 'Ver mi diagnostico';
+    if (state.step === 2) return 'Ver primer patrón';
+    if (state.step === 3) return 'Completar diagnóstico de coste';
+    if (state.step === WIZARD_STEPS.length - 1) return 'Ver mi diagnóstico';
     return 'Continuar';
   };
 

@@ -179,12 +179,12 @@ const BookingPage: React.FC = () => {
         </button>
 
         <div className="text-center mb-6">
-          <p className="text-sm font-bold uppercase tracking-wide text-accent1">Interpretacion ejecutiva de 15 minutos</p>
+          <p className="text-sm font-bold uppercase tracking-wide text-accent1">Interpretación ejecutiva de 15 minutos</p>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-primary dark:text-white mt-2">
-            Saber que palanca mover primero
+            Saber qué palanca mover primero
           </h1>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mt-3">
-            Ya tienes el informe. Esta revision no es para repetirlo: es para traducir {mainRiskLabel} en una prioridad defendible ante Direccion, RRHH u Operaciones.
+            Ya tienes el informe. Esta revisión no es para repetirlo: es para traducir {mainRiskLabel} en una prioridad defendible ante Dirección, RRHH u Operaciones.
           </p>
         </div>
 
@@ -197,8 +197,8 @@ const BookingPage: React.FC = () => {
             {isBooked ? (
               <div className="h-[550px] flex flex-col items-center justify-center">
                 <CheckCircle className="w-16 h-16 text-green-600 mb-4" />
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Sesion confirmada</h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-4">Guardando tu diagnostico y volviendo al resultado...</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Sesión confirmada</h2>
+                <p className="text-gray-500 dark:text-gray-400 mb-4">Guardando tu diagnóstico y volviendo al resultado...</p>
                 <div className="w-10 h-10 border-4 border-accent1 border-t-transparent rounded-full animate-spin"></div>
               </div>
             ) : (
@@ -224,7 +224,7 @@ const BookingPage: React.FC = () => {
               Volver al informe ejecutivo
             </button>
             <p className="mt-3 text-xs text-gray-400">
-              El informe seguira disponible para descargarlo y compartirlo internamente.
+              El informe seguirá disponible para descargarlo y compartirlo internamente.
             </p>
           </div>
         </div>

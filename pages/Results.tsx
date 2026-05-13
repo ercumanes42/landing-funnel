@@ -91,9 +91,9 @@ const Results: React.FC = () => {
   const mainRiskLabel = results.dimensionScores.find(d => d.id === mainRisk?.dimension)?.label || "Coste invisible";
   const summary =
     results.globalScore < 40
-      ? "Tu diagnostico apunta a una fuga de capacidad que ya se esta pagando en coste, mandos o continuidad."
+      ? "Tu diagnóstico apunta a una fuga de capacidad que ya se está pagando en coste, mandos o continuidad."
       : results.globalScore < 70
-        ? "Tu empresa tiene parte del problema visible, pero aun hay zonas grises donde el absentismo se convierte en coste."
+        ? "Tu empresa tiene parte del problema visible, pero aún hay zonas grises donde el absentismo se convierte en coste."
         : "Tu empresa muestra una base razonable de control. El foco ahora es anticipar desviaciones y evitar costes normalizados.";
 
   const buildPayload = (status: string) => {
@@ -201,7 +201,7 @@ const Results: React.FC = () => {
           <div className="text-center mb-8">
             <p className="text-sm font-bold uppercase tracking-wide text-accent1">Informe de fuga de capacidad</p>
             <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold text-primary dark:text-white">
-              Diagnostico completado
+              Diagnóstico completado
             </h1>
             {!isGuest && (
               <p className="mt-3 text-slate-600 dark:text-slate-300">
@@ -214,7 +214,7 @@ const Results: React.FC = () => {
             <div className={`bg-white dark:bg-slate-900 border ${exposure.border} dark:border-slate-700 rounded-lg p-6 shadow-sm`}>
               <div className="flex items-center justify-between gap-4 mb-6">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Nivel de exposicion</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Nivel de exposición</p>
                   <p className={`text-3xl font-black ${exposure.text}`}>{exposure.label}</p>
                 </div>
                 <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -266,11 +266,11 @@ const Results: React.FC = () => {
                 </div>
                 <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
                   <p className="text-xl font-black text-accent1">5,5%</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">por baja medica</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">por baja médica</p>
                 </div>
                 <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
                   <p className="text-xl font-black text-accent1">12,3%</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">sectores de mayor exposicion</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">sectores de mayor exposición</p>
                 </div>
               </div>
             </div>
@@ -282,18 +282,18 @@ const Results: React.FC = () => {
                 <div>
                   <h2 className="text-xl font-bold text-primary dark:text-white flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-amber-500" />
-                    Del diagnostico a decision interna
+                    Del diagnóstico a decisión interna
                   </h2>
                   <p className="mt-2 text-slate-600 dark:text-slate-300">
-                    El informe te muestra donde esta la fuga. La revision te muestra que palanca mover primero: coste real, causa probable o momento de actuacion.
+                    El informe te muestra dónde está la fuga. La revisión te muestra qué palanca mover primero: coste real, causa probable o momento de actuación.
                   </p>
                   <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                    En 15 minutos ordenamos tus 3 palancas y dejamos claro que dato pedir primero a RRHH, Operaciones o Finanzas.
+                    En 15 minutos ordenamos tus 3 palancas y dejamos claro qué dato pedir primero a RRHH, Operaciones o Finanzas.
                   </p>
                 </div>
                 <Button onClick={handleBookCall} className="px-7 py-4 text-base rounded-md w-full lg:w-auto">
                   <Calendar className="w-5 h-5 mr-2" />
-                  Saber que palanca mover primero
+                  Saber qué palanca mover primero
                 </Button>
               </div>
 
@@ -301,7 +301,7 @@ const Results: React.FC = () => {
                 {isEmailed ? (
                   <div className="flex items-center text-green-600 font-medium">
                     <CheckCircle className="w-5 h-5 mr-2" />
-                    Informe listo para revision interna.
+                    Informe listo para revisión interna.
                   </div>
                 ) : (
                   <button
@@ -312,7 +312,7 @@ const Results: React.FC = () => {
                   </button>
                 )}
                 <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
-                  El informe es tuyo aunque no agendes. La revision solo sirve para priorizar la decision.
+                  El informe es tuyo aunque no agendes. La revisión solo sirve para priorizar la decisión.
                 </p>
               </div>
             </div>
@@ -331,7 +331,7 @@ const Results: React.FC = () => {
           )}
 
           <div className="mt-10 text-center text-xs text-slate-500">
-            <p>GFS Consulting. Diagnostico generado automaticamente.</p>
+            <p>GFS Consulting. Diagnóstico generado automáticamente.</p>
           </div>
         </div>
       </div>

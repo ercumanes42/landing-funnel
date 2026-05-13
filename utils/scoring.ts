@@ -10,25 +10,25 @@ const OPTION_SCORES: Record<string, Record<string, number>> = {
     "En el equipo: se reparte la carga y se tensa": 30
   },
   q2: {
-    "Tenemos sustitucion clara y funciona": 88,
-    "Tiramos de companeros hasta que vuelva": 42,
+    "Tenemos sustitución clara y funciona": 88,
+    "Tiramos de compañeros hasta que vuelva": 42,
     "Se acumula trabajo y luego hay que recuperarlo": 35,
     "Depende demasiado del jefe directo": 30,
     "No lo vemos hasta que ya molesta": 22
   },
   q3: {
-    "Si: lo vemos en euros y por area": 90,
-    "Vemos dias perdidos, pero no euros": 55,
-    "Sabemos que duele, pero no cuanto": 38,
+    "Sí: lo vemos en euros y por área": 90,
+    "Vemos días perdidos, pero no euros": 55,
+    "Sabemos que duele, pero no cuánto": 38,
     "Solo lo miramos cuando hay una crisis": 28,
     "No tenemos un dato fiable": 20
   },
   q4: {
-    "Cansancio, estres o saturacion": 42,
-    "Dolor fisico, lesiones o problemas de salud": 50,
+    "Cansancio, estrés o saturación": 42,
+    "Dolor físico, lesiones o problemas de salud": 50,
     "Mal ambiente, jefes o conflictos": 35,
-    "Picos de carga, turnos o mala organizacion": 38,
-    "No vemos un patron claro": 22
+    "Picos de carga, turnos o mala organización": 38,
+    "No vemos un patrón claro": 22
   },
   q5: {
     "Antes de que la baja se alargue": 90,
@@ -38,10 +38,10 @@ const OPTION_SCORES: Record<string, Record<string, number>> = {
     "Cuando la persona vuelve": 24
   },
   q6: {
-    "Se notaria en margen o costes": 48,
-    "Se notaria en clientes o servicio": 42,
-    "Se notaria en el cansancio del equipo": 36,
-    "Lo absorberiamos como siempre": 28,
+    "Se notaría en margen o costes": 48,
+    "Se notaría en clientes o servicio": 42,
+    "Se notaría en el cansancio del equipo": 36,
+    "Lo absorberíamos como siempre": 28,
     "No lo hemos calculado": 20
   }
 };

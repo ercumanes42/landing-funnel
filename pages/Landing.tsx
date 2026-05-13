@@ -23,17 +23,12 @@ const Landing: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-16 items-center">
             <div className="animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent1/10 dark:bg-accent1/20 border border-accent1/20 text-xs sm:text-sm font-semibold text-accent1 dark:text-indigo-400 mb-6 shadow-sm">
-                <ShieldCheck className="w-4 h-4" />
-                Sin datos medicos ni datos sensibles de empleados
-              </div>
-
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-primary dark:text-white leading-[1.1] max-w-4xl">
-                Diagnostico de <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent1 to-accent2">Coste Oculto</span> del Absentismo
+                Diagnóstico de <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent1 to-accent2">Coste Oculto</span> del Absentismo
               </h1>
 
               <p className="mt-5 text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
-                En 2 minutos identifica donde se esta convirtiendo el absentismo en coste, carga para mandos o riesgo operativo.
+                En 2 minutos identifica dónde se está convirtiendo el absentismo en coste, carga para mandos o riesgo operativo.
               </p>
 
               <div className="mt-7 flex flex-col sm:flex-row gap-4 sm:items-center">
@@ -46,20 +41,7 @@ const Landing: React.FC = () => {
                 </span>
               </div>
 
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl">
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
-                  <p className="text-2xl font-extrabold text-accent1">7,1%</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">horas pactadas perdidas en Espana, 2025T4</p>
-                </div>
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
-                  <p className="text-2xl font-extrabold text-accent1">5,5%</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">por baja medica en el mismo periodo</p>
-                </div>
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
-                  <p className="text-2xl font-extrabold text-accent1">12,3%</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">en los sectores con mayor exposicion</p>
-                </div>
-              </div>
+
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-500 dark:text-slate-400">
                 <span className="inline-flex items-center gap-1.5">
@@ -108,16 +90,7 @@ const Landing: React.FC = () => {
                     ))}
                   </div>
 
-                  <div className="bg-accent1/5 dark:bg-accent1/10 rounded-xl p-5 border border-accent1/10 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-accent1"></div>
-                    <p className="text-sm font-bold text-accent1 dark:text-indigo-400 flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      Acción estratégica recomendada
-                    </p>
-                    <p className="text-sm text-slate-700 dark:text-slate-300 mt-2.5 leading-relaxed">
-                      Convertir ausencias de los últimos 90 días en coste por área antes de lanzar medidas generales.
-                    </p>
-                  </div>
+
                 </div>
               </div>
 
