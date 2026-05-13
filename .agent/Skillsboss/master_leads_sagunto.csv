@@ -1,0 +1,56 @@
+Sector,Nombre,Telefono,Direccion/URL,Comentarios/Snippet
+Peluquería (Principal),MD Peluquería,+34 640 91 12 66,Av. Campo de Morvedre 42,Solo usa Setmore para citas
+Peluquería (Principal),Jose Moyano - Estilistas,+34 698 98 91 80,"Plaza Ramón de la Sota, 4",Solo usa Fresha
+Peluquería (Principal),Ana Sánchez,+34 962 68 39 04,"Carrer Reina Na Joana, 1",Sin presencia web
+Peluquería (Principal),David Marti,+34 692 37 56 08,"Carrer América, 18",Sin presencia web
+Barbería (Principal),Barber Sugar Nails,+34 643 13 47 10,"C/ Reina Isabel II, 21",Sin presencia web
+Peluquería (Principal),Peluquería Noemi Unisex,+34 658 79 11 12,"Carrer Ametller, 47",Sin presencia web
+Peluquería (Principal),AR. Estilistes,+34 960 81 38 32,"C/ Garrofera, s/n",Sin presencia web
+Barbería (Principal),Moha The Barber,+34 622 11 66 21,"Avinguda Hispanitat, 58",Sin presencia web
+Peluquería (Principal),Lorena Poveda Estilista,+34 627 90 29 14,"C/ de la Palmereta, 22, B1",Sin presencia web
+Peluquería (Principal),Peluquería Patricia,+34 633 45 22 00,"Avinguda de la Ribera, 23",Centro de bronceado incluido
+Peluquería (Principal),Lola Torrente Peluquería y Estética,+34 962 67 05 39,"C/ Churruca, 26A, Bajo",Incluye estética
+Peluquería (Principal),Joven's Estilistes,+34 962 68 10 65,"Carrer Taronger, 35",Salón de belleza
+Estética (Principal),Vermon Salón de Estética,+34 645 71 43 71,"Avinguda de la Ribera, 25",Centro de estética
+Peluquería (Principal),Julia Guillem Peluqueros 2,+34 640 08 07 39,"Carrer Barcelona, 13",Web simple mejorable
+Peluquería (Principal),Luirina Morini,+34 623 22 06 91,"Carrer Alquerieta de Roc, 15",Sin presencia web
+Peluquería (Principal),Peluquería Renau,+34 645 62 64 32,"Av. Doctor Palos, 11",Sin presencia web
+Taller Mecánico (Principal),Talleres Hermanos Ruiz C.B.,Buscar en directorio,Puerto de Sagunto,Buscar en Páginas Amarillas
+Taller Mecánico (Principal),Talleres Record Movil,Buscar en directorio,Puerto de Sagunto,Buscar en Páginas Amarillas
+Taller Mecánico (Principal),Talleres Mecánicos Bonache S.L.,Buscar en directorio,Puerto de Sagunto,Buscar en Páginas Amarillas
+Taller Mecánico (Principal),Autos Ximo 2002 S.L.,Buscar en directorio,Puerto de Sagunto,Buscar en Páginas Amarillas
+Taller Chapa (Principal),Sagunt Dent Repair,Buscar en directorio,"Carrer Els Partidors, 6",Reparación abolladuras
+Taller Mecánico (Principal),Talleres Portauto,Buscar en directorio,"Pol. Ind. Ingruinsa, 49",Neumáticos y reparaciones
+Taller Mecánico (Principal),Talleres Luyjo,Buscar en directorio,Sagunto,Taller multimarca
+Cerrajería (Principal),J.D.A. Cerrajero,Buscar en Habitissimo,Puerto de Sagunto,Cerrajero local
+Cerrajería (Principal),Puertas Automáticas F.Díaz,Buscar en Habitissimo,Puerto de Sagunto,Puertas automáticas
+Cerrajería (Principal),Cerrajería FG,Buscar en Habitissimo,Puerto de Sagunto,Cerrajería local
+Cerrajería (Principal),Metalhome Servicios Integrales,Buscar en Habitissimo,Puerto de Sagunto,Servicios integrales
+Carpintería Metálica (Principal),Empresa Carpintería Metálica,Buscar,"C/ Cataluña, 33",Vista en Empresite
+🔧 FONTANEROS Y SERVICIOS DE AGUA,Tot Repara (Fontaneros Sagunto 24h),96 317 33 29,Zona Sagunto,Web: ✅ Web | Prioridad: ❌ Baja
+🔧 FONTANEROS Y SERVICIOS DE AGUA,Soluciones González,659 059 059,Sagunto,Web: ✅ Web | Prioridad: ❌ Baja
+🔧 FONTANEROS Y SERVICIOS DE AGUA,Servicio Xpress,601 895 629,Sagunto,Web: ✅ Web | Prioridad: ❌ Baja
+🔧 FONTANEROS Y SERVICIOS DE AGUA,Saneamientos Arellano,Consultar,Puerto de Sagunto,Web: ✅ Web | Prioridad: ❌ Baja
+🔧 FONTANEROS Y SERVICIOS DE AGUA,Fontanería Marco,Consultar,Sagunto,Web: ✅ Web | Prioridad: ❌ Baja
+🔧 FONTANEROS Y SERVICIOS DE AGUA,AUTÓNOMOS SIN WEB (buscar en Páginas Amarillas),Varios,Zona,Web: ❌ Sin Web | Prioridad: 🔥 ALTA
+🚗 TALLERES MECÁNICOS,Norauto Sagunto,960 91 21 00,"Av. de les Moreres S/N, Pc. Vidanova",Web: 🌐 Cadena | Prioridad: ❌ Baja
+🚗 TALLERES MECÁNICOS,Sagunt Dent Repair,Consultar,"Carrer Els Partidors, 6, 46500",Web: ⚠️ Verificar | Prioridad: ⭐ Media
+🚗 TALLERES MECÁNICOS,Talleres Portauto,Consultar,"Ojos Negros (Pol. Ind. Ingruinsa), 49",Web: ⚠️ Verificar | Prioridad: ⭐ Media
+🚗 TALLERES MECÁNICOS,Talleres Luyjo,Consultar,Sagunto,Web: ⚠️ Verificar | Prioridad: ⭐ Media
+🚗 TALLERES MECÁNICOS,Mecanizados Carmar,Consultar web,"Avenida Raco de L'Horta 24, 46500",Web: ✅ Web básica | Prioridad: ⭐ Media
+🚗 TALLERES MECÁNICOS,Autotalleres Costa,Consultar,Puerto de Sagunto,Web: ✅ Web | Prioridad: ❌ Baja
+🚗 TALLERES MECÁNICOS,Andrés Zamora Sagunto,Consultar,"Sequia de la Torre, 13, 46520",Web: ✅ Web | Prioridad: ❌ Baja
+🚗 TALLERES MECÁNICOS,"Talleres Hermanos Ruiz, C.B.",Buscar,Puerto de Sagunto,Web: ❌ Verificar | Prioridad: 🔥 ALTA
+🚗 TALLERES MECÁNICOS,Talleres Record Movil,Buscar,Puerto de Sagunto,Web: ❌ Verificar | Prioridad: 🔥 ALTA
+🚗 TALLERES MECÁNICOS,"Talleres Mecánicos Bonache, S.L.",Buscar,Puerto de Sagunto,Web: ❌ Verificar | Prioridad: 🔥 ALTA
+🚗 TALLERES MECÁNICOS,"Autos Ximo 2002, S.L.",Buscar,Puerto de Sagunto,Web: ❌ Verificar | Prioridad: 🔥 ALTA
+💇 PELUQUERÍAS Y BARBERÍAS,Upgrade Men's Grooming,Buscar,"Avda Camp De Morvedre, 78",Web: ⚠️ Booksy | Prioridad: ⭐ Media
+💇 PELUQUERÍAS Y BARBERÍAS,Miguel Angel & Cristian Peluqueros,Buscar,Calle de la...,Web: ⚠️ Verificar | Prioridad: ⭐ Media
+🔐 CERRAJEROS Y CARPINTERÍA METÁLICA,Lockman,Consultar,Puerto de Sagunto,Web: ✅ Web | Prioridad: ❌ Baja
+🔐 CERRAJEROS Y CARPINTERÍA METÁLICA,Cerrajeros Valencia,688 911 157,Sagunto,Web: ✅ Web | Prioridad: ❌ Baja
+🔐 CERRAJEROS Y CARPINTERÍA METÁLICA,Cerrajeros Valencia AC,605 903 344,Sagunto,Web: ✅ Web | Prioridad: ❌ Baja
+🔐 CERRAJEROS Y CARPINTERÍA METÁLICA,J.D.A. Cerrajero,Buscar,Puerto de Sagunto,Web: ❌ Verificar | Prioridad: 🔥 ALTA
+🔐 CERRAJEROS Y CARPINTERÍA METÁLICA,Puertas Automáticas F.Díaz,Buscar,Puerto de Sagunto,Web: ❌ Verificar | Prioridad: 🔥 ALTA
+🔐 CERRAJEROS Y CARPINTERÍA METÁLICA,Cerrajería FG,Buscar,Puerto de Sagunto,Web: ❌ Verificar | Prioridad: 🔥 ALTA
+🔐 CERRAJEROS Y CARPINTERÍA METÁLICA,Metalhome Servicios Integrales,Buscar,Puerto de Sagunto,Web: ❌ Verificar | Prioridad: 🔥 ALTA
+🔐 CERRAJEROS Y CARPINTERÍA METÁLICA,"EMPRESA EN C/ Cataluña, 33, 46520",Buscar,Sagunto,Web: ❌ Sin Web | Prioridad: 🔥 ALTA
