@@ -191,7 +191,7 @@ export const WIZARD_STEPS: { title: string; subtitle?: string; questions: Questi
         id: "q1",
         category: "D2",
         type: "select",
-        text: "¿Cuándo alguien falta, dónde se nota primero?",
+        text: "¿Cuándo alguien falta al trabajo, dónde se nota primero?",
         options: [
           "En operaciones: hay que mover turnos o tareas",
           "En los mandos: acaban tapando huecos",
