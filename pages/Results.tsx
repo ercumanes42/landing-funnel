@@ -17,6 +17,14 @@ const Results: React.FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const hashQuery = window.location.hash.includes('?')
+      ? window.location.hash.slice(window.location.hash.indexOf('?') + 1)
+      : '';
+    const hashParams = new URLSearchParams(hashQuery);
+    hashParams.forEach((value, key) => {
+      if (!params.has(key)) params.set(key, value);
+    });
+
     const urlScore = params.get('score');
     const isDirectPdf = params.get('pdf') === 'true';
 
@@ -151,6 +159,9 @@ const Results: React.FC = () => {
       meta: {
         timestamp: new Date().toISOString(),
         meetingOptIn: status,
+        eventType: status === "Downloaded Report" ? "report_downloaded" : "result_followup",
+        funnelId: "absentismo_laboral",
+        payloadVersion: "2026_05_absentismo_v1",
         reportDelivery: "all_completed_leads",
         conversionLogic: "report_for_internal_review_booking_for_interpretation",
         isUnlocked: false
@@ -183,12 +194,12 @@ const Results: React.FC = () => {
     navigate('/agendar');
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     logEvent(AnalyticsEvent.REPORT_DOWNLOADED, {
       ...buildResultAnalyticsPayload(results),
       report_format: 'print_pdf'
     });
-    notifyMake("Downloaded Report");
+    await notifyMake("Downloaded Report");
     setIsEmailed(true);
     window.print();
   };
