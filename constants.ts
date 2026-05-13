@@ -213,7 +213,7 @@ export const WIZARD_STEPS: { title: string; subtitle?: string; questions: Questi
         text: "Cuando una baja se alarga, que suele pasar en la practica?",
         options: [
           "Tenemos sustitucion clara y funciona",
-          "Tiramos de companeros hasta que vuelva",
+          "Tiramos de compañeros hasta que vuelva",
           "Se acumula trabajo y luego hay que recuperarlo",
           "Depende demasiado del jefe directo",
           "No lo vemos hasta que ya molesta"
@@ -293,7 +293,7 @@ export const WIZARD_STEPS: { title: string; subtitle?: string; questions: Questi
         id: "q6",
         category: "T",
         type: "select",
-        text: "Si el absentismo sube 1 punto este ano, que pasaria?",
+        text: "Si el absentismo sube 1 punto este año, que pasaria?",
         options: [
           "Se notaria en margen o costes",
           "Se notaria en clientes o servicio",
