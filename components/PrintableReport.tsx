@@ -35,7 +35,7 @@ const PrintableReport: React.FC<PrintableReportProps> = ({ results }) => {
         <div className="grid grid-cols-3 gap-8 mb-10">
           <div className="col-span-1 text-center p-6 border-4 border-slate-200 rounded-2xl bg-slate-50">
             <div className="text-6xl font-black text-slate-900">{results.globalScore}</div>
-            <div className="text-sm uppercase font-black mt-2" style={{ color: score la.color }}>{scoreMeta.text}</div>
+            <div className="text-sm uppercase font-black mt-2" style={{ color: scoreMeta.color }}>{scoreMeta.text}</div>
             <div className="mt-4 pt-4 border-t border-slate-200">
               <p className="text-xs uppercase font-bold text-slate-500 mb-1">Nivel de Madurez</p>
               <p className="text-sm font-bold text-slate-900">{results.maturityLevel.level}</p>
