@@ -312,58 +312,60 @@ const RadarWizard: React.FC = () => {
 
       const insight = miniResults.globalScore < 40
         ? {
-            title: "Diagnóstico Preliminar: Fuga de Capacidad Activa",
-            desc: "Tus respuestas indican que el absentismo ya está impactando directamente en tus operaciones o costes. No es solo un dato de RRHH, es capacidad que estás perdiendo cada día.",
-            action: "Completa los últimos 3 pasos para cuantificar el impacto real y obtener tu hoja de ruta."
+            title: "Alerta: Fuga de Capacidad Crítica",
+            desc: "Tus primeras respuestas revelan un escenario donde el absentismo ya no es un problema de RRHH, sino una hemorragia de capacidad operativa. Probablemente estés absorbiendo la carga con mandos agotados o sacrificando calidad de servicio.",
+            action: "Completa los últimos 3 pasos para cuantificar la pérdida económica real y obtener tu hoja de ruta de mitigación."
           }
         : miniResults.globalScore < 70
           ? {
-              title: "Atención: Hay zonas grises que generan coste",
-              desc: "El problema está contenido pero es frágil. Si no segmentamos la causa y el momento de actuación, el coste seguirá oculto en los presupuestos.",
-              action: "Finaliza el diagnóstico para descubrir qué palanca priorizar."
+              title: "Diagnóstico: Equilibrio Operativo Frágil",
+              desc: "Tienes el control básico, pero existe una 'zona gris' peligrosa. El problema está contenido, pero la forma en que absorbes las ausencias genera un coste oculto que erosiona tu margen sin que aparezca en los informes.",
+              action: "Finaliza el diagnóstico para descubrir exactamente dónde se esconde la fuga y qué palanca mover primero."
             }
           : {
-              title: "Base de control detectada",
-              desc: "Muestras un buen nivel inicial. El reto ahora es evitar que el absentismo se normalice y se convierta en un coste fijo estructural.",
-              action: "Completa el test para validar tu capacidad de respuesta temprana."
+              title: "Estado: Base de Gestión Saludable",
+              desc: "Muestras un nivel de control superior a la media. Tu reto ahora es la optimización: evitar que el absentismo se normalice y convertir la gestión de bajas en una ventaja competitiva de eficiencia.",
+              action: "Completa el test para validar tu capacidad de respuesta temprana y obtener el benchmark final."
             };
 
       return (
-        <div className="mt-4 p-6 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="mt-4 p-6 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm animate-fade-in">
           <div className="text-center mb-6">
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">Vista previa basada en tus primeras respuestas</p>
-            <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-md text-white font-bold text-lg ${exposure.color}`}>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-widest font-bold">Análisis preliminar de impacto</p>
+            <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-md text-white font-black text-lg ${exposure.color}`}>
               Exposición {exposure.level}
             </div>
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              Primer foco probable: <span className="font-bold text-primary dark:text-white">{firstRiskLabel}</span>
+            <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
+              Foco de riesgo inmediato: <span className="font-bold text-primary dark:text-white">{firstRiskLabel}</span>
             </p>
           </div>
 
-          <div className="mb-6 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
-            <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-2">{insight.title}</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{insight.desc}</p>
+          <div className="mb-6 p-5 bg-slate-50 dark:bg-slate-700/50 rounded-xl border-l-4 border-accent1">
+            <h4 className="font-extrabold text-gray-800 dark:text-gray-100 mb-2 text-lg">{insight.title}</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed italic">"{insight.desc}"</p>
           </div>
 
           {firstQuickWin && (
-            <div className="mb-6 p-4 bg-accent1/5 dark:bg-accent1/10 rounded-lg border-l-4 border-accent1">
-              <p className="text-xs uppercase text-accent1 dark:text-indigo-400 font-bold mb-1">Acción prioritaria recomendada (Quick Win)</p>
-              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{firstQuickWin}</p>
+            <div className="mb-6 p-4 bg-accent1/5 dark:bg-accent1/10 rounded-lg border border-accent1/20">
+              <p className="text-xs uppercase text-accent1 dark:text-indigo-400 font-black mb-2">Acción de alto impacto recomendada</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                {firstQuickWin}
+              </p>
             </div>
           )}
 
-          <div className="text-center p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <div className="text-center p-5 bg-slate-900 dark:bg-slate-950 rounded-xl border border-slate-800">
+            <p className="text-sm font-medium text-slate-300 mb-2">
               {insight.action}
             </p>
-            <p className="text-base font-bold text-accent2 dark:text-rose-400 mt-2">
-              Un minuto más y tendrás el informe ejecutivo incluido
+            <p className="text-base font-black text-white">
+              En menos de 60 segundos tendrás el informe ejecutivo completo
             </p>
           </div>
 
           <div className="mt-4 text-center">
-            <p className="text-xs text-gray-400 dark:text-gray-500">
-              Falta revisar: causa probable, momento de actuación y escenario de impacto.
+            <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-tighter">
+              Pendiente de validar: Causa probable, momento de actuación y escenario de impacto.
             </p>
           </div>
         </div>

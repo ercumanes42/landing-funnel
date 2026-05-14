@@ -45,12 +45,22 @@ const Results: React.FC = () => {
       ];
 
       const sorted = [...dimensionScores].sort((a, b) => a.score - b.score);
+
+      // We use calculateResults logic internally for guests too to ensure consistency
+      // but since we only have the scores, we simulate the result data
       const guestResults: ResultData = {
         globalScore: getIntParam('score'),
         dimensionScores,
         topRisks: sorted.slice(0, 3).map(dim => ({ dimension: dim.id, score: dim.score })),
-        quickWins: sorted.slice(0, 3).map(dim => QUICK_WINS[dim.id as keyof typeof QUICK_WINS]).filter(Boolean)
+        quickWins: sorted.slice(0, 3).map(dim => QUICK_WINS[dim.id as keyof typeof QUICK_WINS]).filter(Boolean),
+        maturityLevel: {
+          level: "Análisis Parcial",
+          description: "Resultados basados en parámetros compartidos.",
+          nextStep: "Sugerimos realizar el diagnóstico completo para obtener la hoja de ruta detallada."
+        },
+        patterns: []
       };
+
 
       setResults(guestResults);
       setIsGuest(true);
@@ -236,22 +246,29 @@ const Results: React.FC = () => {
           <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-6">
             <div className={`bg-white dark:bg-slate-900 border ${exposure.border} dark:border-slate-700 rounded-lg p-6 shadow-sm`}>
               <div className="flex items-center justify-between gap-4 mb-6">
-                <div>
+                <div className="flex-1">
                   <p className="text-sm text-slate-500 dark:text-slate-400">Nivel de exposición</p>
                   <p className={`text-3xl font-black ${exposure.text}`}>{exposure.label}</p>
                 </div>
-                <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center border-2 border-slate-200 dark:border-slate-700">
                   <span className="text-3xl font-black text-primary dark:text-white">{results.globalScore}</span>
+                  <span className="text-[10px] uppercase font-bold text-slate-400">Score</span>
                 </div>
               </div>
 
-              <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{summary}</p>
+              <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border-l-4 border-accent1">
+                <p className="text-xs uppercase font-bold text-accent1 mb-1">Nivel de Madurez</p>
+                <p className="text-lg font-bold text-primary dark:text-white">{results.maturityLevel.level}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">{results.maturityLevel.description}</p>
+              </div>
 
-              <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{summary}</p>
+
+              <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
                 <p className="text-sm text-slate-500 dark:text-slate-400">Tu fuga principal</p>
                 <p className="mt-1 text-xl font-bold text-primary dark:text-white">{mainRiskLabel}</p>
                 {results.quickWins[0] && (
-                  <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">{results.quickWins[0]}</p>
+                  <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 italic">{results.quickWins[0]}</p>
                 )}
               </div>
             </div>
@@ -282,6 +299,20 @@ const Results: React.FC = () => {
                 })}
               </div>
 
+              {results.patterns.length > 0 && (
+                <div className="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+                  <p className="text-xs uppercase font-black text-amber-600 dark:text-amber-400 mb-2 tracking-wide">Patrones Críticos Detectados</p>
+                  <div className="space-y-3">
+                    {results.patterns.map((p, idx) => (
+                      <div key={idx} className="text-sm">
+                        <span className="font-bold text-slate-900 dark:text-white">{p.name}: </span>
+                        <span className="text-slate-600 dark:text-slate-400">{p.description}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="mt-6 grid sm:grid-cols-3 gap-3">
                 <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
                   <p className="text-xl font-black text-accent1">7,1%</p>
@@ -293,7 +324,7 @@ const Results: React.FC = () => {
                 </div>
                 <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
                   <p className="text-xl font-black text-accent1">12,3%</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">sectores de mayor exposición</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">sectores expuestos</p>
                 </div>
               </div>
             </div>

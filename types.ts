@@ -36,6 +36,15 @@ export interface ResultData {
   dimensionScores: DimensionScore[];
   topRisks: { dimension: string; score: number }[];
   quickWins: string[];
+  maturityLevel: {
+    level: string;
+    description: string;
+    nextStep: string;
+  };
+  patterns: {
+    name: string;
+    description: string;
+  }[];
 }
 
 export enum AnalyticsEvent {
