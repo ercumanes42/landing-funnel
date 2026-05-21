@@ -3,8 +3,8 @@ import { AnalyticsEvent } from "../types";
 
 export { AnalyticsEvent };
 
-const FUNNEL_ID = 'absentismo_laboral';
-const FUNNEL_VERSION = '2026_05_absentismo_v1';
+const FUNNEL_ID = 'fuga_talento';
+const FUNNEL_VERSION = '2026_05_talento_v2';
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY;
 const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://eu.i.posthog.com';
 
@@ -85,6 +85,10 @@ export const identifyLead = (email: string, properties: Record<string, any> = {}
 
 export const buildResultAnalyticsPayload = (results: {
   globalScore: number;
+  rawTotal?: number;
+  maxRawTotal?: number;
+  answeredCount?: number;
+  riskPercent?: number;
   dimensionScores: Array<{ id: string; label: string; score: number }>;
   topRisks: Array<{ dimension: string; score: number }>;
 }) => {
@@ -93,6 +97,10 @@ export const buildResultAnalyticsPayload = (results: {
 
   return {
     global_score: results.globalScore,
+    raw_total: results.rawTotal,
+    max_raw_total: results.maxRawTotal,
+    answered_count: results.answeredCount,
+    risk_percent: results.riskPercent,
     main_risk_id: mainRisk?.dimension || "",
     main_risk_label: mainRiskLabel,
     d1_score: results.dimensionScores.find(d => d.id === "D1")?.score,

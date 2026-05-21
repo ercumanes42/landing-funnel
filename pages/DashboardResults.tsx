@@ -36,9 +36,14 @@ const DashboardResults: React.FC = () => {
     const sorted = [...dimensionScores].sort((a, b) => a.score - b.score);
 
     const isDirectPdf = searchParams.get('pdf') === 'true';
+    const score = getIntParam('score');
 
     setResults({
-      globalScore: getIntParam('score'),
+      globalScore: score,
+      rawTotal: getIntParam('rawTotal'),
+      maxRawTotal: getIntParam('maxRawTotal') || 40,
+      answeredCount: getIntParam('answeredCount'),
+      riskPercent: getIntParam('riskPercent') || Math.max(0, Math.min(100, 100 - score)),
       dimensionScores,
       topRisks: [
         { dimension: sorted[0].id, score: sorted[0].score },
@@ -49,7 +54,13 @@ const DashboardResults: React.FC = () => {
         QUICK_WINS[sorted[0].id as keyof typeof QUICK_WINS],
         QUICK_WINS[sorted[1].id as keyof typeof QUICK_WINS],
         QUICK_WINS[sorted[2].id as keyof typeof QUICK_WINS]
-      ].filter(Boolean)
+      ].filter(Boolean),
+      maturityLevel: {
+        level: "Análisis compartido",
+        description: "Resultados basados en parámetros compartidos por URL.",
+        nextStep: "Sugerimos completar el radar privado para obtener una lectura más precisa."
+      },
+      patterns: []
     });
     
     if (isDirectPdf) {

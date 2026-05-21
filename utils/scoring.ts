@@ -3,105 +3,92 @@ import { AnswerValue, ResultData } from "../types";
 
 const OPTION_SCORES: Record<string, Record<string, number>> = {
   q1: {
-    "Hoy no parece un problema serio": 82,
-    "En operaciones: hay que mover turnos o tareas": 45,
-    "En clientes: bajan tiempos, calidad o servicio": 38,
-    "En los mandos: acaban tapando huecos": 32,
-    "En el equipo: se reparte la carga y se tensa": 30
+    "Es excepcional: casi nadie se va": 95,
+    "Es controlada: algunos casos puntuales": 70,
+    "Es preocupante: hemos perdido a varios clave": 35,
+    "Es crítica: estamos sangrando talento": 10
   },
   q2: {
-    "Tenemos sustitución clara y funciona": 88,
-    "Tiramos de compañeros hasta que vuelva": 42,
-    "Se acumula trabajo y luego hay que recuperarlo": 35,
-    "Depende demasiado del jefe directo": 30,
-    "No lo vemos hasta que ya molesta": 22
-  },
-  q3: {
-    "Sí: lo vemos en euros y por área": 90,
-    "Vemos días perdidos, pero no euros": 55,
-    "Sabemos que duele, pero no cuánto": 38,
-    "Solo lo miramos cuando hay una crisis": 28,
-    "No tenemos un dato fiable": 20
-  },
-  q4: {
-    "Cansancio, estrés o saturación": 42,
-    "Dolor físico, lesiones o problemas de salud": 50,
-    "Mal ambiente, jefes o conflictos": 35,
-    "Picos de carga, turnos o mala organización": 38,
-    "No vemos un patrón claro": 22
-  },
-  q5: {
-    "Antes de que la baja se alargue": 90,
-    "En la primera semana": 78,
-    "Cuando ya afecta al equipo": 42,
-    "Cuando el mando pide ayuda": 36,
-    "Cuando la persona vuelve": 24
-  },
-  q6: {
-    "Se notaría en margen o costes": 48,
-    "Se notaría en clientes o servicio": 42,
-    "Se notaría en el cansancio del equipo": 36,
-    "Lo absorberíamos como siempre": 28,
-    "No lo hemos calculado": 20
+    "No, los jóvenes suelen quedarse al menos 3 años": 90,
+    "1-2 casos puntuales": 65,
+    "3-5 casos (empieza a ser un patrón)": 35,
+    "Más de 5 casos (estamos perdiendo inversión en formación joven)": 15
   }
 };
 
-const RED_FLAGS: Record<string, string[]> = {
-  q3: ["No tenemos un dato fiable", "Solo lo miramos cuando hay una crisis"],
-  q2: ["No lo vemos hasta que ya molesta"],
-  q6: ["No lo hemos calculado"]
+const RED_FLAG_THRESHOLDS: Record<string, number> = {
+  q1: 4,
+  q2: 4,
+  q3: 4,
+  q4: 4,
+  q5: 4,
+  q6: 4,
+  q7: 4,
+  q8: 4
 };
 
 const PATTERNS = [
   {
-    name: "Ceguera Financiera",
-    condition: (res: ResultData) => res.dimensionScores.find(d => d.id === "D1")!.score < 40 && res.dimensionScores.find(d => d.id === "D2")!.score < 50,
-    description: "La empresa sufre una sobrecarga operativa crítica pero no tiene visibilidad del coste económico. Esto impide que la dirección asigne presupuesto para soluciones reales."
+    name: "Fuga de talento por clima y propuesta de valor",
+    condition: (res: ResultData) => res.dimensionScores.find(d => d.id === "D3")!.score < 45,
+    description: "El principal riesgo parece estar en la combinación de atracción, rotación, clima y promesa interna."
   },
   {
-    name: "Fragilidad Operativa",
-    condition: (res: ResultData) => res.dimensionScores.find(d => d.id === "D2")!.score < 40 && res.dimensionScores.find(d => d.id === "D4")!.score < 50,
-    description: "Hay una dependencia peligrosa de personas clave para cubrir huecos y la respuesta es reactiva. Un pico de bajas podría colapsar el servicio."
+    name: "Mandos sosteniendo demasiado peso",
+    condition: (res: ResultData) => res.dimensionScores.find(d => d.id === "D1")!.score < 45,
+    description: "El rendimiento depende demasiado de control o esfuerzo del mando, una señal que suele preceder desgaste y salidas evitables."
   },
   {
-    name: "Desconexión de Liderazgo",
-    condition: (res: ResultData) => res.dimensionScores.find(d => d.id === "D3")!.score < 40 && res.dimensionScores.find(d => d.id === "T")!.score < 40,
-    description: "El absentismo se ha normalizado como un 'coste fijo' y no se analizan las causas. Hay un riesgo alto de que el clima laboral degrade la productividad."
+    name: "Dependencia de roles críticos",
+    condition: (res: ResultData) => res.dimensionScores.find(d => d.id === "D4")!.score < 45,
+    description: "La organización puede tener perfiles difíciles de reemplazar sin sucesión ni transferencia suficiente."
+  },
+  {
+    name: "Adaptación más lenta que el negocio",
+    condition: (res: ResultData) => res.dimensionScores.find(d => d.id === "D2")!.score < 45,
+    description: "El desarrollo interno no parece estar cerrando la brecha de capacidades con suficiente velocidad."
+  },
+  {
+    name: "Fricción generacional",
+    condition: (res: ResultData) => res.dimensionScores.find(d => d.id === "T")!.score < 45,
+    description: "Puede haber choque entre talento joven y senior, con pérdida de aprendizaje cruzado y más presión sobre los mandos."
   }
 ];
 
 const MATURITY_LEVELS = [
   {
-ScoreMax: 40,
-    level: "Nivel 1: Reactivo",
-    description: "El absentismo es gestionado como una emergencia diaria. Se apagan fuegos y se acepta la pérdida de capacidad como inevitable.",
-    nextStep: "Siguiente paso: Implementar la medición de costes reales por área para convertir el problema en un dato financiero."
+    ScoreMax: 40,
+    level: "Nivel 1: Exposición alta",
+    description: "Hay señales de fuga o fricción con impacto potencial en talento clave, liderazgo, continuidad o adaptación.",
+    nextStep: "Siguiente paso: ordenar las 3 áreas de riesgo y decidir qué dato revisar esta semana antes de lanzar iniciativas."
   },
   {
     ScoreMax: 70,
-    level: "Nivel 2: Controlado",
-    description: "Existe visibilidad del problema y se han implementado algunas medidas, pero la respuesta sigue siendo fragmentaria y dependiente de la voluntad del mando.",
-    nextStep: "Siguiente paso: Segmentar las causas por patrón y horario para aplicar soluciones quirúrgicas en lugar de generales."
+    level: "Nivel 2: Riesgo en transición",
+    description: "La organización funciona, pero hay zonas de tensión que pueden convertirse en rotación o pérdida de capacidad si no se priorizan.",
+    nextStep: "Siguiente paso: elegir una palanca principal y convertirla en una hoja de ruta de 30-60 días."
   },
   {
     ScoreMax: 101,
-    level: "Nivel 3: Optimizado",
-    description: "La empresa tiene una cultura de prevención y respuesta temprana. El absentismo se monitoriza como un KPI de eficiencia operativa.",
-    nextStep: "Siguiente paso: Refinar la analítica predictiva para anticipar picos de demanda y ajustar la capacidad antes de que aparezca la tensión."
+    level: "Nivel 3: Base saludable",
+    description: "La organización muestra señales positivas de control, pero aún conviene blindar roles críticos y anticipar desconexión.",
+    nextStep: "Siguiente paso: reforzar prevención, sucesión y aprendizaje para que la ventaja no dependa de personas aisladas."
   }
 ];
 
 const QUESTION_MAPPING: Record<string, string[]> = {
-  D1: ["q3"],
-  D2: ["q1", "q2"],
-  D3: ["q4"],
-  D4: ["q5"],
+  D1: ["q4"],
+  D2: ["q5"],
+  D3: ["q1", "q2", "q3", "q8"],
+  D4: ["q7"],
   T: ["q6"]
 };
 
+const QUESTION_IDS = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8"];
+
 const getQuestionScore = (questionId: string, value: AnswerValue): number | null => {
   if (typeof value === "number") {
-    return Math.round(((value - 1) / 4) * 100);
+    return Math.round(100 - ((value - 1) / 4) * 100);
   }
 
   if (typeof value === "string") {
@@ -112,6 +99,18 @@ const getQuestionScore = (questionId: string, value: AnswerValue): number | null
 };
 
 export const calculateResults = (answers: Record<string, AnswerValue>): ResultData => {
+  const answeredQuestionValues = QUESTION_IDS
+    .map((id) => answers[id])
+    .filter((value): value is number => typeof value === "number");
+  const answeredCount = answeredQuestionValues.length;
+  const rawTotal = answeredQuestionValues.reduce((sum, value) => sum + value, 0);
+  const minRawTotal = answeredCount;
+  const maxRawTotal = answeredCount > 0 ? answeredCount * 5 : QUESTION_IDS.length * 5;
+  const riskPercent = answeredCount > 0
+    ? Math.round(((rawTotal - minRawTotal) / (maxRawTotal - minRawTotal)) * 100)
+    : 0;
+  const globalScore = answeredCount > 0 ? 100 - riskPercent : 0;
+
   const getDimensionScore = (dimKey: string): number => {
     const questionIds = QUESTION_MAPPING[dimKey] || [];
     const scores = questionIds
@@ -122,11 +121,10 @@ export const calculateResults = (answers: Record<string, AnswerValue>): ResultDa
 
     let average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
-    // Aplicar Red Flags: si alguna respuesta es crítica, penalizamos la dimensión
     questionIds.forEach(id => {
       const ans = answers[id];
-      if (typeof ans === 'string' && RED_FLAGS[id]?.includes(ans)) {
-        average = Math.min(average, 30); // Fuerza a riesgo alto
+      if (typeof ans === "number" && ans >= (RED_FLAG_THRESHOLDS[id] || 99)) {
+        average = Math.min(average, 35);
       }
     });
 
@@ -140,21 +138,6 @@ export const calculateResults = (answers: Record<string, AnswerValue>): ResultDa
     color: "#0F766E"
   }));
 
-  let weightedSum = 0;
-  let totalWeight = 0;
-
-  scores.forEach((score) => {
-    const questionIds = QUESTION_MAPPING[score.id] || [];
-    const hasAnsweredDimension = questionIds.some((id) => answers[id] !== undefined && answers[id] !== null);
-
-    if (hasAnsweredDimension) {
-      const weight = DIMENSIONS[score.id as keyof typeof DIMENSIONS].weight;
-      weightedSum += score.score * weight;
-      totalWeight += weight;
-    }
-  });
-
-  const globalScore = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
   const answeredScores = scores.filter((score) => {
     const questionIds = QUESTION_MAPPING[score.id] || [];
     return questionIds.some((id) => answers[id] !== undefined && answers[id] !== null);
@@ -174,6 +157,10 @@ export const calculateResults = (answers: Record<string, AnswerValue>): ResultDa
 
   const tempResults: ResultData = {
     globalScore,
+    rawTotal,
+    maxRawTotal,
+    answeredCount,
+    riskPercent,
     dimensionScores: scores,
     topRisks,
     quickWins: suggestedWins,
@@ -181,7 +168,6 @@ export const calculateResults = (answers: Record<string, AnswerValue>): ResultDa
     patterns: []
   };
 
-  // Calcular Nivel de Madurez
   const maturity = MATURITY_LEVELS.find(l => globalScore <= l.ScoreMax)!;
   tempResults.maturityLevel = {
     level: maturity.level,
@@ -189,7 +175,6 @@ export const calculateResults = (answers: Record<string, AnswerValue>): ResultDa
     nextStep: maturity.nextStep
   };
 
-  // Detectar Patrones
   tempResults.patterns = PATTERNS.filter(p => p.condition(tempResults));
 
   return tempResults;

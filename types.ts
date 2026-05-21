@@ -33,6 +33,10 @@ export interface DimensionScore {
 
 export interface ResultData {
   globalScore: number;
+  rawTotal: number;
+  maxRawTotal: number;
+  answeredCount: number;
+  riskPercent: number;
   dimensionScores: DimensionScore[];
   topRisks: { dimension: string; score: number }[];
   quickWins: string[];
@@ -48,23 +52,23 @@ export interface ResultData {
 }
 
 export enum AnalyticsEvent {
-  PAGE_VIEW = 'abs_page_view',
-  LANDING_CTA_CLICKED = 'abs_landing_cta_clicked',
-  IDENTIFIED_FROM_EMAIL_LINK = 'abs_identified_from_email_link',
+  PAGE_VIEW = 'talent_page_view',
+  LANDING_CTA_CLICKED = 'talent_landing_cta_clicked',
+  IDENTIFIED_FROM_EMAIL_LINK = 'talent_identified_from_email_link',
 
-  DIAGNOSTIC_STARTED = 'abs_diagnostic_started',
-  DIAGNOSTIC_STEP_VIEWED = 'abs_diagnostic_step_viewed',
-  DIAGNOSTIC_QUESTION_ANSWERED = 'abs_diagnostic_question_answered',
-  DIAGNOSTIC_SECTION_COMPLETED = 'abs_diagnostic_section_completed',
-  MINI_RESULT_VIEWED = 'abs_mini_result_viewed',
-  LEAD_FORM_VIEWED = 'abs_lead_form_viewed',
-  LEAD_SUBMITTED = 'abs_lead_submitted',
-  DIAGNOSTIC_COMPLETED = 'abs_diagnostic_completed',
+  DIAGNOSTIC_STARTED = 'talent_diagnostic_started',
+  DIAGNOSTIC_STEP_VIEWED = 'talent_diagnostic_step_viewed',
+  DIAGNOSTIC_QUESTION_ANSWERED = 'talent_diagnostic_question_answered',
+  DIAGNOSTIC_SECTION_COMPLETED = 'talent_diagnostic_section_completed',
+  MINI_RESULT_VIEWED = 'talent_mini_result_viewed',
+  LEAD_FORM_VIEWED = 'talent_lead_form_viewed',
+  LEAD_SUBMITTED = 'talent_lead_submitted',
+  DIAGNOSTIC_COMPLETED = 'talent_diagnostic_completed',
 
-  RESULT_VIEWED = 'abs_result_viewed',
-  REPORT_DOWNLOADED = 'abs_report_downloaded',
-  BOOKING_CTA_CLICKED = 'abs_booking_cta_clicked',
-  BOOKING_CONFIRMED = 'abs_booking_confirmed',
-  BOOKING_SKIPPED = 'abs_booking_skipped',
-  WEBHOOK_ERROR = 'abs_webhook_error'
+  RESULT_VIEWED = 'talent_result_viewed',
+  REPORT_DOWNLOADED = 'talent_report_downloaded',
+  BOOKING_CTA_CLICKED = 'talent_booking_cta_clicked',
+  BOOKING_CONFIRMED = 'talent_booking_confirmed',
+  BOOKING_SKIPPED = 'talent_booking_skipped',
+  WEBHOOK_ERROR = 'talent_webhook_error'
 }

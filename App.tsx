@@ -86,8 +86,8 @@ const App: React.FC = () => {
         <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 dark:border-gray-800 print:hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-accent1 to-accent2">
-                DIAGNÓSTICO ABSENTISMO
+              <span className="text-lg sm:text-xl font-bold text-primary dark:text-white">
+                RADAR FUGA DE TALENTO
               </span>
             </div>
             <div className="flex items-center gap-4">
@@ -123,7 +123,7 @@ const App: React.FC = () => {
               <a href="#" className="hover:text-primary dark:hover:text-white transition-colors">Contacto</a>
             </div>
             <p className="mt-4 text-xs text-gray-400">
-              Diagnóstico ejecutivo automatizado.
+              Diagnóstico ejecutivo de talento, liderazgo y sucesión.
             </p>
           </div>
         </footer>

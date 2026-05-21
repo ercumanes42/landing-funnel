@@ -3,12 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Diagnostico de Coste Oculto del Absentismo | GFS Consulting</title>
-    <meta name="description" content="Calcula en 2 minutos donde se convierte el absentismo en coste, carga operativa o riesgo para el equipo." />
+    <title>Radar de Fuga de Talento | GFS Consulting</title>
+    <meta name="description" content="Detecta en menos de 3 minutos tus principales riesgos en fuga de talento, liderazgo, sucesión, clima y colaboración generacional. Sin datos sensibles de empleados." />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -17,42 +15,33 @@
         theme: {
           extend: {
             colors: {
-              primary: '#0F172A',
-              secondary: '#64748B',
-              accent1: '#4F46E5', /* Deep Indigo - Trust & B2B */
-              accent2: '#F43F5E', /* Rose - Urgency & Action */
-              success: '#10B981',
+              primary: '#111827',
+              secondary: '#475569',
+              accent1: '#0F766E',
+              accent2: '#1D4ED8',
+              success: '#16A34A',
               warning: '#F59E0B',
-              danger: '#EF4444',
-              bgLight: '#F8FAFC',
-              darkBg: '#020617' /* Very deep slate black */
+              danger: '#DC2626',
+              bgLight: '#F7F8FB',
+              darkBg: '#0B1120'
             },
             fontFamily: {
-              sans: ['Montserrat', 'sans-serif'],
+              sans: ['DM Sans', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
             },
             keyframes: {
-              'glow': {
-                '0%, 100%': {
-                  boxShadow: '0 0 5px rgba(15, 118, 110, 0.35), 0 0 10px rgba(29, 78, 216, 0.2)'
-                },
-                '50%': {
-                  boxShadow: '0 0 18px rgba(15, 118, 110, 0.55), 0 0 30px rgba(29, 78, 216, 0.3)'
-                }
-              },
               'fade-in': {
                 '0%': { opacity: '0' },
                 '100%': { opacity: '1' }
               },
               'fade-in-up': {
-                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '0%': { opacity: '0', transform: 'translateY(18px)' },
                 '100%': { opacity: '1', transform: 'translateY(0)' }
               }
             },
             animation: {
-              'spin-slow': 'spin 3s linear infinite',
-              'glow': 'glow 3s ease-in-out infinite',
-              'fade-in': 'fade-in 0.6s ease-out forwards',
-              'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
+              'fade-in': 'fade-in 0.45s ease-out forwards',
+              'fade-in-up': 'fade-in-up 0.55s ease-out forwards',
             }
           }
         }
@@ -61,27 +50,16 @@
     <style>
       .delay-100 { animation-delay: 100ms; }
       .delay-200 { animation-delay: 200ms; }
-      .delay-250 { animation-delay: 250ms; }
       .delay-300 { animation-delay: 300ms; }
-      .delay-400 { animation-delay: 400ms; }
-      .delay-500 { animation-delay: 500ms; }
 
       @media print {
-        @page { margin: 0; size: auto; }
+        @page { margin: 0; size: A4; }
         body {
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
         }
         .no-print, header, footer { display: none !important; }
         .min-h-screen { min-height: auto !important; }
-        .bg-gradient-to-b { background: white !important; }
-      }
-
-      .gradient-text {
-        background: linear-gradient(90deg, #0F766E, #1D4ED8);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
       }
     </style>
     <script type="importmap">

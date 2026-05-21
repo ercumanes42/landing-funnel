@@ -2,315 +2,211 @@ import { Question } from './types';
 
 export const APP_CONFIG = {
   CALENDLY_URL: "https://calendly.com/joaquingfs/diagnostico-ejecutivo-y-hoja-de-ruta",
-  POST_ENDPOINT_URL: import.meta.env.VITE_MAKE_WEBHOOK_URL || "https://hook.eu2.make.com/bvsqarrcivpds6dcri5m4yy4h68jrv36",
+  POST_ENDPOINT_URL: import.meta.env.VITE_MAKE_WEBHOOK_URL || "https://hook.eu2.make.com/xvz6o3714r7e5x14t6j28sgovr29mjmr",
   PRIVACY_POLICY_URL: "#",
   COOKIES_URL: "#"
 };
 
-export const STORAGE_KEY = "absentismo_state";
+export const STORAGE_KEY = "talento_fuga_state";
 
 export const DIMENSIONS = {
-  D1: { label: "Coste invisible", weight: 0.25 },
-  D2: { label: "Sobrecarga operativa", weight: 0.22 },
-  D3: { label: "Causa no segmentada", weight: 0.18 },
-  D4: { label: "Respuesta tardía", weight: 0.20 },
-  T: { label: "Impacto normalizado", weight: 0.15 }
+  D1: { label: "Liderazgo y mandos medios", weight: 0.22 },
+  D2: { label: "Aprendizaje y adaptación", weight: 0.22 },
+  D3: { label: "Atracción, clima y fuga de talento", weight: 0.18 },
+  D4: { label: "Sucesión de roles críticos", weight: 0.18 },
+  T: { label: "Colaboración generacional", weight: 0.20 }
 };
 
 export const QUICK_WINS = {
-  D1: "Traducir las ausencias de los últimos 90 días a euros: horas perdidas, sustituciones, horas extra y retrasos.",
-  D2: "Detectar qué mandos o equipos absorben más huecos y separar baja puntual de cuello operativo recurrente.",
-  D3: "Agrupar las ausencias por patrón visible: cansancio, salud física, conflictos, turnos o picos de carga.",
-  D4: "Definir una acción temprana en la primera semana para evitar que una baja corta se convierta en problema largo.",
-  T: "Calcular qué pasaría si el absentismo sube 1 punto: margen, servicio, mandos o equipo."
+  D1: "Revisar con los mandos dónde se está compensando la falta de liderazgo con control, urgencias o reuniones de seguimiento.",
+  D2: "Detectar qué habilidades nuevas necesita el negocio en los próximos 90 días y convertirlas en una ruta de aprendizaje concreta.",
+  D3: "Cruzar rotación, dificultad de contratación y señales de clima para localizar el primer punto de fuga de talento.",
+  D4: "Identificar los 5 roles cuya salida frenaría más la operación y asignar sucesores o planes de cobertura realistas.",
+  T: "Crear una dinámica de colaboración entre talento joven y senior para transferir conocimiento sin choques de ritmo, estilo o expectativas."
 };
 
 export const RISK_FEEDBACK = {
   D1: {
     low: {
-      label: "Coste invisible",
-      why: "La empresa nota el absentismo, pero todavía no lo traduce a impacto económico por área.",
-      missing: [
-        "Falta convertir días perdidos en horas y euros.",
-        "Falta separar coste directo de sustituciones, horas extra y retrasos.",
-        "Falta una lectura que pueda entender Dirección o Finanzas sin entrar en detalle de RRHH."
-      ],
-      consequence: "Se toman medidas con buena intención, pero sin saber qué fuga económica se quiere cerrar."
+      label: "Mandos sólidos",
+      why: "Los mandos sostienen rendimiento y compromiso sin depender de control constante.",
+      missing: ["Mantener rutinas de feedback y desarrollo para no volver al modo reactivo."],
+      consequence: "Equipos más autónomos y menos riesgo de fuga por mala gestión directa."
     },
     medium: {
-      label: "Coste parcialmente visible",
-      why: "Existen datos, pero no siempre se conectan con coste operativo o margen.",
-      missing: [
-        "Falta una fórmula común para comparar áreas.",
-        "Falta priorizar por coste, no solo por volumen de ausencias."
-      ],
-      consequence: "El absentismo parece controlado hasta que tensiona presupuesto, servicio o productividad."
+      label: "Liderazgo tensionado",
+      why: "Hay mandos que funcionan, pero el rendimiento depende demasiado de personas concretas.",
+      missing: ["Falta un estándar común de gestión, feedback y seguimiento."],
+      consequence: "La calidad del liderazgo varía por equipo y puede empujar salidas evitables."
     },
     high: {
-      label: "Coste trazable",
-      why: "La empresa puede explicar dónde se convierte el absentismo en coste y decidir con datos.",
-      missing: [
-        "Conviene revisar el benchmark por sector y unidad para detectar desviaciones tempranas."
-      ],
-      consequence: "Mejor capacidad para priorizar acciones y defender inversiones con criterio financiero."
+      label: "Riesgo por mando directo",
+      why: "El sistema necesita demasiado control para sostener compromiso y rendimiento.",
+      missing: ["No hay hábitos claros de liderazgo, escucha ni resolución temprana."],
+      consequence: "La fuga puede aparecer como problema de salario cuando en realidad nace en la experiencia diaria."
     }
   },
   D2: {
     low: {
-      label: "Sobrecarga operativa",
-      why: "Las ausencias se absorben moviendo tareas, turnos o mandos, lo que oculta el coste real.",
-      missing: [
-        "Falta visibilidad de quién tapa los huecos.",
-        "Falta un criterio de sustitución por criticidad del puesto.",
-        "Falta medir el impacto en calidad, servicio y carga del equipo."
-      ],
-      consequence: "La empresa funciona, pero a costa de cansancio, errores y pérdida de continuidad."
+      label: "Aprendizaje vivo",
+      why: "La empresa adapta capacidades con rapidez cuando cambia el negocio.",
+      missing: ["Conectar el aprendizaje con objetivos de negocio medibles."],
+      consequence: "Mayor empleabilidad interna y menos necesidad de reemplazar talento."
     },
     medium: {
-      label: "Continuidad frágil",
-      why: "Hay respuesta operativa, pero depende demasiado de personas concretas o decisiones ad hoc.",
-      missing: [
-        "Falta estandarizar coberturas para roles críticos.",
-        "Falta anticipar picos de ausencia por área."
-      ],
-      consequence: "El sistema aguanta mientras la carga sea moderada; con un pico, se rompe."
+      label: "Adaptación irregular",
+      why: "Algunas áreas aprenden rápido, otras llegan tarde o dependen de iniciativas aisladas.",
+      missing: ["Falta priorizar habilidades críticas y responsables de ejecución."],
+      consequence: "El talento con más ambición puede buscar fuera el desarrollo que no ve dentro."
     },
     high: {
-      label: "Continuidad controlada",
-      why: "La empresa tiene mecanismos para cubrir ausencias sin castigar siempre a los mismos equipos.",
-      missing: [
-        "Conviene monitorizar si la cobertura está generando coste oculto en mandos."
-      ],
-      consequence: "Menor deterioro de servicio y menor riesgo de desgaste acumulado."
+      label: "Desarrollo bloqueado",
+      why: "El aprendizaje no está siguiendo la velocidad del negocio.",
+      missing: ["No existe una ruta clara de upskilling ligada a roles críticos."],
+      consequence: "Aumenta la desconexión, la obsolescencia y el coste de sustitución."
     }
   },
   D3: {
     low: {
-      label: "Causa no segmentada",
-      why: "El absentismo se mira como una cifra única, aunque las causas requieren respuestas distintas.",
-      missing: [
-        "Falta separar patrones de cansancio, salud física, clima y organización del trabajo.",
-        "Falta detectar áreas donde se repiten los mismos síntomas.",
-        "Falta conectar causas con acciones concretas."
-      ],
-      consequence: "Se lanzan medidas generales que no atacan el motor real del problema."
+      label: "Atracción y clima fuertes",
+      why: "La propuesta de valor sostiene atracción, permanencia y compromiso.",
+      missing: ["Seguir midiendo señales tempranas para no esperar a las renuncias."],
+      consequence: "Mejor posición para competir por talento sin depender solo de salario."
     },
     medium: {
-      label: "Patrones incompletos",
-      why: "La empresa intuye causas, pero no siempre las cruza con área, turno o recurrencia.",
-      missing: [
-        "Falta una lectura 80/20 de los focos más repetidos.",
-        "Falta revisar si el patrón cambia por tipo de trabajo."
-      ],
-      consequence: "La respuesta mejora, pero puede quedarse demasiado genérica."
+      label: "Fuga latente",
+      why: "Hay señales de rotación, clima o atracción que todavía no están completamente conectadas.",
+      missing: ["Falta unir datos de contratación, permanencia y percepción del equipo."],
+      consequence: "La empresa puede enterarse tarde de por qué se marchan perfiles valiosos."
     },
     high: {
-      label: "Patrones claros",
-      why: "La empresa entiende que no todas las ausencias pesan igual ni se resuelven igual.",
-      missing: [
-        "Conviene reforzar alertas tempranas por patrón y unidad."
-      ],
-      consequence: "Mejor capacidad para actuar antes de que el problema se cronifique."
+      label: "Fuga activa de talento",
+      why: "La pérdida de talento o la dificultad de atraerlo ya amenaza estabilidad y continuidad.",
+      missing: ["No se está leyendo a tiempo la combinación de clima, carrera, salario percibido y propuesta de valor."],
+      consequence: "Más coste de reemplazo, pérdida de conocimiento y presión sobre los equipos que se quedan."
     }
   },
   D4: {
     low: {
-      label: "Respuesta tardía",
-      why: "La actuación llega cuando la ausencia ya afecta al equipo, al mando o al retorno.",
-      missing: [
-        "Falta una acción clara durante la primera semana.",
-        "Falta coordinar expectativas entre empresa, mando y persona.",
-        "Falta preparar el retorno antes de que se produzca."
-      ],
-      consequence: "Las bajas tienden a alargarse o a volver como reincidencias operativas."
+      label: "Sucesión preparada",
+      why: "Los roles críticos tienen cobertura razonable y alternativas visibles.",
+      missing: ["Actualizar el mapa de sucesión cuando cambie la estrategia."],
+      consequence: "Menor dependencia de personas irremplazables."
     },
     medium: {
-      label: "Respuesta reactiva",
-      why: "Hay seguimiento, pero suele activarse cuando ya existe fricción.",
-      missing: [
-        "Falta definir hitos tempranos.",
-        "Falta separar casos simples de casos con riesgo de alargarse."
-      ],
-      consequence: "Se evita parte del daño, pero se pierde margen de prevención."
+      label: "Cobertura parcial",
+      why: "Algunos puestos clave tienen sucesores, otros dependen de improvisación.",
+      missing: ["Falta ordenar roles críticos por impacto y urgencia."],
+      consequence: "Una salida puntual puede convertirse en bloqueo operativo."
     },
     high: {
-      label: "Respuesta temprana",
-      why: "La empresa actúa pronto sin presionar ni improvisar.",
-      missing: [
-        "Conviene medir si la respuesta temprana reduce duración y recurrencia."
-      ],
-      consequence: "Menor duración media y menor sobrecarga del equipo."
+      label: "Dependencia crítica",
+      why: "La organización depende demasiado de personas concretas sin plan de relevo.",
+      missing: ["No hay sucesores preparados ni transferencia de conocimiento suficiente."],
+      consequence: "La fuga de un perfil clave puede frenar proyectos, clientes o decisiones."
     }
   },
   T: {
     low: {
-      label: "Impacto normalizado",
-      why: "La empresa se ha acostumbrado a absorber el absentismo como parte del día a día.",
-      missing: [
-        "Falta calcular el escenario de +1 punto de absentismo.",
-        "Falta identificar quién absorbe primero el impacto.",
-        "Falta elevar el dato a decisión ejecutiva."
-      ],
-      consequence: "El coste se paga en margen, servicio o cansancio antes de aparecer en un informe."
+      label: "Colaboración fluida",
+      why: "Las generaciones colaboran con respeto, aprendizaje mutuo y roles claros.",
+      missing: ["Convertir esas buenas prácticas en hábitos replicables por equipo."],
+      consequence: "Mejor transferencia de conocimiento y menos fricción cultural."
     },
     medium: {
-      label: "Impacto parcialmente asumido",
-      why: "El impacto se reconoce, pero no siempre se convierte en una decisión prioritaria.",
-      missing: [
-        "Falta vincular absentismo con capacidad real.",
-        "Falta anticipar el impacto de un empeoramiento."
-      ],
-      consequence: "El problema compite mal por presupuesto hasta que ya es visible."
+      label: "Silos generacionales",
+      why: "Hay colaboración, pero todavía aparecen distancias entre perfiles jóvenes y senior.",
+      missing: ["Faltan espacios donde ambas generaciones dependan una de otra para lograr resultados."],
+      consequence: "Se pierde aprendizaje cruzado y aumenta la sensación de desconexión."
     },
     high: {
-      label: "Impacto gestionado",
-      why: "La empresa entiende que el absentismo es capacidad, coste y continuidad.",
-      missing: [
-        "Conviene mantener un escenario trimestral de riesgo."
-      ],
-      consequence: "Mejor reacción ante picos y mejor defensa de acciones preventivas."
+      label: "Fricción generacional",
+      why: "Las diferencias de ritmo, comunicación o expectativas generan tensión en los equipos.",
+      missing: ["No hay acuerdos claros de colaboración, mentoría o transferencia de conocimiento."],
+      consequence: "Puede aumentar la fuga de talento joven, la resistencia senior y el desgaste de mandos."
     }
   }
 };
 
 export const METHODOLOGY_TEXT =
-  "Este diagnóstico evalúa 5 focos ejecutivos del absentismo: coste invisible, sobrecarga operativa, causa no segmentada, respuesta tardía e impacto normalizado. La puntuación 0-100 mide capacidad de gestión: 0-39 indica exposición alta, 40-69 exposición media y 70-100 exposición baja.";
+  "Este diagnóstico evalúa 5 focos de riesgo: liderazgo, aprendizaje, atracción/clima/fuga de talento, sucesión y colaboración generacional. La sumatoria de fricción agrega las 8 respuestas del radar en una escala de 8 a 40. La puntuación 0-100 convierte esa fricción en salud organizativa: 0-39 indica exposición alta, 40-69 exposición media y 70-100 exposición baja.";
 
 export const EXECUTIVE_SUMMARIES = {
-  critical: "Tu diagnóstico apunta a una fuga de capacidad que probablemente se está absorbiendo con margen, mandos o cansancio del equipo. El primer paso no es lanzar más medidas, sino ver dónde se convierte en coste.",
-  transition: "Tu empresa tiene parte del problema visible, pero aún hay zonas grises: coste por área, causas repetidas o momento de actuación. Ahí suele estar la oportunidad de mejora.",
-  solid: "Tu empresa muestra una base razonable de control. El foco ahora es anticipar desviaciones, comparar por unidad y evitar que el absentismo se normalice como coste operativo."
+  critical: "Tu organización muestra señales fuertes de fuga de talento o fricción interna. Conviene actuar antes de que el coste aparezca como rotación, pérdida de conocimiento o bloqueo de roles críticos.",
+  transition: "Tu organización tiene parte del riesgo visible, pero aún hay zonas grises en liderazgo, clima, sucesión o adaptación que pueden acelerar la fuga si no se priorizan.",
+  solid: "Tu organización muestra una base saludable. El foco ahora es anticipar desviaciones, reforzar sucesión y convertir la propuesta de valor en ventaja sostenida."
 };
+
+export const LIKERT_LABELS = [
+  "No ocurre",
+  "Ocurre poco",
+  "Ocurre parcialmente",
+  "Ocurre frecuentemente",
+  "Ocurre mucho"
+];
 
 export const WIZARD_STEPS: { title: string; subtitle?: string; questions: Question[] }[] = [
   {
-    title: "Primero, dónde se nota",
-    subtitle: "Elige la respuesta que más se parece a vuestra realidad.",
+    title: "Radar ejecutivo de fuga de talento",
+    subtitle: "Marca del 1 al 5. 1 = no ocurre. 5 = ocurre mucho.",
     questions: [
       {
         id: "q1",
-        category: "D2",
-        type: "select",
-        text: "¿Cuándo alguien falta al trabajo, dónde se nota primero?",
-        options: [
-          "En operaciones: hay que mover turnos o tareas",
-          "En los mandos: acaban tapando huecos",
-          "En clientes: bajan tiempos, calidad o servicio",
-          "En el equipo: se reparte la carga y se tensa",
-          "Hoy no parece un problema serio"
-        ]
-      }
-    ]
-  },
-  {
-    title: "Continuidad",
-    subtitle: "Una baja corta y una baja larga no rompen lo mismo.",
-    questions: [
+        category: "D3",
+        type: "likert",
+        text: "Nos cuesta encontrar candidatos adecuados para puestos clave."
+      },
       {
         id: "q2",
-        category: "D2",
-        type: "select",
-        text: "¿Cuando una baja se alarga, qué suele pasar en la práctica?",
-        options: [
-          "Tenemos sustitución clara y funciona",
-          "Tiramos de compañeros hasta que vuelva",
-          "Se acumula trabajo y luego hay que recuperarlo",
-          "Depende demasiado del jefe directo",
-          "No lo vemos hasta que ya molesta"
-        ]
-      }
-    ]
-  },
-  {
-    title: "Coste",
-    subtitle: "Aquí suele aparecer la primera brecha real.",
-    questions: [
+        category: "D3",
+        type: "likert",
+        text: "La rotación no deseada afecta al equipo."
+      },
       {
         id: "q3",
-        category: "D1",
-        type: "select",
-        text: "¿Tenéis claro cuánto os cuestan esas ausencias?",
-        options: [
-          "Sí: lo vemos en euros y por área",
-          "Vemos días perdidos, pero no euros",
-          "Sabemos que duele, pero no cuánto",
-          "Solo lo miramos cuando hay una crisis",
-          "No tenemos un dato fiable"
-        ]
-      }
-    ]
-  },
-  {
-    title: "Primer patrón detectado",
-    subtitle: "Vista previa antes de completar el diagnóstico.",
-    questions: [
-      { id: "mini_result", category: "result", type: "mini_result", text: "", required: false }
-    ]
-  },
-  {
-    title: "Causa probable",
-    subtitle: "No todas las ausencias piden la misma respuesta.",
-    questions: [
+        category: "D3",
+        type: "likert",
+        text: "Detectamos tarde señales de cansancio, mal clima o desconexión."
+      },
       {
         id: "q4",
-        category: "D3",
-        type: "select",
-        text: "¿Qué motivo crees que hay detrás de esas bajas?",
-        options: [
-          "Cansancio, estrés o saturación",
-          "Dolor físico, lesiones o problemas de salud",
-          "Mal ambiente, jefes o conflictos",
-          "Picos de carga, turnos o mala organización",
-          "No vemos un patrón claro"
-        ]
-      }
-    ]
-  },
-  {
-    title: "Momento de actuación",
-    subtitle: "El tiempo de respuesta cambia mucho el impacto.",
-    questions: [
+        category: "D1",
+        type: "likert",
+        text: "Los líderes tienen que hacer demasiado micromanagement para que el trabajo salga."
+      },
       {
         id: "q5",
-        category: "D4",
-        type: "select",
-        text: "¿En qué momento soléis actuar?",
-        options: [
-          "Antes de que la baja se alargue",
-          "En la primera semana",
-          "Cuando ya afecta al equipo",
-          "Cuando el mando pide ayuda",
-          "Cuando la persona vuelve"
-        ]
-      }
-    ]
-  },
-  {
-    title: "Escenario ejecutivo",
-    subtitle: "La pregunta que convierte absentismo en decisión.",
-    questions: [
+        category: "D2",
+        type: "likert",
+        text: "El equipo aprende tarde las habilidades que el negocio necesita."
+      },
       {
         id: "q6",
         category: "T",
-        type: "select",
-        text: "¿Si el absentismo sube este año en la empresa, qué pasaría?",
-        options: [
-          "Se notaría en margen o costes",
-          "Se notaría en clientes o servicio",
-          "Se notaría en el cansancio del equipo",
-          "Lo absorberíamos como siempre",
-          "No lo hemos calculado"
-        ]
+        type: "likert",
+        text: "Hay choque entre talento joven y senior."
+      },
+      {
+        id: "q7",
+        category: "D4",
+        type: "likert",
+        text: "Faltan sucesores para roles críticos."
+      },
+      {
+        id: "q8",
+        category: "D3",
+        type: "likert",
+        text: "Dependéis demasiado del salario para atraer talento."
       }
     ]
   },
   {
-    title: "Tu diagnóstico ya está listo",
-    subtitle: "Te mostramos el resultado ahora y te enviamos una copia para revisarla o reenviarla internamente.",
+    title: "¿Dónde enviamos tu informe privado?",
+    subtitle: "Déjanos tu nombre y email corporativo para ver el resultado completo y recibir una copia privada.",
     questions: [
       {
         id: "firstname",
-        text: "¿Cuál es tu nombre? *",
+        text: "Nombre",
         hint: "Solo tu nombre, sin apellidos.",
         category: "lead",
         type: "text",
@@ -318,10 +214,17 @@ export const WIZARD_STEPS: { title: string; subtitle?: string; questions: Questi
       },
       {
         id: "email",
-        text: "¿A qué email enviamos el informe? *",
+        text: "Email corporativo",
         hint: "Sin llamadas automáticas ni spam.",
         category: "lead",
         type: "text",
+        required: true
+      },
+      {
+        id: "consent",
+        text: "Acepto recibir mi diagnóstico y un email de seguimiento relacionado con este resultado.",
+        category: "lead",
+        type: "boolean",
         required: true
       }
     ]

@@ -49,6 +49,10 @@ const BookingPage: React.FC = () => {
       },
       survey: {
         globalScore: calculated.globalScore,
+        rawTotal: calculated.rawTotal,
+        maxRawTotal: calculated.maxRawTotal,
+        answeredCount: calculated.answeredCount,
+        riskPercent: calculated.riskPercent,
         d1: calculated.dimensionScores.find(d => d.id === "D1")?.score || 0,
         d2: calculated.dimensionScores.find(d => d.id === "D2")?.score || 0,
         d3: calculated.dimensionScores.find(d => d.id === "D3")?.score || 0,
@@ -65,10 +69,10 @@ const BookingPage: React.FC = () => {
         timestamp: new Date().toISOString(),
         meetingOptIn: confirmed ? "Confirmed Booking" : "Skipped",
         eventType: confirmed ? "booking_confirmed" : "booking_skipped",
-        funnelId: "absentismo_laboral",
-        payloadVersion: "2026_05_absentismo_v1",
+        funnelId: "fuga_talento",
+        payloadVersion: "2026_05_talento_v2",
         reportDelivery: "all_completed_leads",
-        conversionLogic: "report_for_internal_review_booking_for_interpretation",
+        conversionLogic: "private_report_then_optional_executive_prioritization",
         isUnlocked: confirmed
       }
     };
@@ -176,7 +180,7 @@ const BookingPage: React.FC = () => {
 
   const calculated = state ? calculateResults(state.answers) : null;
   const mainRisk = calculated?.topRisks[0];
-  const mainRiskLabel = calculated?.dimensionScores.find(d => d.id === mainRisk?.dimension)?.label || "Coste invisible";
+  const mainRiskLabel = calculated?.dimensionScores.find(d => d.id === mainRisk?.dimension)?.label || "Fuga de talento";
 
   return (
     <div className="min-h-screen bg-bgLight dark:bg-darkBg py-8 px-4 transition-colors duration-300">
@@ -202,7 +206,7 @@ const BookingPage: React.FC = () => {
         <div className="max-w-4xl mx-auto w-full">
           <div className="bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden relative">
             <div className="absolute top-0 right-0 bg-accent1 text-white text-xs font-bold px-3 py-1 rounded-bl-md z-10">
-              SIN DEMO NI PREPARACION
+              SIN DEMO NI PREPARACIÓN
             </div>
 
             {isBooked ? (

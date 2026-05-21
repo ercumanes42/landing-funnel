@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, ChevronLeft, ChevronRight, Save, X } from 'lucide-react';
 import Button from '../components/Button';
-import { APP_CONFIG, STORAGE_KEY, WIZARD_STEPS } from '../constants';
-import { AnswerValue, SurveyState } from '../types';
+import { APP_CONFIG, LIKERT_LABELS, STORAGE_KEY, WIZARD_STEPS } from '../constants';
+import { AnswerValue, Question, SurveyState } from '../types';
 import { buildResultAnalyticsPayload, identifyLead, logEvent, AnalyticsEvent } from '../utils/analytics';
 import { calculateResults } from '../utils/scoring';
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const RadarWizard: React.FC = () => {
   const navigate = useNavigate();
@@ -36,9 +38,12 @@ const RadarWizard: React.FC = () => {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (!parsed.isCompleted) {
+        if (!parsed.isCompleted && Number.isInteger(parsed.step) && parsed.step < WIZARD_STEPS.length) {
           setState(parsed);
           return;
+        }
+        if (!parsed.isCompleted) {
+          localStorage.removeItem(STORAGE_KEY);
         }
       } catch (e) {
         localStorage.removeItem(STORAGE_KEY);
@@ -83,7 +88,7 @@ const RadarWizard: React.FC = () => {
   }, [state.step, state.isCompleted]);
 
   const currentStepConfig = WIZARD_STEPS[state.step];
-  const progress = ((state.step) / (WIZARD_STEPS.length - 1)) * 100;
+  const progress = ((state.step + 1) / WIZARD_STEPS.length) * 100;
 
   const handleAnswer = (questionId: string, value: AnswerValue) => {
     setState(prev => ({
@@ -92,7 +97,7 @@ const RadarWizard: React.FC = () => {
     }));
 
     const questionNumber = parseInt(questionId.replace('q', ''));
-    if (!isNaN(questionNumber) && questionNumber >= 1 && questionNumber <= 6) {
+    if (!isNaN(questionNumber) && questionNumber >= 1 && questionNumber <= 8) {
       logEvent(AnalyticsEvent.DIAGNOSTIC_QUESTION_ANSWERED, {
         question_id: questionId,
         question_number: questionNumber,
@@ -101,15 +106,22 @@ const RadarWizard: React.FC = () => {
     }
   };
 
+  const isQuestionInvalid = (q: Question): boolean => {
+    if (q.required === false) return false;
+
+    const ans = state.answers[q.id];
+
+    if (q.type === 'boolean') return ans !== true;
+    if (q.type === 'likert') return typeof ans !== 'number';
+    if (q.id === 'email') return typeof ans !== 'string' || !EMAIL_REGEX.test(ans.trim());
+
+    return ans === undefined || ans === null || (typeof ans === 'string' && ans.trim() === '');
+  };
+
   const getMissingAnswersCount = (): number => {
-    return currentStepConfig.questions.reduce((missing, q) => {
-      if (q.required === false) return missing;
-
-      const ans = state.answers[q.id];
-      const isBlank = ans === undefined || ans === null || (typeof ans === 'string' && ans.trim() === '');
-
-      return isBlank ? missing + 1 : missing;
-    }, 0);
+    return currentStepConfig.questions.reduce((missing, q) => (
+      isQuestionInvalid(q) ? missing + 1 : missing
+    ), 0);
   };
 
   const validateStep = (): boolean => getMissingAnswersCount() === 0;
@@ -123,16 +135,10 @@ const RadarWizard: React.FC = () => {
 
     setShowValidation(false);
 
-    if (state.step === 2) {
-      logEvent(AnalyticsEvent.DIAGNOSTIC_SECTION_COMPLETED, {
-        section: 'initial_diagnosis',
-        completed_questions: 3
-      });
-    }
-    if (state.step === 6) {
+    if (state.step === 0) {
       logEvent(AnalyticsEvent.DIAGNOSTIC_SECTION_COMPLETED, {
         section: 'diagnostic_questions',
-        completed_questions: 6
+        completed_questions: 8
       });
     }
 
@@ -185,6 +191,10 @@ const RadarWizard: React.FC = () => {
       },
       survey: {
         globalScore: results.globalScore,
+        rawTotal: results.rawTotal,
+        maxRawTotal: results.maxRawTotal,
+        answeredCount: results.answeredCount,
+        riskPercent: results.riskPercent,
         d1: results.dimensionScores.find(d => d.id === "D1")?.score || 0,
         d2: results.dimensionScores.find(d => d.id === "D2")?.score || 0,
         d3: results.dimensionScores.find(d => d.id === "D3")?.score || 0,
@@ -201,10 +211,10 @@ const RadarWizard: React.FC = () => {
         timestamp: new Date().toISOString(),
         meetingOptIn,
         eventType: "lead_submitted",
-        funnelId: "absentismo_laboral",
-        payloadVersion: "2026_05_absentismo_v1",
+        funnelId: "fuga_talento",
+        payloadVersion: "2026_05_talento_v2",
         reportDelivery: "all_completed_leads",
-        conversionLogic: "report_for_internal_review_booking_for_interpretation"
+        conversionLogic: "private_report_then_optional_executive_prioritization"
       }
     };
   };
@@ -259,8 +269,48 @@ const RadarWizard: React.FC = () => {
     return { level: 'Baja', color: 'bg-green-600', text: 'text-green-600' };
   };
 
-  const renderInput = (q: typeof currentStepConfig.questions[0]) => {
+  const renderLikert = (q: Question) => {
     const val = state.answers[q.id];
+
+    return (
+      <div className="mt-4">
+        <div className="grid grid-cols-5 gap-2" role="radiogroup" aria-label={q.text}>
+          {LIKERT_LABELS.map((label, idx) => {
+            const value = idx + 1;
+            const selected = val === value;
+
+            return (
+              <button
+                key={label}
+                type="button"
+                onClick={() => handleAnswer(q.id, value)}
+                aria-pressed={selected}
+                title={label}
+                className={`h-10 sm:h-11 rounded-md border text-sm font-black transition-all ${
+                  selected
+                    ? 'bg-accent1 text-white border-accent1 shadow-md'
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-accent1'
+                }`}
+              >
+                {value}
+              </button>
+            );
+          })}
+        </div>
+        <div className="mt-2 flex justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+          <span>No ocurre</span>
+          <span className="text-right">Ocurre mucho</span>
+        </div>
+      </div>
+    );
+  };
+
+  const renderInput = (q: Question) => {
+    const val = state.answers[q.id];
+
+    if (q.type === 'likert') {
+      return renderLikert(q);
+    }
 
     if (q.type === 'select') {
       return (
@@ -271,13 +321,11 @@ const RadarWizard: React.FC = () => {
               <button
                 key={opt}
                 onClick={() => handleAnswer(q.id, opt)}
-                className={`
-                  min-h-[56px] px-4 py-3 rounded-lg text-left border transition-all text-sm sm:text-base flex items-center justify-between gap-4
-                  ${selected
+                className={`min-h-[56px] px-4 py-3 rounded-lg text-left border transition-all text-sm sm:text-base flex items-center justify-between gap-4 ${
+                  selected
                     ? 'bg-accent1/10 text-primary dark:text-white border-accent1 ring-2 ring-accent1/20 font-semibold'
                     : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-accent1 hover:bg-gray-50 dark:hover:bg-slate-700'
-                  }
-                `}
+                }`}
               >
                 <span>{opt}</span>
                 {selected && <Check className="w-5 h-5 text-accent1 flex-shrink-0" />}
@@ -291,7 +339,7 @@ const RadarWizard: React.FC = () => {
     if (q.type === 'text') {
       return (
         <input
-          type="text"
+          type={q.id === 'email' ? 'email' : 'text'}
           inputMode={q.id === 'email' ? 'email' : 'text'}
           autoComplete={q.id === 'email' ? 'email' : 'given-name'}
           name={q.id}
@@ -303,70 +351,77 @@ const RadarWizard: React.FC = () => {
       );
     }
 
+    if (q.type === 'boolean') {
+      return (
+        <label className="mt-3 flex gap-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={val === true}
+            onChange={(e) => handleAnswer(q.id, e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-slate-300 text-accent1 focus:ring-accent1"
+          />
+          <span>{q.text}</span>
+        </label>
+      );
+    }
+
     if (q.type === 'mini_result') {
       const miniResults = calculateResults(state.answers);
       const exposure = getExposureLevel(miniResults.globalScore);
-      const firstRisk = miniResults.topRisks[0];
-      const firstRiskLabel = miniResults.dimensionScores.find(d => d.id === firstRisk?.dimension)?.label || "Coste invisible";
+      const topRiskLabels = miniResults.topRisks
+        .slice(0, 2)
+        .map(risk => miniResults.dimensionScores.find(d => d.id === risk.dimension)?.label)
+        .filter(Boolean);
       const firstQuickWin = miniResults.quickWins[0];
 
       const insight = miniResults.globalScore < 40
         ? {
-            title: "Alerta: Fuga de Capacidad Crítica",
-            desc: "Tus primeras respuestas revelan un escenario donde el absentismo ya no es un problema de RRHH, sino una hemorragia de capacidad operativa. Probablemente estés absorbiendo la carga con mandos agotados o sacrificando calidad de servicio.",
-            action: "Completa los últimos 3 pasos para cuantificar la pérdida económica real y obtener tu hoja de ruta de mitigación."
+            title: "Tu fuga de talento ya tiene señales visibles",
+            desc: "Las respuestas apuntan a un riesgo que puede aparecer como rotación, baja energía o dependencia de personas clave. Conviene priorizar antes de que se convierta en reemplazos caros."
           }
         : miniResults.globalScore < 70
           ? {
-              title: "Diagnóstico: Equilibrio Operativo Frágil",
-              desc: "Tienes el control básico, pero existe una 'zona gris' peligrosa. El problema está contenido, pero la forma en que absorbes las ausencias genera un coste oculto que erosiona tu margen sin que aparezca en los informes.",
-              action: "Finaliza el diagnóstico para descubrir exactamente dónde se esconde la fuga y qué palanca mover primero."
+              title: "Hay una zona de fricción que merece atención",
+              desc: "El sistema funciona, pero hay señales suficientes para revisar dónde se puede perder talento: mando directo, propuesta de valor, sucesión o adaptación."
             }
           : {
-              title: "Estado: Base de Gestión Saludable",
-              desc: "Muestras un nivel de control superior a la media. Tu reto ahora es la optimización: evitar que el absentismo se normalice y convertir la gestión de bajas en una ventaja competitiva de eficiencia.",
-              action: "Completa el test para validar tu capacidad de respuesta temprana y obtener el benchmark final."
+              title: "La base es saludable, pero hay que blindarla",
+              desc: "Tus respuestas muestran control general. El valor ahora está en detectar a tiempo los focos que podrían romper retención, sucesión o velocidad de aprendizaje."
             };
 
       return (
-        <div className="mt-4 p-6 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm animate-fade-in">
-          <div className="text-center mb-6">
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-widest font-bold">Análisis preliminar de impacto</p>
+        <div className="mt-4 bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm animate-fade-in overflow-hidden">
+          <div className="p-6 text-center border-b border-slate-200 dark:border-slate-800">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide font-black">Diagnóstico preliminar</p>
             <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-md text-white font-black text-lg ${exposure.color}`}>
               Exposición {exposure.level}
             </div>
             <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
-              Foco de riesgo inmediato: <span className="font-bold text-primary dark:text-white">{firstRiskLabel}</span>
+              Áreas más sensibles: <span className="font-bold text-primary dark:text-white">{topRiskLabels.join(" + ")}</span>
             </p>
           </div>
 
-          <div className="mb-6 p-5 bg-slate-50 dark:bg-slate-700/50 rounded-xl border-l-4 border-accent1">
-            <h4 className="font-extrabold text-gray-800 dark:text-gray-100 mb-2 text-lg">{insight.title}</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed italic">"{insight.desc}"</p>
-          </div>
+          <div className="p-6">
+            <h4 className="font-black text-gray-900 dark:text-gray-100 text-xl">{insight.title}</h4>
+            <p className="mt-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{insight.desc}</p>
 
-          {firstQuickWin && (
-            <div className="mb-6 p-4 bg-accent1/5 dark:bg-accent1/10 rounded-lg border border-accent1/20">
-              <p className="text-xs uppercase text-accent1 dark:text-indigo-400 font-black mb-2">Acción de alto impacto recomendada</p>
-              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
-                {firstQuickWin}
+            {firstQuickWin && (
+              <div className="mt-5 p-4 bg-accent1/5 dark:bg-accent1/10 rounded-lg border border-accent1/20">
+                <p className="text-xs uppercase text-accent1 font-black mb-2">Primera palanca sugerida</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                  {firstQuickWin}
+                </p>
+              </div>
+            )}
+
+            <div className="mt-5 text-center p-5 bg-slate-950 rounded-lg border border-slate-800">
+              <p className="text-sm font-medium text-slate-300">
+                Tu informe completo ordena los 3 riesgos principales y la siguiente decisión interna.
+              </p>
+              <p className="mt-2 text-base font-black text-white">
+                Solo falta enviártelo de forma privada.
               </p>
             </div>
-          )}
-
-          <div className="text-center p-5 bg-slate-900 dark:bg-slate-950 rounded-xl border border-slate-800">
-            <p className="text-sm font-medium text-slate-300 mb-2">
-              {insight.action}
-            </p>
-            <p className="text-base font-black text-white">
-              En menos de 60 segundos tendrás el informe ejecutivo completo
-            </p>
-          </div>
-
-          <div className="mt-4 text-center">
-            <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-tighter">
-              Pendiente de validar: Causa probable, momento de actuación y escenario de impacto.
-            </p>
           </div>
         </div>
       );
@@ -376,28 +431,32 @@ const RadarWizard: React.FC = () => {
   };
 
   const getButtonLabel = () => {
-    if (state.step === 2) return 'Ver primer patrón';
-    if (state.step === 3) return 'Completar diagnóstico de coste';
-    if (state.step === WIZARD_STEPS.length - 1) return 'Ver mi diagnóstico';
+    if (state.step === 0) return 'Continuar';
+    if (state.step === WIZARD_STEPS.length - 1) return 'Ver mi informe ejecutivo';
     return 'Continuar';
   };
 
+  const getStepLabel = () => {
+    if (state.step === 0) return '8 señales críticas';
+    return 'Informe privado';
+  };
+
   return (
-    <div className="min-h-screen bg-bgLight dark:bg-darkBg pb-20 transition-colors duration-300">
+    <div className="min-h-[calc(100svh-4rem)] bg-bgLight dark:bg-darkBg transition-colors duration-300">
       <div className="fixed top-16 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700 z-40">
         <div
-          className="h-full bg-gradient-to-r from-accent1 to-accent2 transition-all duration-300 ease-out"
+          className="h-full bg-accent1 transition-all duration-300 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pt-10 sm:pt-16">
-        <div className="mb-8 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="w-full max-w-5xl mx-auto px-4 py-8 sm:py-10 min-h-[calc(100svh-4rem)] flex flex-col justify-center">
+        <div className="mb-5 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-4">
             <button onClick={exitSurvey} className="p-2 -ml-2 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-full" title="Salir">
               <X className="w-5 h-5" />
             </button>
-            <span>Paso {state.step + 1} de {WIZARD_STEPS.length}</span>
+            <span>{getStepLabel()}</span>
           </div>
           <span className="flex items-center gap-1">
             <Save className="w-4 h-4" />
@@ -405,51 +464,49 @@ const RadarWizard: React.FC = () => {
           </span>
         </div>
 
-        <div className="mb-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-primary dark:text-white mb-2">
+        <div className="mb-5 text-center">
+          <h2 className="text-2xl sm:text-3xl font-black text-primary dark:text-white mb-2">
             {currentStepConfig.title}
           </h2>
           {currentStepConfig.subtitle && (
-            <p className="text-base text-gray-500 dark:text-gray-400">
+            <p className="text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
               {currentStepConfig.subtitle}
             </p>
           )}
         </div>
 
-        <div className="space-y-8 sm:space-y-10">
-          {currentStepConfig.questions.map((q) => {
-            const ans = state.answers[q.id];
-            const isMissing = q.required !== false && (
-              ans === undefined ||
-              ans === null ||
-              (typeof ans === 'string' && ans.trim() === '')
-            );
-            const isError = showValidation && isMissing;
+        <div className={state.step === 0 ? "grid md:grid-cols-2 gap-3 sm:gap-4" : "max-w-3xl mx-auto w-full space-y-4 sm:space-y-5"}>
+          {currentStepConfig.questions.map((q, idx) => {
+            const isError = showValidation && isQuestionInvalid(q);
+            const showTitle = q.type !== 'mini_result' && q.type !== 'boolean';
 
             return (
-              <div key={q.id} className={`animate-fade-in-up p-4 rounded-lg transition-colors ${isError ? 'bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/50 -mx-4' : ''}`}>
-                {q.type !== 'mini_result' && (
-                  <>
-                    <h3 className={`text-lg font-medium mb-1 flex items-start justify-between ${isError ? 'text-red-600 dark:text-red-400 font-bold' : 'text-gray-800 dark:text-gray-200'}`}>
+              <div key={q.id} className={`flex flex-col h-full animate-fade-in-up p-3 sm:p-4 rounded-lg transition-colors ${isError ? 'bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/50' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800'}`}>
+                {showTitle && (
+                  <div className="flex-grow">
+                    <h3 className={`text-sm sm:text-base font-bold mb-1 flex items-start justify-between gap-3 ${isError ? 'text-red-600 dark:text-red-400' : 'text-gray-800 dark:text-gray-200'}`}>
                       <span>
+                        {q.type === 'likert' && <span className="text-accent1 mr-2">{idx + 1}.</span>}
                         {q.text} {q.required && <span className="text-red-500">*</span>}
                       </span>
-                      {isError && <span className="text-xs ml-2 bg-red-100 text-red-600 px-2 py-0.5 rounded-full whitespace-nowrap dark:bg-red-900/40 dark:text-red-300">Requerido</span>}
+                      {isError && <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full whitespace-nowrap dark:bg-red-900/40 dark:text-red-300">Revisar</span>}
                     </h3>
                     {q.hint && (
                       <p className={`text-sm italic mb-3 ${isError ? 'text-red-500/80 dark:text-red-400/80' : 'text-gray-500 dark:text-gray-400'}`}>
                         {q.hint}
                       </p>
                     )}
-                  </>
+                  </div>
                 )}
-                {renderInput(q)}
+                <div className={showTitle ? "mt-auto" : ""}>
+                  {renderInput(q)}
+                </div>
               </div>
             );
           })}
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-800 sm:relative sm:bg-transparent sm:dark:bg-transparent sm:border-0 sm:mt-12">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-800 sm:relative sm:bg-transparent sm:dark:bg-transparent sm:border-0 sm:mt-8">
           <div className="max-w-2xl mx-auto flex gap-4 justify-center">
             <Button
               variant="outline"
@@ -463,7 +520,7 @@ const RadarWizard: React.FC = () => {
             <div className="flex flex-col w-full">
               {showValidation && missingCount > 0 && (
                 <p className="text-xs text-red-600 dark:text-red-400 font-bold mb-2 text-center">
-                  Revisa la respuesta marcada para continuar.
+                  Revisa las respuestas marcadas para continuar.
                 </p>
               )}
               {missingCount > 0 && !showValidation && (
@@ -471,7 +528,7 @@ const RadarWizard: React.FC = () => {
                   Te {missingCount === 1 ? 'falta' : 'faltan'} {missingCount} {missingCount === 1 ? 'respuesta' : 'respuestas'} en esta pantalla.
                 </p>
               )}
-              <Button fullWidth onClick={nextStep}>
+              <Button fullWidth onClick={nextStep} className="rounded-md bg-accent1 hover:bg-teal-800">
                 {getButtonLabel()}
                 {state.step !== WIZARD_STEPS.length - 1 && <ChevronRight className="w-5 h-5 ml-1" />}
               </Button>
