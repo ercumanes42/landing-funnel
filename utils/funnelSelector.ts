@@ -27,7 +27,10 @@ export const getActiveFunnel = (): 'talento' | 'absentismo' => {
 
   // 3. Check hostname / domain
   const hostname = window.location.hostname;
-  if (hostname.includes('rrhh') || hostname.includes('talento')) {
+  if (hostname.includes('absentismo')) {
+    return 'absentismo';
+  }
+  if (hostname.includes('rrhh') || hostname.includes('talento') || hostname.includes('fugadetalento')) {
     return 'talento';
   }
 

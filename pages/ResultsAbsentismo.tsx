@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, BarChart3, Calendar, CheckCircle, Download } from 'lucide-react';
 import Button from '../components/Button';
-import PrintableReport from '../components/PrintableReport';
-import { calculateResults } from '../utils/scoring';
+import PrintableReport from '../components/PrintableReportAbsentismo';
+import { calculateResults } from '../utils/scoringAbsentismo';
 import { ResultData, AnalyticsEvent } from '../types';
 import { buildResultAnalyticsPayload, logEvent } from '../utils/analytics';
-import { APP_CONFIG, DIMENSIONS, QUICK_WINS, STORAGE_KEY } from '../constants';
+import { APP_CONFIG, DIMENSIONS, QUICK_WINS, STORAGE_KEY } from '../constantsAbsentismo';
 
 const Results: React.FC = () => {
   const navigate = useNavigate();
@@ -45,22 +45,22 @@ const Results: React.FC = () => {
       ];
 
       const sorted = [...dimensionScores].sort((a, b) => a.score - b.score);
+
+      // We use calculateResults logic internally for guests too to ensure consistency
+      // but since we only have the scores, we simulate the result data
       const guestResults: ResultData = {
         globalScore: getIntParam('score'),
-        rawTotal: 0,
-        maxRawTotal: 40,
-        answeredCount: 0,
-        riskPercent: Math.max(0, Math.min(100, 100 - getIntParam('score'))),
         dimensionScores,
         topRisks: sorted.slice(0, 3).map(dim => ({ dimension: dim.id, score: dim.score })),
         quickWins: sorted.slice(0, 3).map(dim => QUICK_WINS[dim.id as keyof typeof QUICK_WINS]).filter(Boolean),
         maturityLevel: {
-          level: "Análisis compartido",
-          description: "Resultados basados en parámetros compartidos por URL.",
-          nextStep: "Sugerimos completar el radar privado para obtener una lectura más precisa."
+          level: "Análisis Parcial",
+          description: "Resultados basados en parámetros compartidos.",
+          nextStep: "Sugerimos realizar el diagnóstico completo para obtener la hoja de ruta detallada."
         },
         patterns: []
       };
+
 
       setResults(guestResults);
       setIsGuest(true);
@@ -112,13 +112,13 @@ const Results: React.FC = () => {
 
   const exposure = getExposureMeta(results.globalScore);
   const mainRisk = results.topRisks[0];
-  const mainRiskLabel = results.dimensionScores.find(d => d.id === mainRisk?.dimension)?.label || "Fuga de talento";
+  const mainRiskLabel = results.dimensionScores.find(d => d.id === mainRisk?.dimension)?.label || "Coste invisible";
   const summary =
     results.globalScore < 40
-      ? "Tu radar apunta a una fuga de talento con señales visibles en clima, liderazgo, sucesión o velocidad de adaptación."
+      ? "Tu diagnóstico apunta a una fuga de capacidad que ya se está pagando en coste, mandos o continuidad."
       : results.globalScore < 70
-        ? "Tu organización funciona, pero hay fricciones que pueden convertirse en salidas, dependencia de perfiles clave o pérdida de compromiso."
-        : "Tu organización muestra una base saludable. El foco ahora es anticipar señales tempranas y blindar roles críticos.";
+        ? "Tu empresa tiene parte del problema visible, pero aún hay zonas grises donde el absentismo se convierte en coste."
+        : "Tu empresa muestra una base razonable de control. El foco ahora es anticipar desviaciones y evitar costes normalizados.";
 
   const buildPayload = (status: string) => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -154,10 +154,6 @@ const Results: React.FC = () => {
       },
       survey: {
         globalScore: calc.globalScore,
-        rawTotal: calc.rawTotal,
-        maxRawTotal: calc.maxRawTotal,
-        answeredCount: calc.answeredCount,
-        riskPercent: calc.riskPercent,
         d1: calc.dimensionScores.find(d => d.id === "D1")?.score || 0,
         d2: calc.dimensionScores.find(d => d.id === "D2")?.score || 0,
         d3: calc.dimensionScores.find(d => d.id === "D3")?.score || 0,
@@ -174,10 +170,10 @@ const Results: React.FC = () => {
         timestamp: new Date().toISOString(),
         meetingOptIn: status,
         eventType: status === "Downloaded Report" ? "report_downloaded" : "result_followup",
-        funnelId: "fuga_talento",
-        payloadVersion: "2026_05_talento_v2",
+        funnelId: "absentismo_laboral",
+        payloadVersion: "2026_05_absentismo_v1",
         reportDelivery: "all_completed_leads",
-        conversionLogic: "private_report_then_optional_executive_prioritization",
+        conversionLogic: "report_for_internal_review_booking_for_interpretation",
         isUnlocked: false
       }
     };
@@ -236,13 +232,13 @@ const Results: React.FC = () => {
       <div className="min-h-screen bg-bgLight dark:bg-darkBg pb-20 print:hidden">
         <div className="max-w-5xl mx-auto px-4 py-10 sm:py-14">
           <div className="text-center mb-8">
-            <p className="text-sm font-black uppercase tracking-wide text-accent1">Informe ejecutivo de fuga de talento</p>
-            <h1 className="mt-2 text-3xl sm:text-4xl font-black text-primary dark:text-white">
-              Radar completado
+            <p className="text-sm font-bold uppercase tracking-wide text-accent1">Informe de fuga de capacidad</p>
+            <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold text-primary dark:text-white">
+              Diagnóstico completado
             </h1>
             {!isGuest && (
               <p className="mt-3 text-slate-600 dark:text-slate-300">
-                Tu informe queda disponible ahora para revisarlo, descargarlo o reenviarlo internamente.
+                El informe queda disponible ahora para revisarlo, descargarlo o reenviarlo internamente.
               </p>
             )}
           </div>
@@ -254,31 +250,14 @@ const Results: React.FC = () => {
                   <p className="text-sm text-slate-500 dark:text-slate-400">Nivel de exposición</p>
                   <p className={`text-3xl font-black ${exposure.text}`}>{exposure.label}</p>
                 </div>
-                <div className="w-20 h-20 rounded-lg bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center border-2 border-slate-200 dark:border-slate-700">
+                <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center border-2 border-slate-200 dark:border-slate-700">
                   <span className="text-3xl font-black text-primary dark:text-white">{results.globalScore}</span>
                   <span className="text-[10px] uppercase font-bold text-slate-400">Score</span>
                 </div>
               </div>
 
-              {results.answeredCount > 0 && (
-                <div className="mb-6 rounded-lg border-2 border-accent1/30 bg-accent1/5 dark:bg-accent1/10 p-4">
-                  <div className="flex items-end justify-between gap-4">
-                    <div>
-                      <p className="text-xs uppercase font-black tracking-wide text-accent1">Sumatoria de fricción</p>
-                      <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-                        {results.answeredCount} respuestas · cuanto más alto, más fricción.
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-3xl font-black text-primary dark:text-white">{results.rawTotal}</p>
-                      <p className="text-xs font-bold text-slate-500 dark:text-slate-400">de {results.maxRawTotal}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border-l-4 border-accent1">
-                <p className="text-xs uppercase font-black text-accent1 mb-1">Lectura ejecutiva</p>
+              <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border-l-4 border-accent1">
+                <p className="text-xs uppercase font-bold text-accent1 mb-1">Nivel de Madurez</p>
                 <p className="text-lg font-bold text-primary dark:text-white">{results.maturityLevel.level}</p>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">{results.maturityLevel.description}</p>
               </div>
@@ -286,8 +265,8 @@ const Results: React.FC = () => {
               <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{summary}</p>
 
               <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Tu riesgo principal</p>
-                <p className="mt-1 text-xl font-black text-primary dark:text-white">{mainRiskLabel}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Tu fuga principal</p>
+                <p className="mt-1 text-xl font-bold text-primary dark:text-white">{mainRiskLabel}</p>
                 {results.quickWins[0] && (
                   <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 italic">{results.quickWins[0]}</p>
                 )}
@@ -295,7 +274,7 @@ const Results: React.FC = () => {
             </div>
 
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 shadow-sm">
-              <h2 className="text-lg font-black text-primary dark:text-white mb-4 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-primary dark:text-white mb-4 flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-accent1" />
                 Resultado por foco
               </h2>
@@ -321,8 +300,8 @@ const Results: React.FC = () => {
               </div>
 
               {results.patterns.length > 0 && (
-                <div className="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
-                  <p className="text-xs uppercase font-black text-amber-600 dark:text-amber-400 mb-2 tracking-wide">Patrones críticos detectados</p>
+                <div className="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+                  <p className="text-xs uppercase font-black text-amber-600 dark:text-amber-400 mb-2 tracking-wide">Patrones Críticos Detectados</p>
                   <div className="space-y-3">
                     {results.patterns.map((p, idx) => (
                       <div key={idx} className="text-sm">
@@ -336,16 +315,16 @@ const Results: React.FC = () => {
 
               <div className="mt-6 grid sm:grid-cols-3 gap-3">
                 <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
-                  <p className="text-xl font-black text-accent1">8</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">señales críticas</p>
+                  <p className="text-xl font-black text-accent1">7,1%</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">horas pactadas perdidas</p>
                 </div>
                 <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
-                  <p className="text-xl font-black text-accent1">5</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">focos ejecutivos</p>
+                  <p className="text-xl font-black text-accent1">5,5%</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">por baja médica</p>
                 </div>
                 <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
-                  <p className="text-xl font-black text-accent1">15 min</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">para priorizar</p>
+                  <p className="text-xl font-black text-accent1">12,3%</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">sectores expuestos</p>
                 </div>
               </div>
             </div>
@@ -355,18 +334,18 @@ const Results: React.FC = () => {
             <div className="mt-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 shadow-sm">
               <div className="grid lg:grid-cols-[1fr_auto] gap-5 items-center">
                 <div>
-                  <h2 className="text-xl font-black text-primary dark:text-white flex items-center gap-2">
+                  <h2 className="text-xl font-bold text-primary dark:text-white flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-amber-500" />
-                    Del radar a decisión interna
+                    Del diagnóstico a decisión interna
                   </h2>
                   <p className="mt-2 text-slate-600 dark:text-slate-300">
-                    El informe te muestra dónde puede escaparse el talento. La revisión te ayuda a decidir qué palanca mover primero: atracción, mando directo, aprendizaje, sucesión o colaboración generacional.
+                    El informe te muestra dónde está la fuga. La revisión te muestra qué palanca mover primero: coste real, causa probable o momento de actuación.
                   </p>
                   <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                    En 15 minutos ordenamos tus 3 focos y dejamos claro qué dato pedir primero a RRHH, Dirección u Operaciones.
+                    En 15 minutos ordenamos tus 3 palancas y dejamos claro qué dato pedir primero a RRHH, Operaciones o Finanzas.
                   </p>
                 </div>
-                <Button onClick={handleBookCall} className="px-7 py-4 text-base rounded-md w-full lg:w-auto bg-accent1 hover:bg-teal-800">
+                <Button onClick={handleBookCall} className="px-7 py-4 text-base rounded-md w-full lg:w-auto">
                   <Calendar className="w-5 h-5 mr-2" />
                   Saber qué palanca mover primero
                 </Button>
@@ -406,7 +385,7 @@ const Results: React.FC = () => {
           )}
 
           <div className="mt-10 text-center text-xs text-slate-500">
-            <p>GFS Consulting. Radar generado automáticamente.</p>
+            <p>GFS Consulting. Diagnóstico generado automáticamente.</p>
           </div>
         </div>
       </div>
