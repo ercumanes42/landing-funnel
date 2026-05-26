@@ -4,11 +4,18 @@ import { Moon, Sun } from 'lucide-react';
 import Landing from './pages/Landing';
 import RadarWizard from './pages/RadarWizard';
 import Results from './pages/Results';
+import LandingTalento from './pages/LandingTalento';
+import LandingAbsentismo from './pages/LandingAbsentismo';
+import RadarWizardTalento from './pages/RadarWizardTalento';
+import RadarWizardAbsentismo from './pages/RadarWizardAbsentismo';
+import ResultsTalento from './pages/ResultsTalento';
+import ResultsAbsentismo from './pages/ResultsAbsentismo';
 import BookingPage from './pages/BookingPage';
 import Dashboard from './pages/Dashboard';
 import DashboardResults from './pages/DashboardResults';
 import { identifyLead, logEvent, AnalyticsEvent } from './utils/analytics';
 import { STORAGE_KEY } from './constants';
+import { getActiveFunnel } from './utils/funnelSelector';
 
 const PageTracker = () => {
   const location = useLocation();
@@ -79,6 +86,9 @@ const App: React.FC = () => {
     }
   }, []);
 
+  const activeFunnel = getActiveFunnel();
+  const headerTitle = activeFunnel === 'talento' ? 'DIAGNÓSTICO TALENTO' : 'DIAGNÓSTICO ABSENTISMO';
+
   return (
     <HashRouter>
       <PageTracker />
@@ -86,8 +96,8 @@ const App: React.FC = () => {
         <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 dark:border-gray-800 print:hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-lg sm:text-xl font-bold text-primary dark:text-white">
-                RADAR FUGA DE TALENTO
+              <span className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-accent1 to-accent2">
+                {headerTitle}
               </span>
             </div>
             <div className="flex items-center gap-4">
@@ -104,11 +114,26 @@ const App: React.FC = () => {
 
         <main className="flex-grow">
           <Routes>
+            {/* Dynamic domain/hash selectors */}
             <Route path="/" element={<Landing />} />
             <Route path="/radar" element={<RadarWizard />} />
-            <Route path="/agendar" element={<BookingPage />} />
             <Route path="/resultado" element={<Results />} />
             <Route path="/resultados" element={<Results />} />
+
+            {/* Explicit Talento Funnel routes */}
+            <Route path="/talento" element={<LandingTalento />} />
+            <Route path="/radar-talento" element={<RadarWizardTalento />} />
+            <Route path="/resultado-talento" element={<ResultsTalento />} />
+            <Route path="/resultados-talento" element={<ResultsTalento />} />
+
+            {/* Explicit Absentismo Funnel routes */}
+            <Route path="/absentismo" element={<LandingAbsentismo />} />
+            <Route path="/radar-absentismo" element={<RadarWizardAbsentismo />} />
+            <Route path="/resultado-absentismo" element={<ResultsAbsentismo />} />
+            <Route path="/resultados-absentismo" element={<ResultsAbsentismo />} />
+
+            {/* General Routes */}
+            <Route path="/agendar" element={<BookingPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/mis-resultados" element={<DashboardResults />} />
           </Routes>
@@ -123,7 +148,7 @@ const App: React.FC = () => {
               <a href="#" className="hover:text-primary dark:hover:text-white transition-colors">Contacto</a>
             </div>
             <p className="mt-4 text-xs text-gray-400">
-              Diagnóstico ejecutivo de talento, liderazgo y sucesión.
+              Diagnóstico ejecutivo automatizado.
             </p>
           </div>
         </footer>

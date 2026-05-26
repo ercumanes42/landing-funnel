@@ -34,6 +34,11 @@ analyze_persons.ts
 !types.ts
 !vite-env.d.ts
 !vite.config.ts
+!constantsAbsentismo.ts
+!constantsTalento.ts
+!utils/funnelSelector.ts
+!utils/scoringAbsentismo.ts
+!utils/scoringTalento.ts
 
 *.json
 !package.json
